@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: pygmaps
+Version: 0.1.1
+Summary: Python wrapper for Google MAPs javascript API 3.0 
+Home-page: http://code.google.com/p/pygmaps/
+Author: Yifei Jiang
+Author-email: jiangyifei@gmail.com
+License: Apache License 2.0
+Description: UNKNOWN
+Keywords: Python wrapper Google Maps
+Platform: UNKNOWN

@@ -1,0 +1,22 @@
+Metadata-Version: 2.0
+Name: LatLon
+Version: 1.0.2
+Summary: Methods for representing geographic coordinates
+Home-page: UNKNOWN
+Author: Gen Del Raye
+Author-email: gdelraye@hawaii.edu
+License: UNKNOWN
+Keywords: latitude,longitude,decimal degrees,degree minutes,distance
+Platform: UNKNOWN
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
+Classifier: Natural Language :: English
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Topic :: Scientific/Engineering
+Classifier: Development Status :: 4 - Beta
+Requires-Dist: pyproj
+
+UNKNOWN
+
+

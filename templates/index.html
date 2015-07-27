@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="/static/css/custom.css" rel="stylesheet">
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>VFR Flight Planner</title>
+    </head>
+        <!-- http://www.dynamicdrive.com/forums/showthread.php?60374-Dynamically-hide-show-portion-of-HTML-when-checkbox-is-selected -->
+        <script type="text/javascript">
+            var checkDisplay = function(check, form) { //check ID, form ID
+                form = document.getElementById(form), check = document.getElementById(check);
+                check.onclick = function(){
+                    form.style.display = (this.checked) ? "block" : "none";
+                };
+                check.onclick();
+            };
+        </script>
+    <body>
+        <center>
+            <br>
+            <font color="#4B8AB9" size="50">
+                <big>
+                    VFR FLIGHT PLANNER
+                </big>
+            </font>
+            <style>
+                .cent{
+                  text-align:center;
+                }
+                .cent > input{
+                  text-align:left;
+                }
+            </style>
+            <form action="/fplanner" method="post" role="form">
+                <div class="vertical-center">
+                    <div class="container">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="name">{{ form.orig.label }}</label>
+                            <div class="col-sm-10">
+                                {{ form.orig (class_="form-control") }}
+                            </div>
+                            <label class="control-label col-sm-2" for="name">{{ form.dest.label }}</label>
+                            <div class="col-sm-10">
+                                {{ form.dest (class_="form-control") }}
+                            </div>
+                            <label class="control-label col-sm-2" for="name">{{ form.speed.label }}</label>
+                            <div class="col-sm-10">
+                                {{ form.speed (class_="form-control") }}
+                            </div>
+                            <label class="control-label col-sm-2" for="name">{{ form.alt.label }}</label>
+                            <div class="col-sm-10">
+                                {{ form.alt (class_="form-control") }}
+                            </div>
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    Show Aircraft Information <input type="checkbox" id="check">
+                </div>
+                <div class="container" id="airplane">
+                    <div class="col-sm-10">
+                        <br>
+                        <div id="showform">
+                            <label class="control-label col-sm-2" for="name">{{ form.plane_type.label }}</label>
+                            <div class="col-sm-10">
+                                {{ form.plane_type (class_="form-control") }}
+                                <br>
+                                <div class="col-sm-5">
+                                    {{ form.empty_weight.label }}
+                                    {{ form.empty_weight (class_="form-control") }}
+
+                                    {{ form.fuel_lbs.label }}
+                                    {{ form.fuel_lbs (class_="form-control") }}
+
+                                    {{ form.pax1_lbs.label }}
+                                    {{ form.pax1_lbs (class_="form-control") }}
+
+                                    {{ form.pax2_lbs.label }}
+                                    {{ form.pax2_lbs (class_="form-control") }}
+
+                                    {{ form.bag1_lbs.label }}
+                                    {{ form.bag1_lbs (class_="form-control") }}
+
+                                    {{ form.bag2_lbs.label }}
+                                    {{ form.bag2_lbs (class_="form-control") }}
+                                </div>  
+                                <div class="col-sm-5">
+                                    {{ form.weight_arm.label }}
+                                    {{ form.weight_arm (class_="form-control") }}
+
+                                    {{ form.fuel_arm.label }}
+                                    {{ form.fuel_arm (class_="form-control") }}
+
+                                    {{ form.pax1_arm.label }}
+                                    {{ form.pax1_arm (class_="form-control") }}
+
+                                    {{ form.pax2_arm.label }}
+                                    {{ form.pax2_arm (class_="form-control") }}
+
+                                    {{ form.bag1_arm.label }}
+                                    {{ form.bag1_arm (class_="form-control") }}
+
+                                    {{ form.bag2_arm.label }}
+                                    {{ form.bag2_arm (class_="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <input type="submit" class="btn btn-primary" style="border-radius:5px" value="Calculate Route"> 
+                    </div>
+
+                    <script type="text/javascript">
+                        checkDisplay("check", "showform");
+                    </script>
+                </div>
+            </form>
+        </center>
+    </body>
+    <footer>
+        
+    </footer>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/static/js/bootstrap.min.js"></script>
+    <!-- http://stackoverflow.com/questions/20840018/bootstrap-3-carousel-transition-speed -->                      
+</html>
