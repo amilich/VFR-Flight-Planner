@@ -56,7 +56,8 @@ def search():
 
 		cache.set('myRoute', myRoute, timeout=300)
 		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route")
-	except: # really bad way...
+	except Exception, e: # really bad way...
+		print str(e)
 		newLoc = str(request.form['place'])
 		num = str(request.form['num'])
 		try: 

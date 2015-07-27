@@ -9,6 +9,13 @@ from downloadmap import *
 import urllib, re, sys, os, math, copy
 import pygmaps 
 
+"""
+	TODO: 
+		Climbs across waypoints 
+		Fuel stops (unicom, etc.)
+
+"""
+
 class Airplane: 
 	# ** NOTE ** for now, all data is for C172 
 	def __init__(self, tail_number, plane_type, empty_weight, empty_arm, fuel, pax1, pax2, bag1, bag2, fuel_arm=48, pax1_arm=37, pax2_arm=73, bag1_arm=95, bag2_arm=123):
@@ -26,7 +33,8 @@ class Airplane:
 		self.pax2_arm = pax2_arm
 		self.bag1_arm = bag1_arm
 		self.bag2_arm = bag2_arm
-		calcCG()
+		self.calcCG()
+		print self
 
 		# ** NOTE ** need to log the tail number in database (can be done in App.py)
 
@@ -35,8 +43,8 @@ class Airplane:
 
 	# calculate the center of gravity 
 	def calcCG(self):
-		self.weight = self.empty_weight + self.fuel + self.pax1 + self.pax2 + self.bag1 + self.bag2 
-		self.moment = self.empty_weight*self.empty_arm + self.fuel*self.fuel_arm + self.pax1*self.pax2_arm + self.pax2*self.pax2_arm + self.bag1*self.bag1_arm + self.bag2*self.bag2_arm
+		self.weight = float(self.empty_weight) + float(self.fuel) + float(self.pax1) + float(self.pax2) + float(self.bag1) + float(self.bag2)
+		self.moment = float(self.empty_weight)*float(self.empty_arm) + float(self.fuel)*float(self.fuel_arm) + float(self.pax1)*float(self.pax2_arm) + float(self.pax2)*float(self.pax2_arm) + float(self.bag1)*float(self.bag1_arm) + float(self.bag2)*float(self.bag2_arm)
 		self.cg = self.moment/self.weight
 		return 
 
