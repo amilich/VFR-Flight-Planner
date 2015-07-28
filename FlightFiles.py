@@ -6,6 +6,7 @@ from LatLon import LatLon, Latitude, Longitude
 from geomag import mag_heading
 from BeautifulSoup import BeautifulSoup
 from downloadmap import *
+from Elevations import *
 import urllib, re, sys, os, math, copy
 import pygmaps 
 
@@ -416,10 +417,10 @@ def createSegments(origin, destination, course, alt, tas, climb_speed = 75, desc
 feet_to_nm = 0.000164579
 
 class Route: 
-	def __init__(self, origin, destination, routeType="direct", night = False, custom=[], cruising_alt=3500, cruise_speed=110, climb_speed=75, climb_dist=7, gph=10, descent_speed=90): 
-		self.reset(origin, destination, routeType, night, custom, cruising_alt, cruise_speed, climb_speed, climb_dist, gph, descent_speed)
+	def __init__(self, course, origin, destination, routeType="direct", night = False, custom=[], cruising_alt=3500, cruise_speed=110, climb_speed=75, climb_dist=7, gph=10, descent_speed=90): 
+		self.reset(course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, climb_speed, climb_dist, gph, descent_speed)
 
-	def reset(self, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, climb_speed, climb_dist, gph, descent_speed): 
+	def reset(self, course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, climb_speed, climb_dist, gph, descent_speed): 
 		self.origin = origin 
 		self.destination = destination
 		self.climb_speed = climb_speed
@@ -434,7 +435,7 @@ class Route:
 		self.cruise_speed = cruise_speed
 		self.descent_speed = descent_speed
 		#perform route calculations
-		self.course = getDistHeading(origin, destination)
+		self.course = course 
 		if(routeType.lower() == "direct"): 
 			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, self.climb_speed, self.descent_speed, custom=custom)
 		else: 
@@ -485,7 +486,7 @@ class Route:
 
 				newLandmarks = list(prevLandmarks)
 
-				self.reset(self.origin, self.destination, self.routeType, self.night, newLandmarks, self.cruising_alt, self.cruise_speed, self.climb_speed, self.climb_dist, self.gph, self.descent_speed)
+				self.reset(self.course, self.origin, self.destination, self.routeType, self.night, newLandmarks, self.cruising_alt, self.cruise_speed, self.climb_speed, self.climb_dist, self.gph, self.descent_speed)
 				return
 		return 
 
@@ -507,16 +508,58 @@ class Route:
 		self.fuelRequired += self.fuelTaxi
 		return 
 
-def getProperAlt(origin, destination):
-	return 
+def roundthousand(num):
+	return int(math.ceil(num/1000.0))*1000
+
+def getProperAlt(origin, destination, course):
+	start = str(origin.latlon)
+	end = str(destination.latlon)
+	path = start + "|" + end
+	elevations = getElevation(path)
+	pathMap = getChart(elevations)
+	# get the maximum altitude 
+	maxAlt = max(elevations)
+	# for hemispheric rule
+	start_lat = start.split(", ")[0]
+	start_lon = start.split(", ")[1]
+	mag_hdg = mag_heading(float(course[1]), float(start_lat), float(start_lon)) # Get the magnetic heading 
+
+	cruise_alt = roundthousand(maxAlt)
+	thousands = int(cruise_alt/1000)
+
+	if mag_hdg >= 0 and mag_hdg <= 179: 
+		if(thousands%2==0):
+			cruise_alt += 1000 
+	else: 
+		if not thousands%2==0:
+			cruise_alt += 1000 
+
+	# for all VFR flights
+	cruise_alt += 500 
+
+	if(cruise_alt < 1500):
+		cruise_alt += 2000
+
+	return (cruise_alt, pathMap)
 
 def createRoute(home, dest, altitude, airspeed, custom=[]): 
+	messages = []
+
 	ll = getLatLon(home)
 	origin = AirportDist(home, ll[0], ll[1], 0)
 	destination =  AirportDist(dest, getLatLon(dest)[0], getLatLon(dest)[1], -1)
-	#cruising_alt = getProperAlt(origin, destination)
+	course = getDistHeading(origin, destination)
+
+	elevation_data = getProperAlt(origin, destination, course)
+	cruising_alt = elevation_data[0]
+	elevation_map = elevation_data[1]
+
+	if(cruising_alt > altitude): 
+		altitude = cruising_alt
+		messages.append("Changed cruising altitude")
+
 	rType = "direct" if len(custom) == 0 else "custom"
-	route = Route(origin, destination, routeType=rType, custom=custom, cruising_alt=altitude, cruise_speed=airspeed, climb_speed=75, climb_dist=7)
+	route = Route(course, origin, destination, routeType=rType, custom=custom, cruising_alt=altitude, cruise_speed=airspeed, climb_speed=75, climb_dist=7)
 
 	noTOC = copy.copy(route)
 	route.insertClimb()
@@ -540,7 +583,7 @@ def createRoute(home, dest, altitude, airspeed, custom=[]):
 		mymap.addpath(tempPath,"#000000")
 		#print item
 	mymap.addpath(path,"#4169E1")
-	return (getHtml(mymap), noTOC, route)
+	return (getHtml(mymap), noTOC, route, elevation_map, messages)
 
 def getData(filename, p, prevLoc, r, allowSpaces = False):
 	potChanges = []
@@ -583,13 +626,13 @@ if __name__ == "__main__":
 	# testing features 
 	home = "KHPN" 
 	dest = "KGON"
-	a = createRoute(home, dest, 3500, 110)
+	a = createRoute(home, dest, 1000, 110)
 	print a[1].courseSegs
 	print a[2].courseSegs
 	num = "0"
-	b = changeRoute(a[1], int(num), "KLGA", home, dest, 3500, 110)
-	print b[1].courseSegs
-	print b[2].courseSegs
+	#b = changeRoute(a[1], int(num), "KLGA", home, dest, 3500, 110)
+	#print b[1].courseSegs
+	#print b[2].courseSegs
 
 	# print "Fuel required: " + str(route.fuelRequired)
 	# print "Time required: " + str(route.time)

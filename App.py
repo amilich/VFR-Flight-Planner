@@ -55,7 +55,7 @@ def search():
 			forms.append(placeform(place=myRoute[2].courseSegs[x].to_poi.name, num=x))
 
 		cache.set('myRoute', myRoute, timeout=300)
-		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route")
+		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3])
 	except Exception, e: # really bad way...
 		print str(e)
 		newLoc = str(request.form['place'])
@@ -74,7 +74,7 @@ def search():
 				forms.append(placeform(place=myRoute[2].courseSegs[x].to_poi.name, num=x))
 
 			cache.set('myRoute', myRoute, timeout=300)
-			return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route")
+			return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3])
 		except Exception, e: 
 			print str(e)
 			return '<a href="/">home</a>'
