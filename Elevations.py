@@ -4,9 +4,7 @@ import urllib
 ELEVATION_BASE_URL = 'http://maps.google.com/maps/api/elevation/json'
 CHART_BASE_URL = 'http://chart.googleapis.com/chart'
 
-meters_to_feet = 3.28084
-
-def getChart(chartData, chartDataScaling="-500,5000", chartType="lc",chartLabel="Elevation in Feet",chartSize="500x160", chartColor="orange", **chart_args):
+def getChart(chartData, chartDataScaling="-500,5000", chartType="lc",chartLabel="Elevation in Meters",chartSize="500x160", chartColor="orange", **chart_args):
     chart_args.update({
         'cht': chartType,
         'chs': chartSize,
@@ -33,9 +31,6 @@ def getElevation(path,samples="100",sensor="false", **elvtn_args):
     elevationArray = []
 
     for resultset in response['results']:
-      elevationArray.append(float(resultset['elevation']))
+      elevationArray.append(resultset['elevation'])
 
-    newArray = []
-    for item in elevationArray: 
-    	newArray.append(meters_to_feet*float(item))
-    return newArray
+    return elevationArray

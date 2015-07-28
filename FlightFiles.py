@@ -524,7 +524,7 @@ def getProperAlt(origin, destination, course):
 	start_lon = start.split(", ")[1]
 	mag_hdg = mag_heading(float(course[1]), float(start_lat), float(start_lon)) # Get the magnetic heading 
 
-	cruise_alt = roundthousand(maxAlt)
+	cruise_alt = roundthousand(maxAlt*meters_to_feet)
 	thousands = int(cruise_alt/1000)
 
 	if mag_hdg >= 0 and mag_hdg <= 179: 
@@ -539,8 +539,8 @@ def getProperAlt(origin, destination, course):
 	if(cruise_alt < 1500):
 		cruise_alt += 2000
 
-	elevrange = "-500,"+str(cruise_alt)
-	pathMap = getChart(elevations, chartDataScaling=elevrange)
+	# elevrange = "-500,"+str(cruise_alt)
+	pathMap = getChart(elevations)
 
 	return (cruise_alt, pathMap)
 
