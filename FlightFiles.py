@@ -172,7 +172,7 @@ class Segment:
 def getWeather(loc):
 	try: 
 		url = 'http://www.aviationweather.gov/adds/metars/?station_ids=' + loc +'&std_trans=standard&chk_metars=on&hoursStr=most+recent+only&submitmet=Submit'
-		print url
+		#print url
 		page = urllib.urlopen(url)
 		page = page.read()
 		soup = BeautifulSoup(''.join(page))
@@ -196,7 +196,7 @@ def getWindsAloft(lat, lon, alt):
 	loc = AirportDist("windLoc", lat, lon)
 
 	url = 'https://aviationweather.gov/products/nws/boston'
-	print url 
+	#print url 
 	page = urllib.urlopen(url)
 	page = page.read()
 	soup = BeautifulSoup(''.join(page))
@@ -517,9 +517,8 @@ def getProperAlt(origin, destination, course):
 	end = str(destination.latlon)
 	path = start + "|" + end
 	elevations = getElevation(path)
-	pathMap = getChart(elevations)
 	# get the maximum altitude 
-	maxAlt = max(elevations)*meters_to_feet
+	maxAlt = max(elevations)
 	# for hemispheric rule
 	start_lat = start.split(", ")[0]
 	start_lon = start.split(", ")[1]
@@ -537,9 +536,11 @@ def getProperAlt(origin, destination, course):
 
 	# for all VFR flights
 	cruise_alt += 500 
-
 	if(cruise_alt < 1500):
 		cruise_alt += 2000
+
+	elevrange = "-500,"+str(cruise_alt)
+	pathMap = getChart(elevations, chartDataScaling=elevrange)
 
 	return (cruise_alt, pathMap)
 
@@ -554,19 +555,16 @@ def createRoute(home, dest, altitude, airspeed, custom=[]):
 	elevation_data = getProperAlt(origin, destination, course)
 	cruising_alt = elevation_data[0]
 	elevation_map = elevation_data[1]
-
-	if(cruising_alt > altitude): 
-		altitude = cruising_alt
+	print cruising_alt
+	final_alt = altitude
+	if(float(cruising_alt) > float(altitude)): 
+		final_alt = cruising_alt
 		messages.append("Changed cruising altitude")
-
 	rType = "direct" if len(custom) == 0 else "custom"
-	route = Route(course, origin, destination, routeType=rType, custom=custom, cruising_alt=altitude, cruise_speed=airspeed, climb_speed=75, climb_dist=7)
+	route = Route(course, origin, destination, routeType=rType, custom=custom, cruising_alt=final_alt, cruise_speed=airspeed, climb_speed=75, climb_dist=7)
 
 	noTOC = copy.copy(route)
 	route.insertClimb()
-	print noTOC.courseSegs
-	print 'between'
-	print route.courseSegs
 
 	# map creation
 	mymap = pygmaps.maps(float(ll[0]), float(ll[1]), 10)
@@ -625,8 +623,8 @@ def changeRoute(r, n, p, home, dest, altitude, airspeed): # route, leg # to chan
 
 if __name__ == "__main__":
 	# testing features 
-	home = "KHPN" 
-	dest = "KGON"
+	home = "KSGU" 
+	dest = "KPVU"
 	a = createRoute(home, dest, 1000, 110)
 	print a[1].courseSegs
 	print a[2].courseSegs
