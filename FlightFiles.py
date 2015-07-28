@@ -192,6 +192,7 @@ def getWind(loc):
 			wind = (winddir, item[3:5])
 	return wind
 
+# pulls from all winds aloft sources on aviationweather.gov
 def getWindsAloft(lat, lon, alt): 
 	loc = AirportDist("windLoc", lat, lon)
 
@@ -249,7 +250,7 @@ def getWindsAloft(lat, lon, alt):
 
 #print getWindsAloft(40, -73, 5000)
 
-# should be deprecated 
+# used to create general course
 def getDistHeading(poi1, poi2): 
 	try: 
 		return (poi1.latlon.distance(poi2.latlon), poi1.latlon.heading_initial(poi2.latlon))
@@ -257,15 +258,7 @@ def getDistHeading(poi1, poi2):
 		'error'
 		return (float("inf"), 0) #should be out of range, but need better fix
 
-# http://stackoverflow.com/questions/2579535/how-to-convert-dd-to-dms-in-python
-def decdeg2dms(dd):
-	is_positive = dd >= 0
-	dd = abs(dd)
-	minutes,seconds = divmod(dd*3600,60)
-	degrees,minutes = divmod(minutes,60)
-	degrees = degrees if is_positive else -degrees
-	return (degrees,minutes,seconds)
-
+# gets latitude and longitude of airport
 def getLatLon(icao):
 	coords = ()
 	#print icao
