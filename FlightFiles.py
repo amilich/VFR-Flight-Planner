@@ -195,12 +195,16 @@ def getWind(loc):
 def getWindsAloft(lat, lon, alt): 
 	loc = AirportDist("windLoc", lat, lon)
 
-	url = 'https://aviationweather.gov/products/nws/boston'
-	#print url 
-	page = urllib.urlopen(url)
-	page = page.read()
-	soup = BeautifulSoup(''.join(page))
-	found = soup.findAll('pre')
+	# url = 'https://aviationweather.gov/products/nws/boston'
+	urls = ['https://aviationweather.gov/products/nws/boston', 'https://aviationweather.gov/products/nws/chicago', 'https://aviationweather.gov/products/nws/saltlakecity', 'https://aviationweather.gov/products/nws/sanfrancisco', 'https://aviationweather.gov/products/nws/miami', 'https://aviationweather.gov/products/nws/ftworth']
+	found = []
+
+	for url in urls: 
+		page = urllib.urlopen(url)
+		page = page.read()
+		soup = BeautifulSoup(''.join(page))
+		found += soup.findAll('pre')
+
 	windLocs = []
 	rawdata = ("FT" + str(found).split("FT")[1]).split("\n")[1:]
 	for line in rawdata:
