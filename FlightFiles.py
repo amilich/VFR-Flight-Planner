@@ -415,6 +415,7 @@ def createSegments(origin, destination, course, alt, tas, climb_speed = 75, desc
 	return segments 
 
 feet_to_nm = 0.000164579
+meters_to_feet = 3.28084
 
 class Route: 
 	def __init__(self, course, origin, destination, routeType="direct", night = False, custom=[], cruising_alt=3500, cruise_speed=110, climb_speed=75, climb_dist=7, gph=10, descent_speed=90): 
@@ -518,7 +519,7 @@ def getProperAlt(origin, destination, course):
 	elevations = getElevation(path)
 	pathMap = getChart(elevations)
 	# get the maximum altitude 
-	maxAlt = max(elevations)
+	maxAlt = max(elevations)*meters_to_feet
 	# for hemispheric rule
 	start_lat = start.split(", ")[0]
 	start_lon = start.split(", ")[1]
