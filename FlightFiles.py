@@ -57,10 +57,16 @@ class Airplane:
 
 class Environment: 
 	def __init__(self, temp, pres, elevation, sky_cond, visibility): 
+		self.temp = temp
+		self.pres = pres 
+		self.elevation = elevation
+		self.sky_cond = sky_cond 
+		self.visibility = visibility
 		return 
 
 	# pressure alt
 	def calcPressureAltitude(self):
+		press_diff = (self.pres - 29.92)*1000
 		return 
 
 	# density alt
@@ -500,10 +506,17 @@ class Route:
 		self.fuelRequired += self.fuelTaxi
 		return 
 
+def getProperAlt(origin, destination):
+	
+
+
 def createRoute(home, dest, altitude, airspeed, custom=[]): 
 	ll = getLatLon(home)
 	origin = AirportDist(home, ll[0], ll[1], 0)
 	destination =  AirportDist(dest, getLatLon(dest)[0], getLatLon(dest)[1], -1)
+
+	cruising_alt = getProperAlt(origin, destination)
+
 	rType = "direct" if len(custom) == 0 else "custom"
 	route = Route(origin, destination, routeType=rType, custom=custom, cruising_alt=altitude, cruise_speed=airspeed, climb_speed=75, climb_dist=7)
 
