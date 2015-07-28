@@ -137,16 +137,17 @@ class Segment:
 		return 
 
 	def getData(self):
-		return [self.from_poi.name, self.to_poi.name, str(self.length*0.539957), str(self.alt), str(self.tas), str(self.gs), str(self.hdg)]
+		return [self.from_poi.name, self.to_poi.name, str("{0:.2f}".format(self.length*km_to_nm)), str(self.alt), str(self.tas), str(self.gs), str(self.hdg)]
 
 	def convertToString(self, num): # for custom route planning
 		try: 
-			return "<td>" + self.from_poi.name + "</td><td>&rarr;</td><td>" + "<form action=\"/update\" method=\"post\"><input type='text' value='" + self.to_poi.name + "' name=\"to\" readonly='false' ondblclick=\"this.readOnly='';\"> <input type=\"hidden\" name=\"num\" value=\"" + str(num) + "\"> </form> " + "</td><td>" + str(self.length*0.539957) + "</td><td>" + str(self.alt) + "</td><td>" + str(self.tas) + "</td><td>" + str(self.gs) + "</td><td>" + str(self.hdg) + "</td>"
+			return "<td>" + self.from_poi.name + "</td><td>&rarr;</td><td>" + "<form action=\"/update\" method=\"post\"><input type='text' value='" + self.to_poi.name + "' name=\"to\" readonly='false' ondblclick=\"this.readOnly='';\"> <input type=\"hidden\" name=\"num\" value=\"" + str(num) + "\"> </form> " + "</td><td>" + str("{0:.2f}".format(self.length*km_to_nm))+ "</td><td>" + str(self.alt) + "</td><td>" + str(self.tas) + "</td><td>" + str(self.gs) + "</td><td>" + str(self.hdg) + "</td>"
 		except Exception,e: 
 			print str(e) 
 
 	def __repr__(self):
-		return self.from_poi.name + " -> " + self.to_poi.name + " (" + str(self.length*km_to_nm) + " mi, " + str(self.time) + " hrs); " + str(self.alt) + " @ " + str(self.tas) + " kt. GS=" + str(self.gs) + "; CH=" + str(self.hdg) + "." 
+		print str("{0:.2f}".format(self.length*km_to_nm))
+		return self.from_poi.name + " -> " + self.to_poi.name + " (" + str("{0:.2f}".format(self.length*km_to_nm)) + " mi, " + str(self.time) + " hrs); " + str(self.alt) + " @ " + str(self.tas) + " kt. GS=" + str(self.gs) + "; CH=" + str(self.hdg) + "." 
 	
 	@classmethod
 	def calcWindCorrectionAngle(self, d, va, w, vw): # d is desired course, va true airspeed, w wind direction, vw wind speed
@@ -507,16 +508,13 @@ class Route:
 		return 
 
 def getProperAlt(origin, destination):
-	
-
+	return 
 
 def createRoute(home, dest, altitude, airspeed, custom=[]): 
 	ll = getLatLon(home)
 	origin = AirportDist(home, ll[0], ll[1], 0)
 	destination =  AirportDist(dest, getLatLon(dest)[0], getLatLon(dest)[1], -1)
-
-	cruising_alt = getProperAlt(origin, destination)
-
+	#cruising_alt = getProperAlt(origin, destination)
 	rType = "direct" if len(custom) == 0 else "custom"
 	route = Route(origin, destination, routeType=rType, custom=custom, cruising_alt=altitude, cruise_speed=airspeed, climb_speed=75, climb_dist=7)
 
