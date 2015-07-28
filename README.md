@@ -1,3 +1,3 @@
 # VFR-Flight-Planner
 
-See https://shielded-bayou-5304.herokuapp.com/ for demo of limited basic features. 
+See https://gentle-lowlands-1366.herokuapp.com/ for demo of limited basic features. 
