@@ -14,6 +14,8 @@ import pygmaps
 	TODO: 
 		Climbs across waypoints 
 		Fuel stops (unicom, etc.)
+		Simple weight and balance 
+		[DONE] Elevation awareness and maps 
 
 """
 
