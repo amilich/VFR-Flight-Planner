@@ -1,5 +1,6 @@
 from flask import Flask, render_template, g, Markup, session, request, redirect
 from flask_wtf import Form
+from flask_mail import Mail, Message
 from wtforms import StringField
 from wtforms.validators import DataRequired
 from FlightFiles import *
@@ -11,6 +12,14 @@ from flask.ext.cache import Cache
 app = Flask(__name__)
 app.secret_key = 'xbf\xcb7\x0bv\xcf\xc0N\xe1\x86\x98g9\xfei\xdc\xab\xc6\x05\xff%\xd3\xdf'
 cache = Cache(app,config={'CACHE_TYPE': 'simple'})
+
+gmail_name = 'codesearch5@gmail.com'
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = gmail_name
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_KEY')
+mail = Mail(app)
 
 # for route changes
 @app.route('/update', methods = ['POST'])
@@ -42,6 +51,12 @@ def search():
 	altitude = request.form['alt']
 	speed = request.form['speed']
 
+	msg = Message("Route planned from " + airp1 + " to " + airp2, sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com'])
+	msg.body = """
+            From: %s To: %s,
+            Speed: %s, Altitude: %s
+            """ % (airp1, airp2, speed, altitude)
+	mail.send(msg)
 	# need to get airplane parameters, store them in session
 	try: 
 		tail_num = request.form['tail_num']
