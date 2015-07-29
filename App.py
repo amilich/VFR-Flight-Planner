@@ -75,7 +75,13 @@ def search():
 
 	cache.set('myRoute', myRoute, timeout=300)
 	cache.set('plane', airplane, timeout=300)
-	return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3])
+	messages = myRoute[4]
+	print 'messages: ' + str(messages)
+	print len(messages)
+	showMsgs = False 
+	if(len(messages) is not 0): 
+		showMsgs = True
+	return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs)
 
 @app.route('/')
 def init():

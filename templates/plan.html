@@ -8,9 +8,19 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <head>
         
     </head>
+    {% if showMsgs %} 
+        {% for msg in messages %}
+            <div class="alert alert-danger fade in">
+                <a href="#" class="close" data-dismiss="alert">&times;</a>
+                <strong>Please note: </strong> {{ msg }}
+            </div>            
+        {% endfor %} 
+    {% endif %} 
+
     <body>
         <div class="container">
         <h3>

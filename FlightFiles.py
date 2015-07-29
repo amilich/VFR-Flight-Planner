@@ -570,6 +570,8 @@ def createRoute(home, dest, altitude, airspeed, custom=[]):
 	noTOC = copy.copy(route)
 	route.insertClimb()
 
+	messages.append("Added Top of Climb (TOC) waypoint")
+
 	# map creation
 	mymap = pygmaps.maps(float(ll[0]), float(ll[1]), 10)
 	mymap.addpoint(float(ll[0]), float(ll[1]))
