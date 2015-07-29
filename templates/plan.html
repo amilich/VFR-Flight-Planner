@@ -61,7 +61,7 @@
                                     {% set f = forms[item.num].place.process_data(item.getData()[1]) %}
                                     {% set f = forms[item.num].num.process_data(item.num) %}
                                     <td> <!-- form here -->
-                                        <form action="/fplanner#update" method="post" role="form">
+                                        <form action="/update" method="post" role="form">
                                             {{ forms[item.num].hidden_tag() }}
                                             {{ forms[item.num].place() }}
                                         </form>

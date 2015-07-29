@@ -14,3 +14,5 @@ elevtest.py
 FlightFiles.pyc
 
 elevtest2.py
+
+templates/flightplan.html
