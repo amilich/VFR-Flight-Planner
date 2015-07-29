@@ -19,7 +19,7 @@ def getChart(chartData, chartDataScaling="-500,5000", chartType="lc",chartLabel=
     chartUrl = CHART_BASE_URL + '?' + urllib.urlencode(chart_args)
     return chartUrl
 
-def getElevation(path,samples="100",sensor="false", **elvtn_args):
+def getElevation(path,samples="75",sensor="false", **elvtn_args):
     elvtn_args.update({
         'path': path,
         'samples': samples,

@@ -136,7 +136,6 @@ class Segment:
 			#print 'Aloft'
 			# aloft = getWindsAloft(self.from_poi.lat, self.from_poi.lon, self.alt)
 			aloft = self.aloft
-			print 'ALOFT: ' + str(aloft)
 			self.w = 10*aloft[:2] # only 2 digits
 			self.vw = aloft[2:4]
 			self.temp = aloft[4:]
@@ -664,7 +663,6 @@ if __name__ == "__main__":
 	home = "KHPN" 
 	dest = "KTEB"
 
-	setWindsAloft()
 	a = createRoute(home, dest, 1000, 110)
 	# print a[1].courseSegs
 	print a[2].courseSegs
