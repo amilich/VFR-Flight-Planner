@@ -81,13 +81,14 @@ class Environment:
 		return 
 
 class AirportDist:
-	def __init__(self, name, lat, lon, dist=-1):
+	def __init__(self, name, lat, lon, dist=-1, data=""):
 		self.name = name
 		self.dist = dist
 		self.lat = lat
 		self.lon = lon
 		self.priority = 0
 		self.latlon = LatLon(Latitude(lat), Longitude(lon))
+		self.data = data
 	def __repr__(self): 
 		return str(self.name) + ": " +  str(self.dist)
 
@@ -133,9 +134,11 @@ class Segment:
 		elif(self.isDest or self.alt == 0):
 			self.w, self.vw = getWind(self.to_poi.name)
 		else: 
-			#print 'Aloft'
+			print 'Aloft: ' + str(self.aloft)
 			# aloft = getWindsAloft(self.from_poi.lat, self.from_poi.lon, self.alt)
-			aloft = self.aloft
+			aloft = str(self.aloft)
+			#if("9900" in str(aloft)): 
+			#	aloft = "0000+00"
 			self.w = 10*aloft[:2] # only 2 digits
 			self.vw = aloft[2:4]
 			self.temp = aloft[4:]
@@ -224,24 +227,34 @@ def getWindsAloft(lat, lon, alt):
 		found += soup.findAll('pre')
 	windLocs = []
 	for line in str(found).split("\n"):
-		if "pre" in line: 
+		if "pre" in line or "VALID" in line: 
+			continue
+		counter = 0
+		# ignore winds aloft that do not have the full data by counting the number of pieces of data
+		for item in line.split(" "): 
+			if(item.strip() is not ""): 
+				counter += 1
+		if(counter < 10): 
 			continue
 		try: 
 			airpt = str(line.split()[0])
 			latlon = getLatLon(airpt)
-			windLocs.append(AirportDist(airpt, latlon[0], latlon[1]))
+			windLocs.append(AirportDist(airpt, latlon[0], latlon[1], data=line))
 		except:
 			continue
 	for item in windLocs: 
 		item.dist = item.latlon.distance(loc.latlon)
-
 	sortedAirports = sorted(windLocs, key=lambda x: x.dist, reverse=False)
-	dataLine = []
-	for line in str(found).split("\n"):
-		if sortedAirports[0].name[1:] in line: 
-			dataLine = line.split()
+	print sortedAirports
+	#dataLine = []
+	#for line in str(found).split("\n"):
+	#	if sortedAirports[0].name[1:] in line: 
+	#		dataLine = line.split()
+	dataLine = sortedAirports[0].data.split(" ")
+	print dataLine
 	alt = float(alt)
 	# print dataLine
+	# print alt
 	# FT  3000    6000    9000   12000   18000   24000  30000  34000  39000 
 	if alt >= 0 and alt < 4500: # 3000  
 		return dataLine[1]
@@ -306,6 +319,36 @@ def getDistancesInRange(origin, dest, course):
 			if(tempDist < math.ceil(course[0])): 
 				distances.append(AirportDist(data[0], data[1], data[2], tempDist))
 	
+	with open("data/cities.txt") as f:
+		lines = f.readlines()
+		for line in lines: 
+			data = line.split(", ")
+			if(len(data) < 3): 
+				continue
+			temp = LatLon(Latitude(data[1]), Longitude(data[2]))
+			tempDist = originLoc.distance(temp)
+			if(tempDist < math.ceil(course[0])):
+				distances.append(AirportDist(data[0], data[1], data[2], tempDist))
+	return distances 
+
+def getAirportsInRange(origin, dest, course): 
+	distances = []
+	originLoc = origin.latlon
+	with open("data/newairports_2.txt") as f:
+		lines = f.readlines()
+		for line in lines: 
+			data = line.split(", ")
+			if(len(data) < 3): 
+				continue
+			temp = LatLon(Latitude(data[1]), Longitude(data[2]))
+			tempDist = originLoc.distance(temp)
+			if(tempDist < math.ceil(course[0])): 
+				distances.append(AirportDist(data[0], data[1], data[2], tempDist))
+	return distances
+
+def getCitiesInRange(origin, dest, course): 
+	distances = []
+	originLoc = origin.latlon
 	with open("data/cities.txt") as f:
 		lines = f.readlines()
 		for line in lines: 
@@ -403,6 +446,7 @@ def calculateRouteLandmarks(origin, destination, course):
 		course = getDistHeading(currentLandmark, destination)
 	return routeLandmarks 
 
+
 def getFieldElevation(icao): 
 	with open("data/airportalt.txt") as f:
 		lines = f.readlines()
@@ -416,7 +460,7 @@ def getMid(num):
 		return int(num/2)
 	return int((num-1)/2)
 
-def createSegments(origin, destination, course, alt, tas, climb_speed = 75, descent_speed = 90, custom = [], isCustom=False): 
+def createSegments(origin, destination, course, alt, tas, climb_speed = 75, descent_speed = 90, custom = [], isCustom=False, doWeather=True): 
 	if len(custom) == 0:
 		landmarks = calculateRouteLandmarks(origin, destination, course)
 	else: 
@@ -424,9 +468,15 @@ def createSegments(origin, destination, course, alt, tas, climb_speed = 75, desc
 	segments = []
 	middle = len(landmarks)
 	num = getMid(len(landmarks))
+	print num
+	print landmarks[num]
 	# print len(landmarks), num
-	wAloft = getWindsAloft(landmarks[num].lat, landmarks[num].lon, alt)
-	# print "for trip: " + wAloft
+	if(doWeather):
+		wAloft = getWindsAloft(landmarks[num].lat, landmarks[num].lon, alt)
+	else: 
+		wAloft = "0000+00"
+
+	print "for trip: " + wAloft
 	for x in range(len(landmarks)-1): # - 2 bc final in last thing?
 		if x == 0: 
 			nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], getFieldElevation(origin.name), climb_speed, True, False, x, aloft=wAloft) # starting alt is field elevation 
@@ -442,10 +492,10 @@ feet_to_nm = 0.000164579
 meters_to_feet = 3.28084
 
 class Route: 
-	def __init__(self, course, origin, destination, routeType="direct", night = False, custom=[], cruising_alt=3500, cruise_speed=110, climb_speed=75, climb_dist=7, gph=10, descent_speed=90): 
-		self.reset(course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, climb_speed, climb_dist, gph, descent_speed)
+	def __init__(self, course, origin, destination, routeType="direct", night = False, custom=[], cruising_alt=3500, cruise_speed=110, climb_speed=75, climb_dist=7, gph=10, descent_speed=90, doWeather=True): 
+		self.reset(course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, climb_speed, climb_dist, gph, descent_speed, doWeather=doWeather)
 
-	def reset(self, course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, climb_speed, climb_dist, gph, descent_speed, climb_done=False): 
+	def reset(self, course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, climb_speed, climb_dist, gph, descent_speed, climb_done=False, doWeather=False): 
 		self.origin = origin 
 		self.destination = destination
 		self.climb_speed = climb_speed
@@ -462,10 +512,10 @@ class Route:
 		#perform route calculations
 		self.course = course 
 		if(routeType.lower() is not "direct" or climb_done): 
-			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, self.climb_speed, self.descent_speed, custom=custom, isCustom=True)
+			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, self.climb_speed, self.descent_speed, custom=custom, isCustom=True, doWeather=doWeather)
 			print 'now using customized - zipping through!'
 		else: 
-			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, self.climb_speed, self.descent_speed, custom=custom)
+			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, self.climb_speed, self.descent_speed, custom=custom, doWeather=doWeather)
 			print 'using old way for some reason'
 			
 		self.calculateFuelTime()
@@ -518,7 +568,7 @@ class Route:
 				print prevLandmarks
 				newLandmarks = list(prevLandmarks)
 
-				self.reset(self.course, self.origin, self.destination, self.routeType, self.night, newLandmarks, self.cruising_alt, self.cruise_speed, self.climb_speed, self.climb_dist, self.gph, self.descent_speed, climb_done = True)
+				self.reset(self.course, self.origin, self.destination, self.routeType, self.night, newLandmarks, self.cruising_alt, self.cruise_speed, self.climb_speed, self.climb_dist, self.gph, self.descent_speed, climb_done = True, doWeather = True)
 				return
 		return 
 
@@ -592,7 +642,7 @@ def createRoute(home, dest, altitude, airspeed, custom=[]):
 		final_alt = cruising_alt
 		messages.append("Changed cruising altitude")
 	rType = "direct" if len(custom) == 0 else "custom"
-	route = Route(course, origin, destination, routeType=rType, custom=custom, cruising_alt=final_alt, cruise_speed=airspeed, climb_speed=75, climb_dist=7)
+	route = Route(course, origin, destination, routeType=rType, custom=custom, cruising_alt=final_alt, cruise_speed=airspeed, climb_speed=75, climb_dist=7, doWeather=False)
 
 	print 'done with the route'
 
@@ -660,8 +710,8 @@ def changeRoute(r, n, p, home, dest, altitude, airspeed): # route, leg # to chan
 
 if __name__ == "__main__":
 	# testing features 
-	home = "KHPN" 
-	dest = "KTEB"
+	home = "KLAX" 
+	dest = "KSFO"
 
 	a = createRoute(home, dest, 1000, 110)
 	# print a[1].courseSegs
