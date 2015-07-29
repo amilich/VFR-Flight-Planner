@@ -12,7 +12,7 @@ def getHtml(myMap):
 		string += ('\t\tvar myOptions = {\n')
 		string += ('\t\t\tzoom: %d,\n' % (myMap.zoom))
 		string += ('\t\t\tcenter: centerlatlng,\n')
-		string += ('\t\t\tmapTypeId: google.maps.MapTypeId.ROADMAP\n')
+		string += ('\t\t\tmapTypeId: google.maps.MapTypeId.TERRAIN\n')
 		string += ('\t\t};\n')
 		string += ('\t\tvar map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);\n')
 		string += ('\n')

@@ -469,8 +469,6 @@ def createSegments(origin, destination, course, alt, tas, climb_speed = 75, desc
 	segments = []
 	middle = len(landmarks)
 	num = getMid(len(landmarks))
-	print num
-	print landmarks[num]
 	# print len(landmarks), num
 	if(doWeather):
 		wAloft = getWindsAloft(landmarks[num].lat, landmarks[num].lon, alt)
@@ -626,7 +624,6 @@ def createRoute(home, dest, altitude, airspeed, custom=[]):
 	elevation_data = getProperAlt(origin, destination, course)
 	cruising_alt = elevation_data[0]
 	elevation_map = elevation_data[1]
-	print cruising_alt
 	final_alt = altitude
 	if(float(cruising_alt) > float(altitude)): 
 		final_alt = cruising_alt
@@ -634,17 +631,14 @@ def createRoute(home, dest, altitude, airspeed, custom=[]):
 	rType = "direct" if len(custom) == 0 else "custom"
 	route = Route(course, origin, destination, routeType=rType, custom=custom, cruising_alt=final_alt, cruise_speed=airspeed, climb_speed=75, climb_dist=7, doWeather=False)
 
-	print 'done with the route'
-
 	noTOC = copy.copy(route)
 	route.insertClimb()
-	print 'done with climb'
-
 	messages.append("Added Top of Climb (TOC) waypoint")
 
 	# map creation
-	print 'creating map'
-	mymap = pygmaps.maps(float(ll[0]), float(ll[1]), 10)
+	num = getMid(len(route.courseSegs))
+	mapLL = (route.courseSegs[num].to_poi.lat, route.courseSegs[num].to_poi.lon)
+	mymap = pygmaps.maps(float(mapLL[0]), float(mapLL[1]), 7)
 	mymap.addpoint(float(ll[0]), float(ll[1]))
 	path = []
 	path.append((float(ll[0]), float(ll[1])))

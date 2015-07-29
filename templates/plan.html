@@ -14,7 +14,7 @@
     </head>
     {% if showMsgs %} 
         {% for msg in messages %}
-            <div class="alert alert-danger fade in">
+            <div class="alert alert-danger fade in" style="width:100%">
                 <a href="#" class="close" data-dismiss="alert">&times;</a>
                 <strong>Please note: </strong> {{ msg }}
             </div>            
@@ -36,12 +36,12 @@
             <div class="row">
                 <div class="col-xs-6">
                     {{ map }}
-                    <br><br>
-                    <img src="{{ elevation }}" alt="Elevation Map">
                 </div>
                 <div class="col-xs-6">
                     <big>Flight Information: </big>
-                    <br>
+                    <br><br>
+                    <img src="{{ elevation }}" alt="Elevation Map">
+                    <br><br><br>
                     <div class="container">
                         <table border='1' style=\"width:50%\">
                             <tr>
