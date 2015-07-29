@@ -47,7 +47,7 @@ class Airplane:
 	# calculate the center of gravity 
 	def calcCG(self):
 		self.weight = float(self.empty_weight) + float(self.fuel) + float(self.pax1) + float(self.pax2) + float(self.bag1) + float(self.bag2)
-		self.moment = float(self.empty_weight)*float(self.empty_arm) + float(self.fuel)*float(self.fuel_arm) + float(self.pax1)*float(self.pax2_arm) + float(self.pax2)*float(self.pax2_arm) + float(self.bag1)*float(self.bag1_arm) + float(self.bag2)*float(self.bag2_arm)
+		self.moment = float(self.empty_weight)*float(self.empty_arm) + float(self.fuel)*float(self.fuel_arm) + float(self.pax1)*float(self.pax1_arm) + float(self.pax2)*float(self.pax2_arm) + float(self.bag1)*float(self.bag1_arm) + float(self.bag2)*float(self.bag2_arm)
 		self.cg = self.moment/self.weight
 		return 
 
@@ -468,7 +468,7 @@ class Route:
 				# similar to changeRoute method 
 				# need to offset it the climb distance
 				heading = self.courseSegs[x].course[1] 
-				print heading 
+				# print heading 
 				offset = str(self.courseSegs[x].from_poi.latlon.offset(heading, self.climb_dist))
 				offsetLatLon = (float(offset.split(", ")[0]), float(offset.split(", ")[1]))
 				offsetObj = AirportDist("TOC", offsetLatLon[0], offsetLatLon[1])
@@ -476,14 +476,19 @@ class Route:
 				prevLandmarks = []
 				y=0
 				insert=True
-				while y < len(self.courseSegs)-1:
-					# print y
-					if y == x+1: 
-						prevLandmarks.append(offsetObj)	
-					prevLandmarks.append(self.courseSegs[y].from_poi)
-					y += 1
-				prevLandmarks.append(self.courseSegs[len(self.courseSegs)-1].to_poi)
-
+				if len(self.courseSegs) > 1: 
+					while y < len(self.courseSegs):
+						print y, x
+						if y == x+1: 
+							prevLandmarks.append(offsetObj)	
+						prevLandmarks.append(self.courseSegs[y].from_poi)
+						y += 1
+					prevLandmarks.append(self.courseSegs[len(self.courseSegs)-1].to_poi)
+				else: 
+					prevLandmarks.append(self.origin)
+					prevLandmarks.append(offsetObj)
+					prevLandmarks.append(self.destination)
+				print prevLandmarks
 				newLandmarks = list(prevLandmarks)
 
 				self.reset(self.course, self.origin, self.destination, self.routeType, self.night, newLandmarks, self.cruising_alt, self.cruise_speed, self.climb_speed, self.climb_dist, self.gph, self.descent_speed)
@@ -622,10 +627,10 @@ def changeRoute(r, n, p, home, dest, altitude, airspeed): # route, leg # to chan
 
 if __name__ == "__main__":
 	# testing features 
-	home = "KSGU" 
-	dest = "KPVU"
+	home = "KHPN" 
+	dest = "KTEB"
 	a = createRoute(home, dest, 1000, 110)
-	print a[1].courseSegs
+	# print a[1].courseSegs
 	print a[2].courseSegs
 	num = "0"
 	#b = changeRoute(a[1], int(num), "KLGA", home, dest, 3500, 110)
