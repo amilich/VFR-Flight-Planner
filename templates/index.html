@@ -68,93 +68,196 @@
                 </div>
             </div>
         </div>
+        <br>
         <div id="content">
             <form action="/fplanner" method="post" role="form">
-                <div class="vertical-center">
+                <center>
                     <div class="container">
                         {{ form.hidden_tag() }}
                         <div class="form-group">
                             <label class="control-label col-sm-2" for="name">{{ form.orig.label }}</label>
-                            <div class="col-sm-10">
-                                {{ form.orig (class_="form-control") }}
+                            <div class="">
+                                {{ form.orig (style="width:40%; border-radius: 5px; padding:3px;") }}
                             </div>
+                            <br>
                             <label class="control-label col-sm-2" for="name">{{ form.dest.label }}</label>
-                            <div class="col-sm-10">
-                                {{ form.dest (class_="form-control") }}
+                            <div class="">
+                                {{ form.dest (style="width:40%; border-radius: 5px; padding:3px;") }}
                             </div>
+                            <br>
                             <label class="control-label col-sm-2" for="name">{{ form.speed.label }}</label>
-                            <div class="col-sm-10">
-                                {{ form.speed (class_="form-control") }}
+                            <div class="">
+                                {{ form.speed (style="width:40%; border-radius: 5px; padding:3px;") }}
                             </div>
+                            <br>
                             <label class="control-label col-sm-2" for="name">{{ form.alt.label }}</label>
-                            <div class="col-sm-10">
-                                {{ form.alt (class_="form-control") }}
+                            <div class="">
+                                {{ form.alt (style="width:40%; border-radius: 5px; padding:3px;") }}
                             </div>
                             <div class="col-sm-offset-2 col-sm-10">
                                 <br>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-5">
+                </center>
+                <center>
                     Show Aircraft Information <input type="checkbox" id="check">
-                </div>
-                <div class="container" id="airplane">
-                    <div class="col-sm-10">
-                        <br>
-                        <div id="showform">
-                            <label class="control-label col-sm-2" for="name">{{ form.plane_type.label }}</label>
-                            <div class="col-sm-10">
-                                {{ form.plane_type (class_="form-control") }}
-                                <br>
-                                <div class="col-sm-5">
-                                    {{ form.empty_weight.label }}
+                    <br><br>
+                    <div class="container">
+                        <input type="submit" class="btn btn-primary" style="border-radius:5px" value="Calculate Route" onclick="loading();">
+                    </div>
+                    <br>
+                </center>
+                <div id="showform">
+                    <script type="text/javascript">
+                        checkDisplay("check", "showform");
+                    </script>
+                    <div class="row">
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.plane_type.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
+                                    {{ form.plane_type (class_="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.tail_num.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
+                                    {{ form.tail_num (class_="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.empty_weight.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
                                     {{ form.empty_weight (class_="form-control") }}
-    
-                                    {{ form.fuel_lbs.label }}
-                                    {{ form.fuel_lbs (class_="form-control") }}
-    
-                                    {{ form.pax1_lbs.label }}
-                                    {{ form.pax1_lbs (class_="form-control") }}
-    
-                                    {{ form.pax2_lbs.label }}
-                                    {{ form.pax2_lbs (class_="form-control") }}
-    
-                                    {{ form.bag1_lbs.label }}
-                                    {{ form.bag1_lbs (class_="form-control") }}
-    
-                                    {{ form.bag2_lbs.label }}
-                                    {{ form.bag2_lbs (class_="form-control") }}
-                                </div>  
-                                <div class="col-sm-5">
-                                    {{ form.weight_arm.label }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.weight_arm.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
                                     {{ form.weight_arm (class_="form-control") }}
-    
-                                    {{ form.fuel_arm.label }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.fuel_lbs.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
+                                    {{ form.fuel_lbs (class_="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.fuel_arm.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
                                     {{ form.fuel_arm (class_="form-control") }}
-    
-                                    {{ form.pax1_arm.label }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.pax1_lbs.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
+                                    {{ form.pax1_lbs (class_="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.pax1_arm.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
                                     {{ form.pax1_arm (class_="form-control") }}
-    
-                                    {{ form.pax2_arm.label }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.pax2_lbs.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
+                                    {{ form.pax2_lbs (class_="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.pax2_arm.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
                                     {{ form.pax2_arm (class_="form-control") }}
-    
-                                    {{ form.bag1_arm.label }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.bag1_lbs.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
+                                    {{ form.bag1_lbs (class_="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.bag1_arm.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
                                     {{ form.bag1_arm (class_="form-control") }}
-    
-                                    {{ form.bag2_arm.label }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.bag1_lbs.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
+                                    {{ form.bag1_lbs (class_="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.bag2_arm.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
                                     {{ form.bag2_arm (class_="form-control") }}
                                 </div>
                             </div>
                         </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.climb_dist.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
+                                    {{ form.climb_dist (class_="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.climb_speed.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
+                                    {{ form.climb_speed (class_="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.descent_speed.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
+                                    {{ form.descent_speed (class_="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                {{ form.max_range.label (class_="col-md-4 control-label")}}
+                                <div class="col-md-8">
+                                    {{ form.max_range (class_="form-control") }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="container">
-                        <input type="submit" class="btn btn-primary" style="border-radius:5px" value="Calculate Route" onclick="loading();">
-                    </div>
-    
-                    <script type="text/javascript">
-                        checkDisplay("check", "showform");
-                    </script>
                 </div>
             </form>
         </div>

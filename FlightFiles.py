@@ -648,15 +648,16 @@ def createRoute(home, dest, altitude, airspeed, custom=[]):
 	mymap.addpoint(float(ll[0]), float(ll[1]))
 	path = []
 	path.append((float(ll[0]), float(ll[1])))
+	""" For magnetic heading lines - not visually accurate""" 
 	for item in route.courseSegs: 
 		path.append((float(item.to_poi.lat), float(item.to_poi.lon)))
 		mymap.addpoint(float(item.to_poi.lat), float(item.to_poi.lon))
 
-		tempPath = []
-		offset = str(item.from_poi.latlon.offset(item.hdg, 8*km_to_nm))
-		tempPath.append((float(item.from_poi.lat), float(item.from_poi.lon)))
-		tempPath.append((float(offset.split(", ")[0]), float(offset.split(", ")[1])))
-		mymap.addpath(tempPath,"#000000")
+		# tempPath = []
+		# offset = str(item.from_poi.latlon.offset(item.hdg, 8*km_to_nm))
+		# tempPath.append((float(item.from_poi.lat), float(item.from_poi.lon)))
+		# tempPath.append((float(offset.split(", ")[0]), float(offset.split(", ")[1])))
+		# mymap.addpath(tempPath,"#000000")
 		#print item
 	mymap.addpath(path,"#4169E1")
 	return (getHtml(mymap), noTOC, route, elevation_map, messages)

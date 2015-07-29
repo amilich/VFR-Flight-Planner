@@ -9,6 +9,7 @@ class searchform(Form):
     alt = StringField('Altitude (feet):', [validators.DataRequired()], default="3500")
     # airplane info
     plane_type = StringField('Aircraft Make/Model:', [validators.DataRequired()], default="C172SP")
+    tail_num = StringField('Tail Number:', [validators.DataRequired()], default="N6228N")
     empty_weight = StringField('Empty Weight (lbs):', [validators.DataRequired()], default="1733.7")
     weight_arm = StringField('Weight Arm (in):', [validators.DataRequired()], default="41.476")
     fuel_lbs = StringField('Fuel (lbs):', [validators.DataRequired()], default="318")
@@ -21,6 +22,10 @@ class searchform(Form):
     bag1_arm = StringField('Baggage 1 Arm (in):', [validators.DataRequired()], default="95")
     bag2_lbs = StringField('Baggage 2 (lbs):', [validators.DataRequired()], default="0")
     bag2_arm = StringField('Baggage 2 Arm (in):', [validators.DataRequired()], default="123")
+    climb_dist = StringField('Climb Distance (nm):', [validators.DataRequired()], default="10")
+    climb_speed = StringField('Climb Speed (kts):', [validators.DataRequired()], default="74")
+    descent_speed = StringField('Descent Speed (kts):', [validators.DataRequired()], default="90")
+    max_range = StringField('Maximum Range (nm):', [validators.DataRequired()], default="150")
 
 # for changing location
 class placeform(Form):

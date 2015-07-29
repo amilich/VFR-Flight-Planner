@@ -37,33 +37,37 @@ def update():
 @app.route('/fplanner', methods = ['POST'])
 def search():
 	# render_template("flightplan.html")
-	airp1 = request.form['orig']
-	airp2 = request.form['dest']
+	airp1 = request.form['orig'].upper()
+	airp2 = request.form['dest'].upper()
 	altitude = request.form['alt']
 	speed = request.form['speed']
 
 	# need to get airplane parameters, store them in session
-	craft_type = request.form['plane_type']
-	empty_weight = request.form['empty_weight']
-	weight_arm = request.form['weight_arm']
-	fuel_lbs = request.form['fuel_lbs'] 
-	fuel_arm = request.form['fuel_arm'] 
-	pax1_lbs = request.form['pax1_lbs']
-	pax1_arm = request.form['pax1_arm']
-	pax2_lbs = request.form['pax2_lbs']
-	pax2_arm = request.form['pax2_arm']
-	bag1_lbs = request.form['bag1_lbs']
-	bag1_arm = request.form['bag1_arm']
-	bag2_lbs = request.form['bag2_lbs']
-	bag2_arm = request.form['bag2_arm']
+	try: 
+		tail_num = request.form['tail_num']
+		craft_type = request.form['plane_type']
+		empty_weight = request.form['empty_weight']
+		weight_arm = request.form['weight_arm']
+		fuel_lbs = request.form['fuel_lbs'] 
+		fuel_arm = request.form['fuel_arm'] 
+		pax1_lbs = request.form['pax1_lbs']
+		pax1_arm = request.form['pax1_arm']
+		pax2_lbs = request.form['pax2_lbs']
+		pax2_arm = request.form['pax2_arm']
+		bag1_lbs = request.form['bag1_lbs']
+		bag1_arm = request.form['bag1_arm']
+		bag2_lbs = request.form['bag2_lbs']
+		bag2_arm = request.form['bag2_arm']
+		# create the airplane
+		airplane = Airplane(tail_num, craft_type, empty_weight, weight_arm, fuel_lbs, pax1_lbs, pax2_lbs, bag1_lbs, bag2_lbs, fuel_arm, pax1_arm, pax2_arm, bag1_arm, bag2_arm)
+		cache.set('plane', airplane, timeout=300)
+	except Exception, e: 
+		print str(e)
 
 	session['ORIG'] = airp1
 	session['DEST'] = airp2
 	session['ALT'] = altitude
 	session['SPD'] = speed
-
-	# create the airplane *** TODO *** add tail number form
-	airplane = Airplane("N6228N", craft_type, empty_weight, weight_arm, fuel_lbs, pax1_lbs, pax2_lbs, bag1_lbs, bag2_lbs, fuel_arm, pax1_arm, pax2_arm, bag1_arm, bag2_arm)
 
 	myRoute = createRoute(airp1, airp2, altitude, speed)
 	map_content = str(myRoute[0])
@@ -74,7 +78,6 @@ def search():
 		forms.append(placeform(place=myRoute[2].courseSegs[x].to_poi.name, num=x))
 
 	cache.set('myRoute', myRoute, timeout=300)
-	cache.set('plane', airplane, timeout=300)
 	messages = myRoute[4]
 	print 'messages: ' + str(messages)
 	print len(messages)
@@ -90,5 +93,5 @@ def init():
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.debug = False
+    app.debug = True
     app.run(host='0.0.0.0', port=port)
