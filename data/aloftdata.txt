@@ -1,0 +1,2868 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<!--[if lt IE 9]>
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<![endif]-->
+<base href="https://aviationweather.gov/" /><title>AWC - NCEP Winds Aloft Forecasts - NE US</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+<meta http-equiv="content-type" content="text/html; charset=utf-8" >
+<meta name="DC.language" content="en-us" scheme="DCTERMS.RFC1766" >
+<meta name="description" content="Aviation Weather Center Homepage provides comprehensive user-friendly aviation weather Text products and graphics." >
+<meta name="keywords" content="aviation, weather, icing, turbulence, convection, pirep, metar, taf, airmet, sigmet, satellite, radar, surface, wind, temperature, aloft, airplane, NEXRAD, GOES, WSR-88D, precipitation, rain, snow, sleet, thunderstorm, en-route, prognosis, chart" >
+<meta name="DC.title" content="AWC &amp;#45; NCEP Winds Aloft Forecasts - NE US" >
+<meta name="DC.description" content="AWC &amp;#45; NCEP Winds Aloft Forecasts - NE US" >
+<meta name="DC.creator" content="NOAA's National Weather Service - Aviation Weather Center Homepage" >
+<meta name="DC.date.created" content="2005-01-26" scheme="ISO8601" >
+<meta name="DC.date.reviewed" content="2005-11-29" scheme="ISO8601" >
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="/static/javascript/winds/scripts.js"></script>
+<script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<link href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" >
+<link href="/static/css/winds/winds.css" media="screen" rel="stylesheet" type="text/css" >
+<link href="/images/favicon.ico" rel="shortcut icon" >
+<link href="/images/noaa_logo.png" rel="apple-touch-icon" >
+<link href="/css/layout.css" media="" rel="stylesheet" type="text/css" >
+
+</head>
+<body >
+<div id="awc_pagewrapper">
+<!-- Top header, banner text -->
+<div id="awc_head" >
+<div id="awc_header" >
+  <div class="awc_headerarea">
+    <div class="awc_headerleft">
+      <a href="http://www.noaa.gov"><img src="/images/layout/noaa_logo.png" border="0"/></a>
+      <a href="http://www.weather.gov"><img src="/images/layout/nws_logo.png" border="0"/></a>
+    </div> <!-- awc_headerleft -->
+    <div class="awc_headertext">
+      <h1><a href="/">AVIATION WEATHER CENTER</a><span style="font-size:14px;color:#555"></span></h1>
+      <h2><a href="http://www.noaa.gov">N O A A</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <a href="http://www.weather.gov">N A T I O N A L &nbsp;&nbsp;W E A T H E R &nbsp;&nbsp;S E R V I C E</a></h2>
+      </div> <!-- awc_headertext -->
+    <a href="http://www.commerce.gov">
+    <div class="awc_headerright">
+    </div> <!-- awc_headerright -->
+    </a>
+  </div> <!-- awc_headerarea -->
+</div> <!-- awc_header -->
+<!-- Header shadow -->
+<div id="awc_header_shadow" >
+  <div id="awc_header_shadow_content" > </div>
+</div>
+<!-- AWC Top Navigation Menu -->
+<div id="awc_topnav" >
+  <div id="awc_menu">
+  <ul>
+    <li style="float: left; width: 150px; top: -5px">
+
+	<script>
+  $(document).ready(function() {
+    $("#autocomplete").autocomplete({
+        source: function( request, response ) {
+            $.ajax({
+               url: "/popups/location?format=json",
+               dataType: "json",
+               data: request,
+               success: function(data){
+                   if (data.source.redirect) {
+                       // data.redirect contains the string URL to redirect to
+                       window.location.href = data.source.redirect;
+                   }
+                   else {
+
+                       var re = $.ui.autocomplete.escapeRegex(request.term);
+                       var matcher = new RegExp( "^" + re, "i" );
+                       var a = $.grep( data.source, function(item,index){
+                           return matcher.test(item['label']);
+                           });
+
+                       response(a);
+                       }
+                   }
+
+               });
+            }
+       });
+    $("#autocomplete").tooltip({ position: { my: "right center", at: "right-115 center" } });
+  });
+  </script>
+
+ <style>
+.ui-autocomplete {
+	max-height: 100px;
+	overflow-y: auto;
+	/* prevent horizontal scrollbar */
+	overflow-x: hidden;
+}
+
+/* IE 6 doesn't support max-height
+* we use height instead, but this forces the menu to always be this tall
+*/
+* html .ui-autocomplete {
+	height: 100px;
+}
+
+.ui-autocomplete-category {
+	font-weight: bold;
+	padding: .2em .4em;
+	margin: .8em 0 .2em;
+	line-height: 1.5;
+	text-align:left;
+}
+.ui-menu-item {
+   	text-align: left;
+}
+
+#getForecast > label {
+	display: inline-block;
+	width: 5em;
+}
+
+fieldset div {
+	margin-bottom: 2em;
+}
+
+fieldset .help {
+	display: inline-block;
+}
+
+.ui-tooltip {
+	width: 210px;
+}
+</style>
+
+
+<div class="ui-widget" style="width: 160px">
+<form id="getForecast" name="getForecast" action="/popups/location/search" method="POST" >
+    <input id="autocomplete" title="Enter City/St, or Zip Code, or ICAO identifier and click Go." autocomplete="off" onclick="this.value=(this.value=='Local Forecast'?'':this.value)" value="Local Forecast" name="inputstring" style="color:rgb(153,153,153); font-size: 8pt; height: 16px; width: 100px" type="text">
+    <input id="btnSearch" value="Go" name="btnSearch" type="submit" style="font-size: 8pt; height: 24px;">
+
+</form>
+</div>
+	</li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>HOME</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/">AWC Home</a></li>
+        <li class="awc_link" aria-haspopup="true" onClick=""><span>NCEP &gt;</span>
+          <ul aria-haspopup="false">
+	    <li class="awc_link"><a href="http://www.ncep.noaa.gov/">NCEP Home</a>
+            <li class="awc_link"><a href="/">Aviation (AWC)</a></li>
+            <li class="awc_link"><a href="http://www.cpc.ncep.noaa.gov">Climate (CPC)</a></li>
+            <li class="awc_link"><a href="http://www.nhc.noaa.gov">Hurricane (NHC)</a></li>
+            <li class="awc_link"><a href="http://www.emc.ncep.noaa.gov">Modeling (EMC)</a></li>
+            <li class="awc_link"><a href="http://www.opc.ncep.noaa.gov">Ocean (OPC)</a></li>
+            <li class="awc_link"><a href="http://www.nco.ncep.noaa.gov">Operations (NCO)</a></li>
+            <li class="awc_link"><a href="http://www.sec.noaa.gov">Space (SWPC)</a></li>
+            <li class="awc_link"><a href="http://www.spc.noaa.gov">Storm (SPC)</a></li>
+            <li class="awc_link"><a href="http://www.wpc.ncep.noaa.gov">Weather (WPC)</a></li>
+	  </ul>
+	</li>
+        <li class="awc_link"><a href="http://www.weather.gov/">NWS Home</a></li>
+        <li class="awc_link"><a href="http://www.noaa.gov/">NOAA Home</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>ADVISORIES</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/sigmet">SIGMET</a></li>
+        <li class="awc_link"><a href="/gairmet">G-AIRMET</a></li>
+        <li class="awc_link"><a href="/cwamis">Center Weather</a></li>
+        <li class="awc_link"><a href="/caws">Ops. Bridging &ndash; CAWS</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>FORECASTS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/convection">Convection</a></li>
+        <li class="awc_link"><a href="/turbulence">Turbulence</a></li>
+        <li class="awc_link"><a href="/icing">Icing</a></li>
+        <li class="awc_link"><a href="/windtemp">Winds/Temps</a></li>
+        <li class="awc_link"><a href="/progchart">Prog Charts</a>
+        <li class="awc_link"><a href="/taf">TAFs</a></li>
+        <li class="awc_link"><a href="/wafs">WAFS Forecasts</a></li>
+        <li class="awc_link"><a href="/areafcst">Area Forecasts</a></li>
+        <li class="awc_link"><a href="/fcstdisc">Avn. Forecast Disc.</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true" ><span>OBSERVATIONS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/airep">Aircraft Reps</a> </li>
+        <li class="awc_link"><a href="/metar">METARs</a> </li>
+        <li class="awc_link"><a href="/cva">Ceiling and Vis</a> </li>
+        <li class="awc_link"><a href="/radar">Radar</a></li>
+        <li class="awc_link"><a href="/satellite">Satellite</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>TOOLS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/flightpath">Flight Path Tool</a></li>
+        <li class="awc_link"><a href="/hemst">HEMS Tool</a></li>
+        <li class="awc_link"><a href="/dataserver">Text Data Server</a></li>
+        <li class="awc_link"><a href="/flightfolder">Flight Folder</a></li>
+        <li class="awc_link"><a href="/decisionsupport">Decision Support</a></li>
+        <li class="awc_link"><a href="/briefing">Standard Briefing</a></li>
+        <li class="awc_link"><a href="http://testbed.aviationweather.gov">Aviation Testbed</a></li>
+        <li class="awc_link"><a href="/info/links">Aviation Links</a></li>
+      </ul>
+    </li>
+        <li class="awc_link" onClick="" aria-haspopup="true" ><span>NEWS</span>
+
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/news">AWC News</a></li>
+        <li class="awc_link"><a href="https://www.facebook.com/US.NOAA.AviationWeatherCenter">Facebook</a></li>
+        <li class="awc_link"><a href="http://www.weather.gov/news">NWS News</a></li>
+        <li class="awc_link"><a href="/news/front">The Front</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>SEARCH</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link">
+	  <form method="get" action="http://search.usa.gov/search">
+	  <input type="hidden" name="v:project" value="firstgov" />
+	  <label for="query">Search For</label>
+	  <input type="text" name="query" id="query" size="12" />
+	  <input type="submit" value="Go" />
+	  <p>
+	  <input type="radio" name="affiliate" checked="checked" value="nws.noaa.gov" id="nws" />
+	  <label for="nws" class="search-scope">NWS</label>
+	  <input type="radio" name="affiliate" value="noaa.gov" id="noaa" />
+	  <label for="noaa" class="search-scope">All NOAA</label>
+	  </p>
+	  </form>
+	</li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>ABOUT</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/info">AWC</a></li>
+        <li class="awc_link"><a href="/info/legacy">Legacy</a></li>
+        <li class="awc_link"><a href="/help">Help</a></li>
+        <li class="awc_link"><a href="/info/faq">FAQ</a></li>
+        <li class="awc_link"><a href="/contact">Feedback</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>USER</span>
+    <ul aria-haspopup="false">
+        	<li class="awc_link"><a href="/user">Login</a></li>
+    	<li class="awc_link"><a href="/user/index/create">Register</a></li>
+    
+    </ul>
+    </li>
+  </ul>
+  <br style="clear:all" clear="both" />
+  </div> <!-- awc_menu -->
+</div> <!-- awc_topnav -->
+</div>
+<!-- Main content -->
+<div id="awc_main">
+<div id="awc_main_content">
+
+
+<div style="width:550px; margin-left:200px">
+<div id="title">Forecast Winds and Temps Aloft (BOS)
+<div id="help"><a href="/products/nws/info">FYI/Help</a></div></div>
+<form METHOD="GET" name="fltlvl"><dt id="fint-label">&#160;</dt>
+<dd id="fint-element">
+<input type="hidden" name="fint" value="06" id="fint"></dd><table width="550" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="center"><span class="timelbl">
+<label><input type="radio" name="lvl" id="lvl-lo" value="lo" checked="checked" onClick="this.form.submit()">Low</label> <label><input type="radio" name="lvl" id="lvl-hi" value="hi" onClick="this.form.submit()">High</label></span></td>
+		<td align="center"><span class="timelbl">
+<button name="FBWindsMap" id="FBWindsMap" type="button" value="FB Winds Map" onClick='location.href="/products/nws/winds/"'>FB Winds Map</button></span></td>
+		<td width="206">
+		<table width="204" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td align="center" width="38"><span class="timelbl">0800z</span></td>
+				<td align="center" width="49"><span class="timelbl">1500z</span></td>
+				<td align="center" width="58"><span class="timelbl">0000z</span></td>
+				<td align="right" width="65"><span class="timelbl">1200z</span></td>
+			</tr>
+			<tr>
+				<td width="204" colspan="4" align="center"><A
+					href="/products/nws/boston?fint=06&lvl=lo"><img
+					src="/static/images/winds/btns/06hr.gif"
+					width="174" height="14" ALT="Clickable Image" USEMAP="#timeline"
+					NAME="btn1" align="center" border="0"></A></td>
+			</tr>
+			<tr>
+				<td width="204" colspan="4" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+					class="timelblref">1252 UTC</span></td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+</table>
+</form>
+<!-- FbWinds Time Bar IMAGE MAP -->
+<MAP NAME="timeline">
+	<AREA SHAPE=RECT COORDS="0,0,45,13"
+		HREF="/products/nws/boston?fint=06&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0606.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="06hr Forecast">
+	<AREA SHAPE=RECT COORDS="45,0,99,13"
+		HREF="/products/nws/boston?fint=12&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0612.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="12hr Forecast">
+	<AREA SHAPE=RECT COORDS="99,0,174,13"
+		HREF="/products/nws/boston?fint=24&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0624.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="24hr Forecast">
+</MAP>
+<div align="left" style="margin-left: 0px;"><pre>(Extracted from FBUS31 KWNO 290804)
+FD1US1
+DATA BASED ON 290600Z    
+VALID 291200Z   FOR USE 0800-1500Z. TEMPS NEG ABV 24000
+
+FT  3000    6000    9000   12000   18000   24000  30000  34000  39000
+BDL 3307 3207+15 3211+09 3314+04 3222-08 3526-20 015935 367043 358653
+BGR 3210 3320+11 3329+05 3328+00 3440-11 3449-24 369537 369945 369654
+CAR 3210 3220+08 3229+03 3331+00 3441-13 3458-25 860236 850445 368453
+PWM 3308 3416+13 3324+06 3325+01 3334-10 3441-23 018336 369244 359854
+EMI 1807 9900+15 2908+10 3009+06 9900-06 0518-16 353832 365340 366752
+ACK 3209 3309+13 3416+08 3326+03 3233-09 3239-23 017538 369744 860754
+BOS 3608 3410+14 3318+08 3324+03 3331-09 3435-22 017636 368744 359753
+BML 3011 3116+13 3220+07 3226+01 3335-10 3541-22 367235 358144 348953
+ACY 2606 9900+15 9900+09 9900+06 3009-07 0213-19 024534 016342 368352
+ALB 9900 3307+15 3208+08 3311+04 3118-08 0127-19 365034 355943 347953
+BUF 9900 2509+15 2010+09 2506+05 2508-06 2606-16 333131 334640 336151
+JFK 2705 9900+15 3406+09 9900+05 3012-07 3618-19 025134 366443 358652
+PLB 3005 3310+15 3218+08 3222+03 3223-09 3528-19 355334 346143 346953
+SYR 9900 2405+16 2805+09 2805+04 3009-07 0208-17 333333 335341 347351
+CLE 2406 2507+16 2510+13 2710+06 2812-05 2914-15 322129 322739 314551
+CMH 9900 2606+16 2806+12 3005+05 3014-05 2912-14 341328 332139 332951
+CVG 3109 2910+17 3209+12 3415+07 3013-04 2909-15 031028 040739 311451
+AGC 1506 1905+16 2607+12 2905+06 3010-05 3516-14 342830 353739 345151
+AVP 9900 9900+15 9900+09 9900+05 3106-06 0317-18 363334 355041 357452
+PSB      1607+15 9900+11 2805+07 2907-06 0307-16 343131 354640 355952
+ORF 1205 9900+15 3007+10 3207+05 0106-07 0417-18 034730 026440 027152
+RIC 1909 2406+14 2607+10 2605+05 9900-06 0425-16 024030 015340 016652
+ROA 1805 9900+16 2807+11 2707+06 0112-05 0223-13 012629 023739 024351
+CRW 3205 9900+16 9900+11 2806+06 3212-04 3515-14 011929 022239 012851
+EKN      9900+16 9900+11 9900+06 3209-05 0120-13 362930 013739 364651
+</pre></div>
+<table width="525" align="center" border="0" cellpadding="0"
+	cellspacing="0" align="center">
+	<tr>
+		<td width="150">&nbsp;</td>
+		<td width="168" valign="bottom">
+		<div align="center">
+		<FORM><INPUT type="button" value="FB Winds Map"
+			onClick="location.href='/products/nws/winds/'"></FORM>
+		</div>
+		</td>
+		<td width="206">&nbsp;</td>
+	</tr>
+</table>
+<br clear="both" style="clear:both;">
+
+</div> <!-- awc_main_content -->
+</div> <!-- awc_main -->
+
+<!-- Bottom Nav content -->
+<div id="awc_botnav">
+  <div id="awc_botnav_content">
+  <p style="text-align: center; font-size: 10px; color: #1150a0">
+    Page loaded:&nbsp;
+  <A HREF="http://www.time.gov">12:52 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
+  05:52 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
+  06:52 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
+  07:52 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
+  08:52 AM  Eastern
+  </p>
+  <div style="display: table-row">
+    <div style="display: table-cell; width: 100px">&nbsp;</div>
+    <div style="display: table-cell; width: 200px">
+      <h1>ADVISORIES</h1>
+      <ul>
+        <li><a href="/sigmet">SIGMET</a></li>
+        <li><a href="/gairmet">G-AIRMET</a></li>
+        <li><a href="/cwamis">Center Weather</a></li>
+        <li><a href="/caws">Ops. Bridging - CAWS</a></li>
+      </ul>
+      <h1>FORECASTS</h1>
+      <ul>
+        <li><a href="/convection">Convection</a></li>
+        <li><a href="/turbulence">Turbulence</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>FORECASTS</h1>
+      <ul>
+        <li><a href="/icing">Icing</a></li>
+        <li><a href="/windtemp">Winds/Temps</a></li>
+        <li><a href="/progchart">Prog Charts</a></li>
+        <li><a href="/taf">TAFs</a></li>
+        <li><a href="/wafs">WAFS Forecasts</a></li>
+        <li><a href="/areafcst">Area Forecasts</a></li>
+        <li><a href="/fcstdisc">Avn Forecast Disc (AFD)</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>OBSERVATIONS</h1>
+      <ul>
+        <li><a href="/airep">Aircraft Reps</a></li>
+        <li><a href="/metar">METARs</a></li>
+        <li><a href="/cva">Ceiling and Vis</a></li>
+        <li><a href="/radar">Radar</a></li>
+        <li><a href="/satellite">Satellite</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>USER TOOLS</h1>
+      <ul>
+        <li><a href="/flightpath">FPT Application</a></li>
+        <li><a href="/dataserver">Text Data Server</a></li>
+        <li><a href="/flightfolder">Flight Folder</a></li>
+        <li><a href="/decisionsupport">Decision Support</a></li>
+        <li><a href="/briefing">Standard Briefing</a></li>
+        <li><a href="http://testbed.aviationweather.gov">Aviation Testbed</a></li>
+        <li><a href="/info/links">Aviation Links</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>ABOUT US</h1>
+      <ul>
+        <li><a href="/info">AWC</a></li>
+        <li><a href="/info/legacy">Legacy</a></li>
+        <li><a href="/help">Help</a></li>
+        <li><a href="/info/faq/">FAQ</a></li>
+        <li><a href="/contact">Feedback</a></li>
+      </ul>
+    </div>
+  </div> <!-- table -->
+  </div> <!-- awc_botnav_content -->
+</div> <!-- awc_botnav -->
+
+<!-- Footer -->
+<div id="awc_footer">
+  <div id="awc_footer_content">
+
+  <div style="width:240px; float: left; text-align:left">
+    <img src="/images/layout/usa_gov.png"/>
+  </div>
+  <div style="width:260px; float: left; text-align:left">
+    <a href="http://www.commerce.gov/">US Dept of Commerce</a><br/>
+    <a href="http://www.noaa.gov/">National Oceanic and Atmospheric Administration</A><br/>
+    <A href="http://www.weather.gov/">National Weather Service</a><br/>
+    <A href="http://www.ncep.noaa.gov/"><SPAN class="gray">National Centers for Environmental Prediction</SPAN></a><BR/>
+    <A href="/">Aviation Weather Center</a><br/>
+    7220 NW 101st Terr., Room 118<br/>
+    Kansas City, MO 64153-2371<br/>
+  </div>
+  <div style="width:220px; float: left; text-align:left">
+    <a href="http://www.weather.gov/disclaimer">Disclaimer</a><br/>
+    <a href="http://www.cio.noaa.gov/services_programs/info_quality.html">Information Quality</a><br/>
+    <A href="http://www.weather.gov/glossary">Glossary</a><br/>
+    <A href="/info">About Us</a><br/>
+    <a href="mailto:ncep.awc.avwx@noaa.gov?subject=AWC WEB Page--Feedback">
+    Contact AWC</a><br/>
+  </div>
+  <div style="width:240px; float: left; text-align:left">
+    <A href="http://www.weather.gov/privacy">Privacy Policy</a><br/>
+    <A href="http://www.rdc.noaa.gov/~foia">Freedom of Information Act (FOIA)</a><br/>
+    <a href="http://www.weather.gov/careers">Career Opportunities</a><br/>
+    Server:     WOC25 <br/>
+  </div>
+  </div>  <!-- awc_footer_content -->
+</div>  <!-- awc_footer -->
+</body>
+
+</html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<!--[if lt IE 9]>
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<![endif]-->
+<base href="https://aviationweather.gov/" /><title>AWC - NCEP Winds Aloft Forecasts - NC US</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+<meta http-equiv="content-type" content="text/html; charset=utf-8" >
+<meta name="DC.language" content="en-us" scheme="DCTERMS.RFC1766" >
+<meta name="description" content="Aviation Weather Center Homepage provides comprehensive user-friendly aviation weather Text products and graphics." >
+<meta name="keywords" content="aviation, weather, icing, turbulence, convection, pirep, metar, taf, airmet, sigmet, satellite, radar, surface, wind, temperature, aloft, airplane, NEXRAD, GOES, WSR-88D, precipitation, rain, snow, sleet, thunderstorm, en-route, prognosis, chart" >
+<meta name="DC.title" content="AWC &amp;#45; NCEP Winds Aloft Forecasts - NC US" >
+<meta name="DC.description" content="AWC &amp;#45; NCEP Winds Aloft Forecasts - NC US" >
+<meta name="DC.creator" content="NOAA's National Weather Service - Aviation Weather Center Homepage" >
+<meta name="DC.date.created" content="2005-01-26" scheme="ISO8601" >
+<meta name="DC.date.reviewed" content="2005-11-29" scheme="ISO8601" >
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="/static/javascript/winds/scripts.js"></script>
+<script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<link href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" >
+<link href="/static/css/winds/winds.css" media="screen" rel="stylesheet" type="text/css" >
+<link href="/images/favicon.ico" rel="shortcut icon" >
+<link href="/images/noaa_logo.png" rel="apple-touch-icon" >
+<link href="/css/layout.css" media="" rel="stylesheet" type="text/css" >
+
+</head>
+<body >
+<div id="awc_pagewrapper">
+<!-- Top header, banner text -->
+<div id="awc_head" >
+<div id="awc_header" >
+  <div class="awc_headerarea">
+    <div class="awc_headerleft">
+      <a href="http://www.noaa.gov"><img src="/images/layout/noaa_logo.png" border="0"/></a>
+      <a href="http://www.weather.gov"><img src="/images/layout/nws_logo.png" border="0"/></a>
+    </div> <!-- awc_headerleft -->
+    <div class="awc_headertext">
+      <h1><a href="/">AVIATION WEATHER CENTER</a><span style="font-size:14px;color:#555"></span></h1>
+      <h2><a href="http://www.noaa.gov">N O A A</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <a href="http://www.weather.gov">N A T I O N A L &nbsp;&nbsp;W E A T H E R &nbsp;&nbsp;S E R V I C E</a></h2>
+      </div> <!-- awc_headertext -->
+    <a href="http://www.commerce.gov">
+    <div class="awc_headerright">
+    </div> <!-- awc_headerright -->
+    </a>
+  </div> <!-- awc_headerarea -->
+</div> <!-- awc_header -->
+<!-- Header shadow -->
+<div id="awc_header_shadow" >
+  <div id="awc_header_shadow_content" > </div>
+</div>
+<!-- AWC Top Navigation Menu -->
+<div id="awc_topnav" >
+  <div id="awc_menu">
+  <ul>
+    <li style="float: left; width: 150px; top: -5px">
+
+	<script>
+  $(document).ready(function() {
+    $("#autocomplete").autocomplete({
+        source: function( request, response ) {
+            $.ajax({
+               url: "/popups/location?format=json",
+               dataType: "json",
+               data: request,
+               success: function(data){
+                   if (data.source.redirect) {
+                       // data.redirect contains the string URL to redirect to
+                       window.location.href = data.source.redirect;
+                   }
+                   else {
+
+                       var re = $.ui.autocomplete.escapeRegex(request.term);
+                       var matcher = new RegExp( "^" + re, "i" );
+                       var a = $.grep( data.source, function(item,index){
+                           return matcher.test(item['label']);
+                           });
+
+                       response(a);
+                       }
+                   }
+
+               });
+            }
+       });
+    $("#autocomplete").tooltip({ position: { my: "right center", at: "right-115 center" } });
+  });
+  </script>
+
+ <style>
+.ui-autocomplete {
+	max-height: 100px;
+	overflow-y: auto;
+	/* prevent horizontal scrollbar */
+	overflow-x: hidden;
+}
+
+/* IE 6 doesn't support max-height
+* we use height instead, but this forces the menu to always be this tall
+*/
+* html .ui-autocomplete {
+	height: 100px;
+}
+
+.ui-autocomplete-category {
+	font-weight: bold;
+	padding: .2em .4em;
+	margin: .8em 0 .2em;
+	line-height: 1.5;
+	text-align:left;
+}
+.ui-menu-item {
+   	text-align: left;
+}
+
+#getForecast > label {
+	display: inline-block;
+	width: 5em;
+}
+
+fieldset div {
+	margin-bottom: 2em;
+}
+
+fieldset .help {
+	display: inline-block;
+}
+
+.ui-tooltip {
+	width: 210px;
+}
+</style>
+
+
+<div class="ui-widget" style="width: 160px">
+<form id="getForecast" name="getForecast" action="/popups/location/search" method="POST" >
+    <input id="autocomplete" title="Enter City/St, or Zip Code, or ICAO identifier and click Go." autocomplete="off" onclick="this.value=(this.value=='Local Forecast'?'':this.value)" value="Local Forecast" name="inputstring" style="color:rgb(153,153,153); font-size: 8pt; height: 16px; width: 100px" type="text">
+    <input id="btnSearch" value="Go" name="btnSearch" type="submit" style="font-size: 8pt; height: 24px;">
+
+</form>
+</div>
+	</li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>HOME</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/">AWC Home</a></li>
+        <li class="awc_link" aria-haspopup="true" onClick=""><span>NCEP &gt;</span>
+          <ul aria-haspopup="false">
+	    <li class="awc_link"><a href="http://www.ncep.noaa.gov/">NCEP Home</a>
+            <li class="awc_link"><a href="/">Aviation (AWC)</a></li>
+            <li class="awc_link"><a href="http://www.cpc.ncep.noaa.gov">Climate (CPC)</a></li>
+            <li class="awc_link"><a href="http://www.nhc.noaa.gov">Hurricane (NHC)</a></li>
+            <li class="awc_link"><a href="http://www.emc.ncep.noaa.gov">Modeling (EMC)</a></li>
+            <li class="awc_link"><a href="http://www.opc.ncep.noaa.gov">Ocean (OPC)</a></li>
+            <li class="awc_link"><a href="http://www.nco.ncep.noaa.gov">Operations (NCO)</a></li>
+            <li class="awc_link"><a href="http://www.sec.noaa.gov">Space (SWPC)</a></li>
+            <li class="awc_link"><a href="http://www.spc.noaa.gov">Storm (SPC)</a></li>
+            <li class="awc_link"><a href="http://www.wpc.ncep.noaa.gov">Weather (WPC)</a></li>
+	  </ul>
+	</li>
+        <li class="awc_link"><a href="http://www.weather.gov/">NWS Home</a></li>
+        <li class="awc_link"><a href="http://www.noaa.gov/">NOAA Home</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>ADVISORIES</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/sigmet">SIGMET</a></li>
+        <li class="awc_link"><a href="/gairmet">G-AIRMET</a></li>
+        <li class="awc_link"><a href="/cwamis">Center Weather</a></li>
+        <li class="awc_link"><a href="/caws">Ops. Bridging &ndash; CAWS</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>FORECASTS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/convection">Convection</a></li>
+        <li class="awc_link"><a href="/turbulence">Turbulence</a></li>
+        <li class="awc_link"><a href="/icing">Icing</a></li>
+        <li class="awc_link"><a href="/windtemp">Winds/Temps</a></li>
+        <li class="awc_link"><a href="/progchart">Prog Charts</a>
+        <li class="awc_link"><a href="/taf">TAFs</a></li>
+        <li class="awc_link"><a href="/wafs">WAFS Forecasts</a></li>
+        <li class="awc_link"><a href="/areafcst">Area Forecasts</a></li>
+        <li class="awc_link"><a href="/fcstdisc">Avn. Forecast Disc.</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true" ><span>OBSERVATIONS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/airep">Aircraft Reps</a> </li>
+        <li class="awc_link"><a href="/metar">METARs</a> </li>
+        <li class="awc_link"><a href="/cva">Ceiling and Vis</a> </li>
+        <li class="awc_link"><a href="/radar">Radar</a></li>
+        <li class="awc_link"><a href="/satellite">Satellite</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>TOOLS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/flightpath">Flight Path Tool</a></li>
+        <li class="awc_link"><a href="/hemst">HEMS Tool</a></li>
+        <li class="awc_link"><a href="/dataserver">Text Data Server</a></li>
+        <li class="awc_link"><a href="/flightfolder">Flight Folder</a></li>
+        <li class="awc_link"><a href="/decisionsupport">Decision Support</a></li>
+        <li class="awc_link"><a href="/briefing">Standard Briefing</a></li>
+        <li class="awc_link"><a href="http://testbed.aviationweather.gov">Aviation Testbed</a></li>
+        <li class="awc_link"><a href="/info/links">Aviation Links</a></li>
+      </ul>
+    </li>
+        <li class="awc_link" onClick="" aria-haspopup="true" ><span>NEWS</span>
+
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/news">AWC News</a></li>
+        <li class="awc_link"><a href="https://www.facebook.com/US.NOAA.AviationWeatherCenter">Facebook</a></li>
+        <li class="awc_link"><a href="http://www.weather.gov/news">NWS News</a></li>
+        <li class="awc_link"><a href="/news/front">The Front</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>SEARCH</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link">
+	  <form method="get" action="http://search.usa.gov/search">
+	  <input type="hidden" name="v:project" value="firstgov" />
+	  <label for="query">Search For</label>
+	  <input type="text" name="query" id="query" size="12" />
+	  <input type="submit" value="Go" />
+	  <p>
+	  <input type="radio" name="affiliate" checked="checked" value="nws.noaa.gov" id="nws" />
+	  <label for="nws" class="search-scope">NWS</label>
+	  <input type="radio" name="affiliate" value="noaa.gov" id="noaa" />
+	  <label for="noaa" class="search-scope">All NOAA</label>
+	  </p>
+	  </form>
+	</li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>ABOUT</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/info">AWC</a></li>
+        <li class="awc_link"><a href="/info/legacy">Legacy</a></li>
+        <li class="awc_link"><a href="/help">Help</a></li>
+        <li class="awc_link"><a href="/info/faq">FAQ</a></li>
+        <li class="awc_link"><a href="/contact">Feedback</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>USER</span>
+    <ul aria-haspopup="false">
+        	<li class="awc_link"><a href="/user">Login</a></li>
+    	<li class="awc_link"><a href="/user/index/create">Register</a></li>
+    
+    </ul>
+    </li>
+  </ul>
+  <br style="clear:all" clear="both" />
+  </div> <!-- awc_menu -->
+</div> <!-- awc_topnav -->
+</div>
+<!-- Main content -->
+<div id="awc_main">
+<div id="awc_main_content">
+
+
+<div style="width:550px; margin-left:200px">
+<div id="title">Forecast Winds and Temps Aloft (CHI)
+<div id="help"><a href="/products/nws/info">FYI/Help</a></div></div>
+<form METHOD="GET" name="fltlvl"><dt id="fint-label">&#160;</dt>
+<dd id="fint-element">
+<input type="hidden" name="fint" value="06" id="fint"></dd><table width="550" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="center"><span class="timelbl">
+<label><input type="radio" name="lvl" id="lvl-lo" value="lo" checked="checked" onClick="this.form.submit()">Low</label> <label><input type="radio" name="lvl" id="lvl-hi" value="hi" onClick="this.form.submit()">High</label></span></td>
+		<td align="center"><span class="timelbl">
+<button name="FBWindsMap" id="FBWindsMap" type="button" value="FB Winds Map" onClick='location.href="/products/nws/winds/"'>FB Winds Map</button></span></td>
+		<td width="206">
+		<table width="204" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td align="center" width="38"><span class="timelbl">0800z</span></td>
+				<td align="center" width="49"><span class="timelbl">1500z</span></td>
+				<td align="center" width="58"><span class="timelbl">0000z</span></td>
+				<td align="right" width="65"><span class="timelbl">1200z</span></td>
+			</tr>
+			<tr>
+				<td width="204" colspan="4" align="center"><A
+					href="/products/nws/chicago?fint=06&lvl=lo"><img
+					src="/static/images/winds/btns/06hr.gif"
+					width="174" height="14" ALT="Clickable Image" USEMAP="#timeline"
+					NAME="btn1" align="center" border="0"></A></td>
+			</tr>
+			<tr>
+				<td width="204" colspan="4" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+					class="timelblref">1252 UTC</span></td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+</table>
+</form>
+<!-- FbWinds Time Bar IMAGE MAP -->
+<MAP NAME="timeline">
+	<AREA SHAPE=RECT COORDS="0,0,45,13"
+		HREF="/products/nws/chicago?fint=06&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0606.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="06hr Forecast">
+	<AREA SHAPE=RECT COORDS="45,0,99,13"
+		HREF="/products/nws/chicago?fint=12&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0612.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="12hr Forecast">
+	<AREA SHAPE=RECT COORDS="99,0,174,13"
+		HREF="/products/nws/chicago?fint=24&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0624.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="24hr Forecast">
+</MAP>
+<div align="left" style="margin-left: 0px;"><pre>(Extracted from FBUS31 KWNO 290804)
+FD1US1
+DATA BASED ON 290600Z    
+VALID 291200Z   FOR USE 0800-1500Z. TEMPS NEG ABV 24000
+
+FT  3000    6000    9000   12000   18000   24000  30000  34000  39000
+BRL 3416 2817+18 2726+14 2628+08 2833-06 2923-15 281529 261939 242452
+DBQ 3326 2826+16 2637+13 2529+08 2525-06 2629-15 263829 253839 254552
+DSM 3424 2916+16 2927+15 2728+09 2631-07 2634-15 263830 263839 243951
+MCW 3030 2934+15 2738+11 2743+07 2643-06 2648-16 266430 256940 256551
+JOT 3015 2715+19 2621+13 2523+07 2526-05 2808-14 271430 272139 272451
+SPI 3211 2814+18 2822+14 2830+09 2830-06 2927-15 281530 290939 270852
+EVV 3117 3314+18 3315+12 3116+07 3316-05 3305-15 041029 060639 331150
+FWA 2712 2913+18 3014+12 3217+06 2919-04 3116-13 291129 292239 273251
+IND 2916 3111+18 3009+13 3118+07 3020-05 2914-14 260928 241239 281951
+GCK      0624+18 3012+14 9900+08 1929-08 2321-16 231530 222441 223454
+GLD      0918    1007+12 2009+07 2413-08 2431-17 234731 235342 235753
+ICT 0612 2806+21 9900+15 9900+08 2313-06 2317-17 243030 252840 222152
+SLN 0537 0407+18 9900+14 2607+09 2315-08 2425-17 262830 252841 223252
+LOU 3111 3213+18 3414+12 3418+07 3211-04 2906-15 061629 081239 140550
+ECK 2114 2213+16 2512+12 2612+07 2516-06 3110-14 312530 303639 304352
+MKG 2518 2417+17 2724+12 2818+08 2614-05 2720-13 272929 273540 284552
+MQT 2627 2336+16 2342+12 2341+08 2346-06 2347-16 256631 257740 258251
+SSM 2228 2229+16 2225+12 2418+07 2522-06 2426-15 273731 275940 267351
+TVC 2424 2325+17 2523+12 2516+08 2518-05 2526-15 274229 275239 275952
+AXN 2748 2848+09 2859+05 2860+03 2762-09 2677-18 258833 750741 750550
+DLH 2541 2649+08 2650+08 2548+04 2564-08 2482-17 259333 750740 259849
+INL 2339 2642+08 2645+04 2648+00 2656-11 2564-20 256935 258540 258347
+MSP 2747 2748+12 2749+08 2749+04 2660-06 2572-17 259031 750440 750051
+CGI 3017 3312+19 3010+14 2812+08 3310-05 3611-15 011130 021040 990051
+COU 2819 3010+19 2715+14 2622+10 2718-06 2718-16 281129 261239 220851
+MKC 0316 2805+20 2716+14 2623+09 2623-08 2526-16 262729 272539 231151
+SGF 2717 2815+20 2708+14 2310+09 2508-05 2512-16 302029 311540 270652
+STL 3017 3111+18 2817+15 2725+09 2921-05 3018-15 280730 230639 210651
+DIK      3036+10 3047+04 3047-01 2940-12 2930-24 282340 264346 255549
+GFK 2848 3043+08 2946+04 2950+01 2949-10 2952-22 285338 276244 267548
+MOT      3148+09 3146+04 3139-01 3028-10 3023-22 292738 292847 264849
+BFF      1313    1916+08 2521+03 2539-11 2554-20 247433 248842 249452
+GRI      0116+14 3219+12 2623+07 2636-09 2538-17 255630 246341 246052
+OMA 3523 3316+17 3128+14 2726+08 2734-07 2639-16 264630 254840 244851
+ONL      3224+13 3031+07 2845+05 2656-08 2556-18 257331 248641 248852
+ABR 2842 3043+11 2949+05 2851+01 2852-11 2770-21 268734 259942 750351
+FSD 2830 3036+12 2945+08 2955+03 2752-08 2564-18 258131 259640 259851
+PIR      3037+13 3043+05 2852+01 2758-10 2664-22 258534 750242 750751
+RAP      2916+14 3026+06 2835+00 2749-11 2656-24 257936 259143 750251
+GRB 2930 2532+16 2536+12 2529+08 2432-06 2531-15 265829 266339 256652
+LSE 2928 2831+14 2642+12 2548+07 2540-04 2543-16 266530 267239 257351
+</pre></div>
+<table width="525" align="center" border="0" cellpadding="0"
+	cellspacing="0" align="center">
+	<tr>
+		<td width="150">&nbsp;</td>
+		<td width="168" valign="bottom">
+		<div align="center">
+		<FORM><INPUT type="button" value="FB Winds Map"
+			onClick="location.href='/products/nws/winds/'"></FORM>
+		</div>
+		</td>
+		<td width="206">&nbsp;</td>
+	</tr>
+</table>
+<br clear="both" style="clear:both;">
+
+</div> <!-- awc_main_content -->
+</div> <!-- awc_main -->
+
+<!-- Bottom Nav content -->
+<div id="awc_botnav">
+  <div id="awc_botnav_content">
+  <p style="text-align: center; font-size: 10px; color: #1150a0">
+    Page loaded:&nbsp;
+  <A HREF="http://www.time.gov">12:52 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
+  05:52 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
+  06:52 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
+  07:52 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
+  08:52 AM  Eastern
+  </p>
+  <div style="display: table-row">
+    <div style="display: table-cell; width: 100px">&nbsp;</div>
+    <div style="display: table-cell; width: 200px">
+      <h1>ADVISORIES</h1>
+      <ul>
+        <li><a href="/sigmet">SIGMET</a></li>
+        <li><a href="/gairmet">G-AIRMET</a></li>
+        <li><a href="/cwamis">Center Weather</a></li>
+        <li><a href="/caws">Ops. Bridging - CAWS</a></li>
+      </ul>
+      <h1>FORECASTS</h1>
+      <ul>
+        <li><a href="/convection">Convection</a></li>
+        <li><a href="/turbulence">Turbulence</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>FORECASTS</h1>
+      <ul>
+        <li><a href="/icing">Icing</a></li>
+        <li><a href="/windtemp">Winds/Temps</a></li>
+        <li><a href="/progchart">Prog Charts</a></li>
+        <li><a href="/taf">TAFs</a></li>
+        <li><a href="/wafs">WAFS Forecasts</a></li>
+        <li><a href="/areafcst">Area Forecasts</a></li>
+        <li><a href="/fcstdisc">Avn Forecast Disc (AFD)</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>OBSERVATIONS</h1>
+      <ul>
+        <li><a href="/airep">Aircraft Reps</a></li>
+        <li><a href="/metar">METARs</a></li>
+        <li><a href="/cva">Ceiling and Vis</a></li>
+        <li><a href="/radar">Radar</a></li>
+        <li><a href="/satellite">Satellite</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>USER TOOLS</h1>
+      <ul>
+        <li><a href="/flightpath">FPT Application</a></li>
+        <li><a href="/dataserver">Text Data Server</a></li>
+        <li><a href="/flightfolder">Flight Folder</a></li>
+        <li><a href="/decisionsupport">Decision Support</a></li>
+        <li><a href="/briefing">Standard Briefing</a></li>
+        <li><a href="http://testbed.aviationweather.gov">Aviation Testbed</a></li>
+        <li><a href="/info/links">Aviation Links</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>ABOUT US</h1>
+      <ul>
+        <li><a href="/info">AWC</a></li>
+        <li><a href="/info/legacy">Legacy</a></li>
+        <li><a href="/help">Help</a></li>
+        <li><a href="/info/faq/">FAQ</a></li>
+        <li><a href="/contact">Feedback</a></li>
+      </ul>
+    </div>
+  </div> <!-- table -->
+  </div> <!-- awc_botnav_content -->
+</div> <!-- awc_botnav -->
+
+<!-- Footer -->
+<div id="awc_footer">
+  <div id="awc_footer_content">
+
+  <div style="width:240px; float: left; text-align:left">
+    <img src="/images/layout/usa_gov.png"/>
+  </div>
+  <div style="width:260px; float: left; text-align:left">
+    <a href="http://www.commerce.gov/">US Dept of Commerce</a><br/>
+    <a href="http://www.noaa.gov/">National Oceanic and Atmospheric Administration</A><br/>
+    <A href="http://www.weather.gov/">National Weather Service</a><br/>
+    <A href="http://www.ncep.noaa.gov/"><SPAN class="gray">National Centers for Environmental Prediction</SPAN></a><BR/>
+    <A href="/">Aviation Weather Center</a><br/>
+    7220 NW 101st Terr., Room 118<br/>
+    Kansas City, MO 64153-2371<br/>
+  </div>
+  <div style="width:220px; float: left; text-align:left">
+    <a href="http://www.weather.gov/disclaimer">Disclaimer</a><br/>
+    <a href="http://www.cio.noaa.gov/services_programs/info_quality.html">Information Quality</a><br/>
+    <A href="http://www.weather.gov/glossary">Glossary</a><br/>
+    <A href="/info">About Us</a><br/>
+    <a href="mailto:ncep.awc.avwx@noaa.gov?subject=AWC WEB Page--Feedback">
+    Contact AWC</a><br/>
+  </div>
+  <div style="width:240px; float: left; text-align:left">
+    <A href="http://www.weather.gov/privacy">Privacy Policy</a><br/>
+    <A href="http://www.rdc.noaa.gov/~foia">Freedom of Information Act (FOIA)</a><br/>
+    <a href="http://www.weather.gov/careers">Career Opportunities</a><br/>
+    Server:     WOC24 <br/>
+  </div>
+  </div>  <!-- awc_footer_content -->
+</div>  <!-- awc_footer -->
+</body>
+
+</html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<!--[if lt IE 9]>
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<![endif]-->
+<base href="https://aviationweather.gov/" /><title>AWC - NCEP Winds Aloft Forecasts - Rocky Mtn Rgn</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+<meta http-equiv="content-type" content="text/html; charset=utf-8" >
+<meta name="DC.language" content="en-us" scheme="DCTERMS.RFC1766" >
+<meta name="description" content="Aviation Weather Center Homepage provides comprehensive user-friendly aviation weather Text products and graphics." >
+<meta name="keywords" content="aviation, weather, icing, turbulence, convection, pirep, metar, taf, airmet, sigmet, satellite, radar, surface, wind, temperature, aloft, airplane, NEXRAD, GOES, WSR-88D, precipitation, rain, snow, sleet, thunderstorm, en-route, prognosis, chart" >
+<meta name="DC.title" content="AWC &amp;#45; NCEP Winds Aloft Forecasts - Rocky Mtn Rgn" >
+<meta name="DC.description" content="AWC &amp;#45; NCEP Winds Aloft Forecasts - Rocky Mtn Rgn" >
+<meta name="DC.creator" content="NOAA's National Weather Service - Aviation Weather Center Homepage" >
+<meta name="DC.date.created" content="2005-01-26" scheme="ISO8601" >
+<meta name="DC.date.reviewed" content="2005-11-29" scheme="ISO8601" >
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="/static/javascript/winds/scripts.js"></script>
+<script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<link href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" >
+<link href="/static/css/winds/winds.css" media="screen" rel="stylesheet" type="text/css" >
+<link href="/images/favicon.ico" rel="shortcut icon" >
+<link href="/images/noaa_logo.png" rel="apple-touch-icon" >
+<link href="/css/layout.css" media="" rel="stylesheet" type="text/css" >
+
+</head>
+<body >
+<div id="awc_pagewrapper">
+<!-- Top header, banner text -->
+<div id="awc_head" >
+<div id="awc_header" >
+  <div class="awc_headerarea">
+    <div class="awc_headerleft">
+      <a href="http://www.noaa.gov"><img src="/images/layout/noaa_logo.png" border="0"/></a>
+      <a href="http://www.weather.gov"><img src="/images/layout/nws_logo.png" border="0"/></a>
+    </div> <!-- awc_headerleft -->
+    <div class="awc_headertext">
+      <h1><a href="/">AVIATION WEATHER CENTER</a><span style="font-size:14px;color:#555"></span></h1>
+      <h2><a href="http://www.noaa.gov">N O A A</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <a href="http://www.weather.gov">N A T I O N A L &nbsp;&nbsp;W E A T H E R &nbsp;&nbsp;S E R V I C E</a></h2>
+      </div> <!-- awc_headertext -->
+    <a href="http://www.commerce.gov">
+    <div class="awc_headerright">
+    </div> <!-- awc_headerright -->
+    </a>
+  </div> <!-- awc_headerarea -->
+</div> <!-- awc_header -->
+<!-- Header shadow -->
+<div id="awc_header_shadow" >
+  <div id="awc_header_shadow_content" > </div>
+</div>
+<!-- AWC Top Navigation Menu -->
+<div id="awc_topnav" >
+  <div id="awc_menu">
+  <ul>
+    <li style="float: left; width: 150px; top: -5px">
+
+	<script>
+  $(document).ready(function() {
+    $("#autocomplete").autocomplete({
+        source: function( request, response ) {
+            $.ajax({
+               url: "/popups/location?format=json",
+               dataType: "json",
+               data: request,
+               success: function(data){
+                   if (data.source.redirect) {
+                       // data.redirect contains the string URL to redirect to
+                       window.location.href = data.source.redirect;
+                   }
+                   else {
+
+                       var re = $.ui.autocomplete.escapeRegex(request.term);
+                       var matcher = new RegExp( "^" + re, "i" );
+                       var a = $.grep( data.source, function(item,index){
+                           return matcher.test(item['label']);
+                           });
+
+                       response(a);
+                       }
+                   }
+
+               });
+            }
+       });
+    $("#autocomplete").tooltip({ position: { my: "right center", at: "right-115 center" } });
+  });
+  </script>
+
+ <style>
+.ui-autocomplete {
+	max-height: 100px;
+	overflow-y: auto;
+	/* prevent horizontal scrollbar */
+	overflow-x: hidden;
+}
+
+/* IE 6 doesn't support max-height
+* we use height instead, but this forces the menu to always be this tall
+*/
+* html .ui-autocomplete {
+	height: 100px;
+}
+
+.ui-autocomplete-category {
+	font-weight: bold;
+	padding: .2em .4em;
+	margin: .8em 0 .2em;
+	line-height: 1.5;
+	text-align:left;
+}
+.ui-menu-item {
+   	text-align: left;
+}
+
+#getForecast > label {
+	display: inline-block;
+	width: 5em;
+}
+
+fieldset div {
+	margin-bottom: 2em;
+}
+
+fieldset .help {
+	display: inline-block;
+}
+
+.ui-tooltip {
+	width: 210px;
+}
+</style>
+
+
+<div class="ui-widget" style="width: 160px">
+<form id="getForecast" name="getForecast" action="/popups/location/search" method="POST" >
+    <input id="autocomplete" title="Enter City/St, or Zip Code, or ICAO identifier and click Go." autocomplete="off" onclick="this.value=(this.value=='Local Forecast'?'':this.value)" value="Local Forecast" name="inputstring" style="color:rgb(153,153,153); font-size: 8pt; height: 16px; width: 100px" type="text">
+    <input id="btnSearch" value="Go" name="btnSearch" type="submit" style="font-size: 8pt; height: 24px;">
+
+</form>
+</div>
+	</li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>HOME</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/">AWC Home</a></li>
+        <li class="awc_link" aria-haspopup="true" onClick=""><span>NCEP &gt;</span>
+          <ul aria-haspopup="false">
+	    <li class="awc_link"><a href="http://www.ncep.noaa.gov/">NCEP Home</a>
+            <li class="awc_link"><a href="/">Aviation (AWC)</a></li>
+            <li class="awc_link"><a href="http://www.cpc.ncep.noaa.gov">Climate (CPC)</a></li>
+            <li class="awc_link"><a href="http://www.nhc.noaa.gov">Hurricane (NHC)</a></li>
+            <li class="awc_link"><a href="http://www.emc.ncep.noaa.gov">Modeling (EMC)</a></li>
+            <li class="awc_link"><a href="http://www.opc.ncep.noaa.gov">Ocean (OPC)</a></li>
+            <li class="awc_link"><a href="http://www.nco.ncep.noaa.gov">Operations (NCO)</a></li>
+            <li class="awc_link"><a href="http://www.sec.noaa.gov">Space (SWPC)</a></li>
+            <li class="awc_link"><a href="http://www.spc.noaa.gov">Storm (SPC)</a></li>
+            <li class="awc_link"><a href="http://www.wpc.ncep.noaa.gov">Weather (WPC)</a></li>
+	  </ul>
+	</li>
+        <li class="awc_link"><a href="http://www.weather.gov/">NWS Home</a></li>
+        <li class="awc_link"><a href="http://www.noaa.gov/">NOAA Home</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>ADVISORIES</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/sigmet">SIGMET</a></li>
+        <li class="awc_link"><a href="/gairmet">G-AIRMET</a></li>
+        <li class="awc_link"><a href="/cwamis">Center Weather</a></li>
+        <li class="awc_link"><a href="/caws">Ops. Bridging &ndash; CAWS</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>FORECASTS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/convection">Convection</a></li>
+        <li class="awc_link"><a href="/turbulence">Turbulence</a></li>
+        <li class="awc_link"><a href="/icing">Icing</a></li>
+        <li class="awc_link"><a href="/windtemp">Winds/Temps</a></li>
+        <li class="awc_link"><a href="/progchart">Prog Charts</a>
+        <li class="awc_link"><a href="/taf">TAFs</a></li>
+        <li class="awc_link"><a href="/wafs">WAFS Forecasts</a></li>
+        <li class="awc_link"><a href="/areafcst">Area Forecasts</a></li>
+        <li class="awc_link"><a href="/fcstdisc">Avn. Forecast Disc.</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true" ><span>OBSERVATIONS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/airep">Aircraft Reps</a> </li>
+        <li class="awc_link"><a href="/metar">METARs</a> </li>
+        <li class="awc_link"><a href="/cva">Ceiling and Vis</a> </li>
+        <li class="awc_link"><a href="/radar">Radar</a></li>
+        <li class="awc_link"><a href="/satellite">Satellite</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>TOOLS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/flightpath">Flight Path Tool</a></li>
+        <li class="awc_link"><a href="/hemst">HEMS Tool</a></li>
+        <li class="awc_link"><a href="/dataserver">Text Data Server</a></li>
+        <li class="awc_link"><a href="/flightfolder">Flight Folder</a></li>
+        <li class="awc_link"><a href="/decisionsupport">Decision Support</a></li>
+        <li class="awc_link"><a href="/briefing">Standard Briefing</a></li>
+        <li class="awc_link"><a href="http://testbed.aviationweather.gov">Aviation Testbed</a></li>
+        <li class="awc_link"><a href="/info/links">Aviation Links</a></li>
+      </ul>
+    </li>
+        <li class="awc_link" onClick="" aria-haspopup="true" ><span>NEWS</span>
+
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/news">AWC News</a></li>
+        <li class="awc_link"><a href="https://www.facebook.com/US.NOAA.AviationWeatherCenter">Facebook</a></li>
+        <li class="awc_link"><a href="http://www.weather.gov/news">NWS News</a></li>
+        <li class="awc_link"><a href="/news/front">The Front</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>SEARCH</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link">
+	  <form method="get" action="http://search.usa.gov/search">
+	  <input type="hidden" name="v:project" value="firstgov" />
+	  <label for="query">Search For</label>
+	  <input type="text" name="query" id="query" size="12" />
+	  <input type="submit" value="Go" />
+	  <p>
+	  <input type="radio" name="affiliate" checked="checked" value="nws.noaa.gov" id="nws" />
+	  <label for="nws" class="search-scope">NWS</label>
+	  <input type="radio" name="affiliate" value="noaa.gov" id="noaa" />
+	  <label for="noaa" class="search-scope">All NOAA</label>
+	  </p>
+	  </form>
+	</li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>ABOUT</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/info">AWC</a></li>
+        <li class="awc_link"><a href="/info/legacy">Legacy</a></li>
+        <li class="awc_link"><a href="/help">Help</a></li>
+        <li class="awc_link"><a href="/info/faq">FAQ</a></li>
+        <li class="awc_link"><a href="/contact">Feedback</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>USER</span>
+    <ul aria-haspopup="false">
+        	<li class="awc_link"><a href="/user">Login</a></li>
+    	<li class="awc_link"><a href="/user/index/create">Register</a></li>
+    
+    </ul>
+    </li>
+  </ul>
+  <br style="clear:all" clear="both" />
+  </div> <!-- awc_menu -->
+</div> <!-- awc_topnav -->
+</div>
+<!-- Main content -->
+<div id="awc_main">
+<div id="awc_main_content">
+
+
+<div style="width:550px; margin-left:200px">
+<div id="title">Forecast Winds and Temps Aloft (SLC)
+<div id="help"><a href="/products/nws/info">FYI/Help</a></div></div>
+
+<form METHOD="GET" name="fltlvl"><dt id="fint-label">&#160;</dt>
+<dd id="fint-element">
+<input type="hidden" name="fint" value="06" id="fint"></dd><table width="550" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="center"><span class="timelbl">
+<label><input type="radio" name="lvl" id="lvl-lo" value="lo" checked="checked" onClick="this.form.submit()">Low</label> <label><input type="radio" name="lvl" id="lvl-hi" value="hi" onClick="this.form.submit()">High</label></span></td>
+		<td align="center"><span class="timelbl">
+<button name="FBWindsMap" id="FBWindsMap" type="button" value="FB Winds Map" onClick='location.href="/products/nws/winds/"'>FB Winds Map</button></span></td>
+		<td width="206">
+		<table width="204" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td align="center" width="38"><span class="timelbl">0800z</span></td>
+				<td align="center" width="49"><span class="timelbl">1500z</span></td>
+				<td align="center" width="58"><span class="timelbl">0000z</span></td>
+				<td align="right" width="65"><span class="timelbl">1200z</span></td>
+			</tr>
+			<tr>
+				<td width="204" colspan="4" align="center"><A
+					href="/products/nws/saltlakecity?fint=06&lvl=lo"><img
+					src="/static/images/winds/btns/06hr.gif"
+					width="174" height="14" ALT="Clickable Image" USEMAP="#timeline"
+					NAME="btn1" align="center" border="0"></A></td>
+			</tr>
+			<tr>
+				<td width="204" colspan="4" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+					class="timelblref">1252 UTC</span></td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+</table>
+</form>
+<!-- FbWinds Time Bar IMAGE MAP -->
+<MAP NAME="timeline">
+	<AREA SHAPE=RECT COORDS="0,0,45,13"
+		HREF="/products/nws/saltlakecity?fint=06&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0606.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="06hr Forecast">
+	<AREA SHAPE=RECT COORDS="45,0,99,13"
+		HREF="/products/nws/saltlakecity?fint=12&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0612.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="12hr Forecast">
+	<AREA SHAPE=RECT COORDS="99,0,174,13"
+		HREF="/products/nws/saltlakecity?fint=24&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0624.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="24hr Forecast">
+</MAP>
+<div align="left" style="margin-left: 0px;"><pre>(Extracted from FBUS31 KWNO 290804)
+FD1US1
+DATA BASED ON 290600Z    
+VALID 291200Z   FOR USE 0800-1500Z. TEMPS NEG ABV 24000
+
+FT  3000    6000    9000   12000   18000   24000  30000  34000  39000
+PHX 1205 9900+21 9900+15 0909+07 0708-07 1407-16 181932 192742 203354
+PRC              3305+16 9900+09 1805-07 2309-17 212633 193842 215054
+TUS      0912+21 0616+13 0811+07 1209-06 1512-16 171331 181642 162654
+ALS                      2707+09 2511-07 2420-17 233331 223941 214052
+DEN              1717+10 2006+04 2525-08 2430-19 245632 236441 236552
+GJT              0407+16 2808+09 2515-08 2629-19 244933 236442 237554
+PUB              1212+10 2006+06 2513-07 2421-17 234131 224541 214953
+BOI      9900+15 9900+08 2406+04 2917-10 2921-22 282439 283148 293655
+LWS 9900 9900+13 9900+06 2610+01 2921-11 2830-24 273440 283550 293957
+PIH      0606    9900+09 9900+04 2817-10 2925-22 292739 283648 264954
+BIL      3112    2813+06 2826-02 2927-13 2929-26 303542 303250 263850
+DLN              9900+07 2615+00 2925-12 2929-24 303639 303749 303957
+GGW      3129+11 3037+04 3034-02 3133-13 3027-25 241641 201051 252950
+GPI      2815+13 2918+04 2919-03 2925-12 2928-24 293040 293450 293660
+GTF      2917    2912+04 2717-03 2926-13 3028-24 323540 313950 313357
+MLS      2919+13 3028+05 2938-02 3128-14 2724-25 271542 262948 254548
+BAM              1105+13 2312+06 2708-09 2805-22 272037 271746 252556
+ELY              1507+15 2409+08 2605-08 2616-21 252437 243745 235153
+LAS      1908+24 1805+16 1609+08 9900-07 2616-18 252835 224043 205953
+RNO      0712    1106+13 2505+08 2807-09 2910-22 261237 250847 241956
+ABQ              1908+14 9900+08 1410-06 1813-16 202531 212741 212353
+FMN              3108+18 3007+10 2109-07 2316-17 233432 223842 223753
+ROW      0707    9900+16 1606+09 1610-06 1709-16 161031 181441 172352
+TCC      0813    2212+14 2412+08 2115-06 2606-16 211131 201840 202753
+ZUN              2611+15 9900+08 1008-06 2010-17 212332 212942 202953
+BCE                      2407+09 2511-08 2518-19 243334 235343 228054
+SLC      9900    0205+11 2606+06 2714-09 2818-21 263537 254045 246053
+CZI              2407+07 2717+00 2836-11 2738-26 256638 258044 257651
+LND              9900+07 2607+02 2724-11 2936-24 275638 256945 257053
+MBW              1524    2413+06 2524-11 2550-21 246635 247943 249853
+RKS              0608    2507+05 2724-10 2737-21 265036 256145 248553
+</pre></div>
+<table width="525" align="center" border="0" cellpadding="0"
+	cellspacing="0" align="center">
+	<tr>
+		<td width="150">&nbsp;</td>
+		<td width="168" valign="bottom">
+		<div align="center">
+		<FORM><INPUT type="button" value="FB Winds Map"
+			onClick="location.href='/products/nws/winds/'"></FORM>
+		</div>
+		</td>
+		<td width="206">&nbsp;</td>
+	</tr>
+</table>
+<br clear="both" style="clear:both;">
+
+</div> <!-- awc_main_content -->
+</div> <!-- awc_main -->
+
+<!-- Bottom Nav content -->
+<div id="awc_botnav">
+  <div id="awc_botnav_content">
+  <p style="text-align: center; font-size: 10px; color: #1150a0">
+    Page loaded:&nbsp;
+  <A HREF="http://www.time.gov">12:52 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
+  05:52 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
+  06:52 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
+  07:52 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
+  08:52 AM  Eastern
+  </p>
+  <div style="display: table-row">
+    <div style="display: table-cell; width: 100px">&nbsp;</div>
+    <div style="display: table-cell; width: 200px">
+      <h1>ADVISORIES</h1>
+      <ul>
+        <li><a href="/sigmet">SIGMET</a></li>
+        <li><a href="/gairmet">G-AIRMET</a></li>
+        <li><a href="/cwamis">Center Weather</a></li>
+        <li><a href="/caws">Ops. Bridging - CAWS</a></li>
+      </ul>
+      <h1>FORECASTS</h1>
+      <ul>
+        <li><a href="/convection">Convection</a></li>
+        <li><a href="/turbulence">Turbulence</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>FORECASTS</h1>
+      <ul>
+        <li><a href="/icing">Icing</a></li>
+        <li><a href="/windtemp">Winds/Temps</a></li>
+        <li><a href="/progchart">Prog Charts</a></li>
+        <li><a href="/taf">TAFs</a></li>
+        <li><a href="/wafs">WAFS Forecasts</a></li>
+        <li><a href="/areafcst">Area Forecasts</a></li>
+        <li><a href="/fcstdisc">Avn Forecast Disc (AFD)</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>OBSERVATIONS</h1>
+      <ul>
+        <li><a href="/airep">Aircraft Reps</a></li>
+        <li><a href="/metar">METARs</a></li>
+        <li><a href="/cva">Ceiling and Vis</a></li>
+        <li><a href="/radar">Radar</a></li>
+        <li><a href="/satellite">Satellite</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>USER TOOLS</h1>
+      <ul>
+        <li><a href="/flightpath">FPT Application</a></li>
+        <li><a href="/dataserver">Text Data Server</a></li>
+        <li><a href="/flightfolder">Flight Folder</a></li>
+        <li><a href="/decisionsupport">Decision Support</a></li>
+        <li><a href="/briefing">Standard Briefing</a></li>
+        <li><a href="http://testbed.aviationweather.gov">Aviation Testbed</a></li>
+        <li><a href="/info/links">Aviation Links</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>ABOUT US</h1>
+      <ul>
+        <li><a href="/info">AWC</a></li>
+        <li><a href="/info/legacy">Legacy</a></li>
+        <li><a href="/help">Help</a></li>
+        <li><a href="/info/faq/">FAQ</a></li>
+        <li><a href="/contact">Feedback</a></li>
+      </ul>
+    </div>
+  </div> <!-- table -->
+  </div> <!-- awc_botnav_content -->
+</div> <!-- awc_botnav -->
+
+<!-- Footer -->
+<div id="awc_footer">
+  <div id="awc_footer_content">
+
+  <div style="width:240px; float: left; text-align:left">
+    <img src="/images/layout/usa_gov.png"/>
+  </div>
+  <div style="width:260px; float: left; text-align:left">
+    <a href="http://www.commerce.gov/">US Dept of Commerce</a><br/>
+    <a href="http://www.noaa.gov/">National Oceanic and Atmospheric Administration</A><br/>
+    <A href="http://www.weather.gov/">National Weather Service</a><br/>
+    <A href="http://www.ncep.noaa.gov/"><SPAN class="gray">National Centers for Environmental Prediction</SPAN></a><BR/>
+    <A href="/">Aviation Weather Center</a><br/>
+    7220 NW 101st Terr., Room 118<br/>
+    Kansas City, MO 64153-2371<br/>
+  </div>
+  <div style="width:220px; float: left; text-align:left">
+    <a href="http://www.weather.gov/disclaimer">Disclaimer</a><br/>
+    <a href="http://www.cio.noaa.gov/services_programs/info_quality.html">Information Quality</a><br/>
+    <A href="http://www.weather.gov/glossary">Glossary</a><br/>
+    <A href="/info">About Us</a><br/>
+    <a href="mailto:ncep.awc.avwx@noaa.gov?subject=AWC WEB Page--Feedback">
+    Contact AWC</a><br/>
+  </div>
+  <div style="width:240px; float: left; text-align:left">
+    <A href="http://www.weather.gov/privacy">Privacy Policy</a><br/>
+    <A href="http://www.rdc.noaa.gov/~foia">Freedom of Information Act (FOIA)</a><br/>
+    <a href="http://www.weather.gov/careers">Career Opportunities</a><br/>
+    Server:     WOC25 <br/>
+  </div>
+  </div>  <!-- awc_footer_content -->
+</div>  <!-- awc_footer -->
+</body>
+
+</html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<!--[if lt IE 9]>
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<![endif]-->
+<base href="https://aviationweather.gov/" /><title>AWC - NCEP Winds Aloft Forecasts - Pac Cst Rgn</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+<meta http-equiv="content-type" content="text/html; charset=utf-8" >
+<meta name="DC.language" content="en-us" scheme="DCTERMS.RFC1766" >
+<meta name="description" content="Aviation Weather Center Homepage provides comprehensive user-friendly aviation weather Text products and graphics." >
+<meta name="keywords" content="aviation, weather, icing, turbulence, convection, pirep, metar, taf, airmet, sigmet, satellite, radar, surface, wind, temperature, aloft, airplane, NEXRAD, GOES, WSR-88D, precipitation, rain, snow, sleet, thunderstorm, en-route, prognosis, chart" >
+<meta name="DC.title" content="AWC &amp;#45; NCEP Winds Aloft Forecasts - Pac Cst Rgn" >
+<meta name="DC.description" content="AWC &amp;#45; NCEP Winds Aloft Forecasts - Pac Cst Rgn" >
+<meta name="DC.creator" content="NOAA's National Weather Service - Aviation Weather Center Homepage" >
+<meta name="DC.date.created" content="2005-01-26" scheme="ISO8601" >
+<meta name="DC.date.reviewed" content="2005-11-29" scheme="ISO8601" >
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="/static/javascript/winds/scripts.js"></script>
+<script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<link href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" >
+<link href="/static/css/winds/winds.css" media="screen" rel="stylesheet" type="text/css" >
+<link href="/images/favicon.ico" rel="shortcut icon" >
+<link href="/images/noaa_logo.png" rel="apple-touch-icon" >
+<link href="/css/layout.css" media="" rel="stylesheet" type="text/css" >
+
+</head>
+<body >
+<div id="awc_pagewrapper">
+<!-- Top header, banner text -->
+<div id="awc_head" >
+<div id="awc_header" >
+  <div class="awc_headerarea">
+    <div class="awc_headerleft">
+      <a href="http://www.noaa.gov"><img src="/images/layout/noaa_logo.png" border="0"/></a>
+      <a href="http://www.weather.gov"><img src="/images/layout/nws_logo.png" border="0"/></a>
+    </div> <!-- awc_headerleft -->
+    <div class="awc_headertext">
+      <h1><a href="/">AVIATION WEATHER CENTER</a><span style="font-size:14px;color:#555"></span></h1>
+      <h2><a href="http://www.noaa.gov">N O A A</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <a href="http://www.weather.gov">N A T I O N A L &nbsp;&nbsp;W E A T H E R &nbsp;&nbsp;S E R V I C E</a></h2>
+      </div> <!-- awc_headertext -->
+    <a href="http://www.commerce.gov">
+    <div class="awc_headerright">
+    </div> <!-- awc_headerright -->
+    </a>
+  </div> <!-- awc_headerarea -->
+</div> <!-- awc_header -->
+<!-- Header shadow -->
+<div id="awc_header_shadow" >
+  <div id="awc_header_shadow_content" > </div>
+</div>
+<!-- AWC Top Navigation Menu -->
+<div id="awc_topnav" >
+  <div id="awc_menu">
+  <ul>
+    <li style="float: left; width: 150px; top: -5px">
+
+	<script>
+  $(document).ready(function() {
+    $("#autocomplete").autocomplete({
+        source: function( request, response ) {
+            $.ajax({
+               url: "/popups/location?format=json",
+               dataType: "json",
+               data: request,
+               success: function(data){
+                   if (data.source.redirect) {
+                       // data.redirect contains the string URL to redirect to
+                       window.location.href = data.source.redirect;
+                   }
+                   else {
+
+                       var re = $.ui.autocomplete.escapeRegex(request.term);
+                       var matcher = new RegExp( "^" + re, "i" );
+                       var a = $.grep( data.source, function(item,index){
+                           return matcher.test(item['label']);
+                           });
+
+                       response(a);
+                       }
+                   }
+
+               });
+            }
+       });
+    $("#autocomplete").tooltip({ position: { my: "right center", at: "right-115 center" } });
+  });
+  </script>
+
+ <style>
+.ui-autocomplete {
+	max-height: 100px;
+	overflow-y: auto;
+	/* prevent horizontal scrollbar */
+	overflow-x: hidden;
+}
+
+/* IE 6 doesn't support max-height
+* we use height instead, but this forces the menu to always be this tall
+*/
+* html .ui-autocomplete {
+	height: 100px;
+}
+
+.ui-autocomplete-category {
+	font-weight: bold;
+	padding: .2em .4em;
+	margin: .8em 0 .2em;
+	line-height: 1.5;
+	text-align:left;
+}
+.ui-menu-item {
+   	text-align: left;
+}
+
+#getForecast > label {
+	display: inline-block;
+	width: 5em;
+}
+
+fieldset div {
+	margin-bottom: 2em;
+}
+
+fieldset .help {
+	display: inline-block;
+}
+
+.ui-tooltip {
+	width: 210px;
+}
+</style>
+
+
+<div class="ui-widget" style="width: 160px">
+<form id="getForecast" name="getForecast" action="/popups/location/search" method="POST" >
+    <input id="autocomplete" title="Enter City/St, or Zip Code, or ICAO identifier and click Go." autocomplete="off" onclick="this.value=(this.value=='Local Forecast'?'':this.value)" value="Local Forecast" name="inputstring" style="color:rgb(153,153,153); font-size: 8pt; height: 16px; width: 100px" type="text">
+    <input id="btnSearch" value="Go" name="btnSearch" type="submit" style="font-size: 8pt; height: 24px;">
+
+</form>
+</div>
+	</li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>HOME</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/">AWC Home</a></li>
+        <li class="awc_link" aria-haspopup="true" onClick=""><span>NCEP &gt;</span>
+          <ul aria-haspopup="false">
+	    <li class="awc_link"><a href="http://www.ncep.noaa.gov/">NCEP Home</a>
+            <li class="awc_link"><a href="/">Aviation (AWC)</a></li>
+            <li class="awc_link"><a href="http://www.cpc.ncep.noaa.gov">Climate (CPC)</a></li>
+            <li class="awc_link"><a href="http://www.nhc.noaa.gov">Hurricane (NHC)</a></li>
+            <li class="awc_link"><a href="http://www.emc.ncep.noaa.gov">Modeling (EMC)</a></li>
+            <li class="awc_link"><a href="http://www.opc.ncep.noaa.gov">Ocean (OPC)</a></li>
+            <li class="awc_link"><a href="http://www.nco.ncep.noaa.gov">Operations (NCO)</a></li>
+            <li class="awc_link"><a href="http://www.sec.noaa.gov">Space (SWPC)</a></li>
+            <li class="awc_link"><a href="http://www.spc.noaa.gov">Storm (SPC)</a></li>
+            <li class="awc_link"><a href="http://www.wpc.ncep.noaa.gov">Weather (WPC)</a></li>
+	  </ul>
+	</li>
+        <li class="awc_link"><a href="http://www.weather.gov/">NWS Home</a></li>
+        <li class="awc_link"><a href="http://www.noaa.gov/">NOAA Home</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>ADVISORIES</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/sigmet">SIGMET</a></li>
+        <li class="awc_link"><a href="/gairmet">G-AIRMET</a></li>
+        <li class="awc_link"><a href="/cwamis">Center Weather</a></li>
+        <li class="awc_link"><a href="/caws">Ops. Bridging &ndash; CAWS</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>FORECASTS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/convection">Convection</a></li>
+        <li class="awc_link"><a href="/turbulence">Turbulence</a></li>
+        <li class="awc_link"><a href="/icing">Icing</a></li>
+        <li class="awc_link"><a href="/windtemp">Winds/Temps</a></li>
+        <li class="awc_link"><a href="/progchart">Prog Charts</a>
+        <li class="awc_link"><a href="/taf">TAFs</a></li>
+        <li class="awc_link"><a href="/wafs">WAFS Forecasts</a></li>
+        <li class="awc_link"><a href="/areafcst">Area Forecasts</a></li>
+        <li class="awc_link"><a href="/fcstdisc">Avn. Forecast Disc.</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true" ><span>OBSERVATIONS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/airep">Aircraft Reps</a> </li>
+        <li class="awc_link"><a href="/metar">METARs</a> </li>
+        <li class="awc_link"><a href="/cva">Ceiling and Vis</a> </li>
+        <li class="awc_link"><a href="/radar">Radar</a></li>
+        <li class="awc_link"><a href="/satellite">Satellite</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>TOOLS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/flightpath">Flight Path Tool</a></li>
+        <li class="awc_link"><a href="/hemst">HEMS Tool</a></li>
+        <li class="awc_link"><a href="/dataserver">Text Data Server</a></li>
+        <li class="awc_link"><a href="/flightfolder">Flight Folder</a></li>
+        <li class="awc_link"><a href="/decisionsupport">Decision Support</a></li>
+        <li class="awc_link"><a href="/briefing">Standard Briefing</a></li>
+        <li class="awc_link"><a href="http://testbed.aviationweather.gov">Aviation Testbed</a></li>
+        <li class="awc_link"><a href="/info/links">Aviation Links</a></li>
+      </ul>
+    </li>
+        <li class="awc_link" onClick="" aria-haspopup="true" ><span>NEWS</span>
+
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/news">AWC News</a></li>
+        <li class="awc_link"><a href="https://www.facebook.com/US.NOAA.AviationWeatherCenter">Facebook</a></li>
+        <li class="awc_link"><a href="http://www.weather.gov/news">NWS News</a></li>
+        <li class="awc_link"><a href="/news/front">The Front</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>SEARCH</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link">
+	  <form method="get" action="http://search.usa.gov/search">
+	  <input type="hidden" name="v:project" value="firstgov" />
+	  <label for="query">Search For</label>
+	  <input type="text" name="query" id="query" size="12" />
+	  <input type="submit" value="Go" />
+	  <p>
+	  <input type="radio" name="affiliate" checked="checked" value="nws.noaa.gov" id="nws" />
+	  <label for="nws" class="search-scope">NWS</label>
+	  <input type="radio" name="affiliate" value="noaa.gov" id="noaa" />
+	  <label for="noaa" class="search-scope">All NOAA</label>
+	  </p>
+	  </form>
+	</li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>ABOUT</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/info">AWC</a></li>
+        <li class="awc_link"><a href="/info/legacy">Legacy</a></li>
+        <li class="awc_link"><a href="/help">Help</a></li>
+        <li class="awc_link"><a href="/info/faq">FAQ</a></li>
+        <li class="awc_link"><a href="/contact">Feedback</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>USER</span>
+    <ul aria-haspopup="false">
+        	<li class="awc_link"><a href="/user">Login</a></li>
+    	<li class="awc_link"><a href="/user/index/create">Register</a></li>
+    
+    </ul>
+    </li>
+  </ul>
+  <br style="clear:all" clear="both" />
+  </div> <!-- awc_menu -->
+</div> <!-- awc_topnav -->
+</div>
+<!-- Main content -->
+<div id="awc_main">
+<div id="awc_main_content">
+
+
+<div style="width:550px; margin-left:200px">
+<div id="title">Forecast Winds and Temps Aloft (SFO)
+<div id="help"><a href="/products/nws/info">FYI/Help</a></div></div>
+
+<form METHOD="GET" name="fltlvl"><dt id="fint-label">&#160;</dt>
+<dd id="fint-element">
+<input type="hidden" name="fint" value="06" id="fint"></dd><table width="550" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="center"><span class="timelbl">
+<label><input type="radio" name="lvl" id="lvl-lo" value="lo" checked="checked" onClick="this.form.submit()">Low</label> <label><input type="radio" name="lvl" id="lvl-hi" value="hi" onClick="this.form.submit()">High</label></span></td>
+		<td align="center"><span class="timelbl">
+<button name="FBWindsMap" id="FBWindsMap" type="button" value="FB Winds Map" onClick='location.href="/products/nws/winds/"'>FB Winds Map</button></span></td>
+		<td width="206">
+		<table width="204" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td align="center" width="38"><span class="timelbl">0800z</span></td>
+				<td align="center" width="49"><span class="timelbl">1500z</span></td>
+				<td align="center" width="58"><span class="timelbl">0000z</span></td>
+				<td align="right" width="65"><span class="timelbl">1200z</span></td>
+			</tr>
+			<tr>
+				<td width="204" colspan="4" align="center"><A
+					href="/products/nws/sanfrancisco?fint=06&lvl=lo"><img
+					src="/static/images/winds/btns/06hr.gif"
+					width="174" height="14" ALT="Clickable Image" USEMAP="#timeline"
+					NAME="btn1" align="center" border="0"></A></td>
+			</tr>
+			<tr>
+				<td width="204" colspan="4" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+					class="timelblref">1252 UTC</span></td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+</table>
+</form>
+<!-- FbWinds Time Bar IMAGE MAP -->
+<MAP NAME="timeline">
+	<AREA SHAPE=RECT COORDS="0,0,45,13"
+		HREF="/products/nws/sanfrancisco?fint=06&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0606.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="06hr Forecast">
+	<AREA SHAPE=RECT COORDS="45,0,99,13"
+		HREF="/products/nws/sanfrancisco?fint=12&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0612.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="12hr Forecast">
+	<AREA SHAPE=RECT COORDS="99,0,174,13"
+		HREF="/products/nws/sanfrancisco?fint=24&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0624.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="24hr Forecast">
+</MAP>
+<div align="left" style="margin-left: 0px;"><pre>(Extracted from FBUS31 KWNO 290804)
+FD1US1
+DATA BASED ON 290600Z    
+VALID 291200Z   FOR USE 0800-1500Z. TEMPS NEG ABV 24000
+
+FT  3000    6000    9000   12000   18000   24000  30000  34000  39000
+BIH      9900    1305+15 1411+08 2205-08 2608-21 242536 233445 233953
+BLH 2016 1807+22 1309+15 1412+07 1606-06 2105-17 221733 203842 195953
+FAT 9900 9900+22 1513+15 1517+08 1706-08 2509-21 242336 232846 233654
+FOT 0807 0806+22 0706+14 9900+08 3505-08 2808-21 261338 241048 221158
+ONT 9900 9900+23 1108+15 1114+08 9900-05 2412-18 222035 213243 203952
+RBL 1107 0805+22 1307+14 1807+08 9900-08 2710-21 261538 221048 231357
+SAC 9900 0907+23 1416+15 1519+08 9900-07 9900-21 170638 221147 231856
+SAN 0905 1110+22 1112+15 1211+08 1206-05 2308-17 231434 192842 183553
+SBA 9900 1206+22 1416+15 1415+09 9900-07 2515-19 222035 222845 223752
+SFO 9900 1010+20 1211+14 1410+09 9900-07 9900-22 200837 221547 232156
+SIY      1019+20 9900+13 9900+07 2909-09 2812-22 271437 261647 261858
+WJF      9900+23 1106+16 1311+08 9900-07 2515-18 222235 213244 213852
+AST 0316 3508+15 3006+10 3111+03 2921-12 2929-23 293339 293549 284258
+IMB              2706+09 2709+03 2816-09 2720-23 292939 293547 283957
+LKV              0805+11 9900+05 2610-09 2614-23 281837 271747 262158
+OTH 0520 0416+19 0414+12 0314+05 3213-10 3216-22 301638 271848 262558
+PDX 0507 0305+16 3507+10 3512+03 3019-12 3026-23 303039 293549 274158
+RDM      0707+15 9900+10 3307+04 3016-10 2817-22 292638 283048 263458
+GEG      2305+13 2005+06 2705-01 3023-12 2834-24 273440 273550 283958
+SEA 0111 3310+13 2910+09 3014+02 2825-13 2834-25 284139 294450 284759
+YKM 3207 3007+14 3105+08 3311+02 3021-12 2926-23 293439 283649 274957
+</pre></div>
+<table width="525" align="center" border="0" cellpadding="0"
+	cellspacing="0" align="center">
+	<tr>
+		<td width="150">&nbsp;</td>
+		<td width="168" valign="bottom">
+		<div align="center">
+		<FORM><INPUT type="button" value="FB Winds Map"
+			onClick="location.href='/products/nws/winds/'"></FORM>
+		</div>
+		</td>
+		<td width="206">&nbsp;</td>
+	</tr>
+</table>
+<br clear="both" style="clear:both;">
+
+</div> <!-- awc_main_content -->
+</div> <!-- awc_main -->
+
+<!-- Bottom Nav content -->
+<div id="awc_botnav">
+  <div id="awc_botnav_content">
+  <p style="text-align: center; font-size: 10px; color: #1150a0">
+    Page loaded:&nbsp;
+  <A HREF="http://www.time.gov">12:52 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
+  05:52 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
+  06:52 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
+  07:52 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
+  08:52 AM  Eastern
+  </p>
+  <div style="display: table-row">
+    <div style="display: table-cell; width: 100px">&nbsp;</div>
+    <div style="display: table-cell; width: 200px">
+      <h1>ADVISORIES</h1>
+      <ul>
+        <li><a href="/sigmet">SIGMET</a></li>
+        <li><a href="/gairmet">G-AIRMET</a></li>
+        <li><a href="/cwamis">Center Weather</a></li>
+        <li><a href="/caws">Ops. Bridging - CAWS</a></li>
+      </ul>
+      <h1>FORECASTS</h1>
+      <ul>
+        <li><a href="/convection">Convection</a></li>
+        <li><a href="/turbulence">Turbulence</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>FORECASTS</h1>
+      <ul>
+        <li><a href="/icing">Icing</a></li>
+        <li><a href="/windtemp">Winds/Temps</a></li>
+        <li><a href="/progchart">Prog Charts</a></li>
+        <li><a href="/taf">TAFs</a></li>
+        <li><a href="/wafs">WAFS Forecasts</a></li>
+        <li><a href="/areafcst">Area Forecasts</a></li>
+        <li><a href="/fcstdisc">Avn Forecast Disc (AFD)</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>OBSERVATIONS</h1>
+      <ul>
+        <li><a href="/airep">Aircraft Reps</a></li>
+        <li><a href="/metar">METARs</a></li>
+        <li><a href="/cva">Ceiling and Vis</a></li>
+        <li><a href="/radar">Radar</a></li>
+        <li><a href="/satellite">Satellite</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>USER TOOLS</h1>
+      <ul>
+        <li><a href="/flightpath">FPT Application</a></li>
+        <li><a href="/dataserver">Text Data Server</a></li>
+        <li><a href="/flightfolder">Flight Folder</a></li>
+        <li><a href="/decisionsupport">Decision Support</a></li>
+        <li><a href="/briefing">Standard Briefing</a></li>
+        <li><a href="http://testbed.aviationweather.gov">Aviation Testbed</a></li>
+        <li><a href="/info/links">Aviation Links</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>ABOUT US</h1>
+      <ul>
+        <li><a href="/info">AWC</a></li>
+        <li><a href="/info/legacy">Legacy</a></li>
+        <li><a href="/help">Help</a></li>
+        <li><a href="/info/faq/">FAQ</a></li>
+        <li><a href="/contact">Feedback</a></li>
+      </ul>
+    </div>
+  </div> <!-- table -->
+  </div> <!-- awc_botnav_content -->
+</div> <!-- awc_botnav -->
+
+<!-- Footer -->
+<div id="awc_footer">
+  <div id="awc_footer_content">
+
+  <div style="width:240px; float: left; text-align:left">
+    <img src="/images/layout/usa_gov.png"/>
+  </div>
+  <div style="width:260px; float: left; text-align:left">
+    <a href="http://www.commerce.gov/">US Dept of Commerce</a><br/>
+    <a href="http://www.noaa.gov/">National Oceanic and Atmospheric Administration</A><br/>
+    <A href="http://www.weather.gov/">National Weather Service</a><br/>
+    <A href="http://www.ncep.noaa.gov/"><SPAN class="gray">National Centers for Environmental Prediction</SPAN></a><BR/>
+    <A href="/">Aviation Weather Center</a><br/>
+    7220 NW 101st Terr., Room 118<br/>
+    Kansas City, MO 64153-2371<br/>
+  </div>
+  <div style="width:220px; float: left; text-align:left">
+    <a href="http://www.weather.gov/disclaimer">Disclaimer</a><br/>
+    <a href="http://www.cio.noaa.gov/services_programs/info_quality.html">Information Quality</a><br/>
+    <A href="http://www.weather.gov/glossary">Glossary</a><br/>
+    <A href="/info">About Us</a><br/>
+    <a href="mailto:ncep.awc.avwx@noaa.gov?subject=AWC WEB Page--Feedback">
+    Contact AWC</a><br/>
+  </div>
+  <div style="width:240px; float: left; text-align:left">
+    <A href="http://www.weather.gov/privacy">Privacy Policy</a><br/>
+    <A href="http://www.rdc.noaa.gov/~foia">Freedom of Information Act (FOIA)</a><br/>
+    <a href="http://www.weather.gov/careers">Career Opportunities</a><br/>
+    Server:     WOC25 <br/>
+  </div>
+  </div>  <!-- awc_footer_content -->
+</div>  <!-- awc_footer -->
+</body>
+
+</html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<!--[if lt IE 9]>
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<![endif]-->
+<base href="https://aviationweather.gov/" /><title>AWC - NCEP Winds Aloft Forecasts - SE US</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+<meta http-equiv="content-type" content="text/html; charset=utf-8" >
+<meta name="DC.language" content="en-us" scheme="DCTERMS.RFC1766" >
+<meta name="description" content="Aviation Weather Center Homepage provides comprehensive user-friendly aviation weather Text products and graphics." >
+<meta name="keywords" content="aviation, weather, icing, turbulence, convection, pirep, metar, taf, airmet, sigmet, satellite, radar, surface, wind, temperature, aloft, airplane, NEXRAD, GOES, WSR-88D, precipitation, rain, snow, sleet, thunderstorm, en-route, prognosis, chart" >
+<meta name="DC.title" content="AWC &amp;#45; NCEP Winds Aloft Forecasts - SE US" >
+<meta name="DC.description" content="AWC &amp;#45; NCEP Winds Aloft Forecasts - SE US" >
+<meta name="DC.creator" content="NOAA's National Weather Service - Aviation Weather Center Homepage" >
+<meta name="DC.date.created" content="2005-01-26" scheme="ISO8601" >
+<meta name="DC.date.reviewed" content="2005-11-29" scheme="ISO8601" >
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="/static/javascript/winds/scripts.js"></script>
+<script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<link href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" >
+<link href="/static/css/winds/winds.css" media="screen" rel="stylesheet" type="text/css" >
+<link href="/images/favicon.ico" rel="shortcut icon" >
+<link href="/images/noaa_logo.png" rel="apple-touch-icon" >
+<link href="/css/layout.css" media="" rel="stylesheet" type="text/css" >
+
+</head>
+<body >
+<div id="awc_pagewrapper">
+<!-- Top header, banner text -->
+<div id="awc_head" >
+<div id="awc_header" >
+  <div class="awc_headerarea">
+    <div class="awc_headerleft">
+      <a href="http://www.noaa.gov"><img src="/images/layout/noaa_logo.png" border="0"/></a>
+      <a href="http://www.weather.gov"><img src="/images/layout/nws_logo.png" border="0"/></a>
+    </div> <!-- awc_headerleft -->
+    <div class="awc_headertext">
+      <h1><a href="/">AVIATION WEATHER CENTER</a><span style="font-size:14px;color:#555"></span></h1>
+      <h2><a href="http://www.noaa.gov">N O A A</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <a href="http://www.weather.gov">N A T I O N A L &nbsp;&nbsp;W E A T H E R &nbsp;&nbsp;S E R V I C E</a></h2>
+      </div> <!-- awc_headertext -->
+    <a href="http://www.commerce.gov">
+    <div class="awc_headerright">
+    </div> <!-- awc_headerright -->
+    </a>
+  </div> <!-- awc_headerarea -->
+</div> <!-- awc_header -->
+<!-- Header shadow -->
+<div id="awc_header_shadow" >
+  <div id="awc_header_shadow_content" > </div>
+</div>
+<!-- AWC Top Navigation Menu -->
+<div id="awc_topnav" >
+  <div id="awc_menu">
+  <ul>
+    <li style="float: left; width: 150px; top: -5px">
+
+	<script>
+  $(document).ready(function() {
+    $("#autocomplete").autocomplete({
+        source: function( request, response ) {
+            $.ajax({
+               url: "/popups/location?format=json",
+               dataType: "json",
+               data: request,
+               success: function(data){
+                   if (data.source.redirect) {
+                       // data.redirect contains the string URL to redirect to
+                       window.location.href = data.source.redirect;
+                   }
+                   else {
+
+                       var re = $.ui.autocomplete.escapeRegex(request.term);
+                       var matcher = new RegExp( "^" + re, "i" );
+                       var a = $.grep( data.source, function(item,index){
+                           return matcher.test(item['label']);
+                           });
+
+                       response(a);
+                       }
+                   }
+
+               });
+            }
+       });
+    $("#autocomplete").tooltip({ position: { my: "right center", at: "right-115 center" } });
+  });
+  </script>
+
+ <style>
+.ui-autocomplete {
+	max-height: 100px;
+	overflow-y: auto;
+	/* prevent horizontal scrollbar */
+	overflow-x: hidden;
+}
+
+/* IE 6 doesn't support max-height
+* we use height instead, but this forces the menu to always be this tall
+*/
+* html .ui-autocomplete {
+	height: 100px;
+}
+
+.ui-autocomplete-category {
+	font-weight: bold;
+	padding: .2em .4em;
+	margin: .8em 0 .2em;
+	line-height: 1.5;
+	text-align:left;
+}
+.ui-menu-item {
+   	text-align: left;
+}
+
+#getForecast > label {
+	display: inline-block;
+	width: 5em;
+}
+
+fieldset div {
+	margin-bottom: 2em;
+}
+
+fieldset .help {
+	display: inline-block;
+}
+
+.ui-tooltip {
+	width: 210px;
+}
+</style>
+
+
+<div class="ui-widget" style="width: 160px">
+<form id="getForecast" name="getForecast" action="/popups/location/search" method="POST" >
+    <input id="autocomplete" title="Enter City/St, or Zip Code, or ICAO identifier and click Go." autocomplete="off" onclick="this.value=(this.value=='Local Forecast'?'':this.value)" value="Local Forecast" name="inputstring" style="color:rgb(153,153,153); font-size: 8pt; height: 16px; width: 100px" type="text">
+    <input id="btnSearch" value="Go" name="btnSearch" type="submit" style="font-size: 8pt; height: 24px;">
+
+</form>
+</div>
+	</li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>HOME</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/">AWC Home</a></li>
+        <li class="awc_link" aria-haspopup="true" onClick=""><span>NCEP &gt;</span>
+          <ul aria-haspopup="false">
+	    <li class="awc_link"><a href="http://www.ncep.noaa.gov/">NCEP Home</a>
+            <li class="awc_link"><a href="/">Aviation (AWC)</a></li>
+            <li class="awc_link"><a href="http://www.cpc.ncep.noaa.gov">Climate (CPC)</a></li>
+            <li class="awc_link"><a href="http://www.nhc.noaa.gov">Hurricane (NHC)</a></li>
+            <li class="awc_link"><a href="http://www.emc.ncep.noaa.gov">Modeling (EMC)</a></li>
+            <li class="awc_link"><a href="http://www.opc.ncep.noaa.gov">Ocean (OPC)</a></li>
+            <li class="awc_link"><a href="http://www.nco.ncep.noaa.gov">Operations (NCO)</a></li>
+            <li class="awc_link"><a href="http://www.sec.noaa.gov">Space (SWPC)</a></li>
+            <li class="awc_link"><a href="http://www.spc.noaa.gov">Storm (SPC)</a></li>
+            <li class="awc_link"><a href="http://www.wpc.ncep.noaa.gov">Weather (WPC)</a></li>
+	  </ul>
+	</li>
+        <li class="awc_link"><a href="http://www.weather.gov/">NWS Home</a></li>
+        <li class="awc_link"><a href="http://www.noaa.gov/">NOAA Home</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>ADVISORIES</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/sigmet">SIGMET</a></li>
+        <li class="awc_link"><a href="/gairmet">G-AIRMET</a></li>
+        <li class="awc_link"><a href="/cwamis">Center Weather</a></li>
+        <li class="awc_link"><a href="/caws">Ops. Bridging &ndash; CAWS</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>FORECASTS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/convection">Convection</a></li>
+        <li class="awc_link"><a href="/turbulence">Turbulence</a></li>
+        <li class="awc_link"><a href="/icing">Icing</a></li>
+        <li class="awc_link"><a href="/windtemp">Winds/Temps</a></li>
+        <li class="awc_link"><a href="/progchart">Prog Charts</a>
+        <li class="awc_link"><a href="/taf">TAFs</a></li>
+        <li class="awc_link"><a href="/wafs">WAFS Forecasts</a></li>
+        <li class="awc_link"><a href="/areafcst">Area Forecasts</a></li>
+        <li class="awc_link"><a href="/fcstdisc">Avn. Forecast Disc.</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true" ><span>OBSERVATIONS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/airep">Aircraft Reps</a> </li>
+        <li class="awc_link"><a href="/metar">METARs</a> </li>
+        <li class="awc_link"><a href="/cva">Ceiling and Vis</a> </li>
+        <li class="awc_link"><a href="/radar">Radar</a></li>
+        <li class="awc_link"><a href="/satellite">Satellite</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>TOOLS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/flightpath">Flight Path Tool</a></li>
+        <li class="awc_link"><a href="/hemst">HEMS Tool</a></li>
+        <li class="awc_link"><a href="/dataserver">Text Data Server</a></li>
+        <li class="awc_link"><a href="/flightfolder">Flight Folder</a></li>
+        <li class="awc_link"><a href="/decisionsupport">Decision Support</a></li>
+        <li class="awc_link"><a href="/briefing">Standard Briefing</a></li>
+        <li class="awc_link"><a href="http://testbed.aviationweather.gov">Aviation Testbed</a></li>
+        <li class="awc_link"><a href="/info/links">Aviation Links</a></li>
+      </ul>
+    </li>
+        <li class="awc_link" onClick="" aria-haspopup="true" ><span>NEWS</span>
+
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/news">AWC News</a></li>
+        <li class="awc_link"><a href="https://www.facebook.com/US.NOAA.AviationWeatherCenter">Facebook</a></li>
+        <li class="awc_link"><a href="http://www.weather.gov/news">NWS News</a></li>
+        <li class="awc_link"><a href="/news/front">The Front</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>SEARCH</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link">
+	  <form method="get" action="http://search.usa.gov/search">
+	  <input type="hidden" name="v:project" value="firstgov" />
+	  <label for="query">Search For</label>
+	  <input type="text" name="query" id="query" size="12" />
+	  <input type="submit" value="Go" />
+	  <p>
+	  <input type="radio" name="affiliate" checked="checked" value="nws.noaa.gov" id="nws" />
+	  <label for="nws" class="search-scope">NWS</label>
+	  <input type="radio" name="affiliate" value="noaa.gov" id="noaa" />
+	  <label for="noaa" class="search-scope">All NOAA</label>
+	  </p>
+	  </form>
+	</li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>ABOUT</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/info">AWC</a></li>
+        <li class="awc_link"><a href="/info/legacy">Legacy</a></li>
+        <li class="awc_link"><a href="/help">Help</a></li>
+        <li class="awc_link"><a href="/info/faq">FAQ</a></li>
+        <li class="awc_link"><a href="/contact">Feedback</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>USER</span>
+    <ul aria-haspopup="false">
+        	<li class="awc_link"><a href="/user">Login</a></li>
+    	<li class="awc_link"><a href="/user/index/create">Register</a></li>
+    
+    </ul>
+    </li>
+  </ul>
+  <br style="clear:all" clear="both" />
+  </div> <!-- awc_menu -->
+</div> <!-- awc_topnav -->
+</div>
+<!-- Main content -->
+<div id="awc_main">
+<div id="awc_main_content">
+
+
+<div style="width:550px; margin-left:200px">
+<div id="title">Forecast Winds and Temps Aloft (MIA)
+<div id="help"><a href="/products/nws/info">FYI/Help</a></div></div>
+
+<form METHOD="GET" name="fltlvl"><dt id="fint-label">&#160;</dt>
+<dd id="fint-element">
+<input type="hidden" name="fint" value="06" id="fint"></dd><table width="550" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="center"><span class="timelbl">
+<label><input type="radio" name="lvl" id="lvl-lo" value="lo" checked="checked" onClick="this.form.submit()">Low</label> <label><input type="radio" name="lvl" id="lvl-hi" value="hi" onClick="this.form.submit()">High</label></span></td>
+		<td align="center"><span class="timelbl">
+<button name="FBWindsMap" id="FBWindsMap" type="button" value="FB Winds Map" onClick='location.href="/products/nws/winds/"'>FB Winds Map</button></span></td>
+		<td width="206">
+		<table width="204" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td align="center" width="38"><span class="timelbl">0800z</span></td>
+				<td align="center" width="49"><span class="timelbl">1500z</span></td>
+				<td align="center" width="58"><span class="timelbl">0000z</span></td>
+				<td align="right" width="65"><span class="timelbl">1200z</span></td>
+			</tr>
+			<tr>
+				<td width="204" colspan="4" align="center"><A
+					href="/products/nws/miami?fint=06&lvl=lo"><img
+					src="/static/images/winds/btns/06hr.gif"
+					width="174" height="14" ALT="Clickable Image" USEMAP="#timeline"
+					NAME="btn1" align="center" border="0"></A></td>
+			</tr>
+			<tr>
+				<td width="204" colspan="4" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+					class="timelblref">1252 UTC</span></td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+</table>
+</form>
+<!-- FbWinds Time Bar IMAGE MAP -->
+<MAP NAME="timeline">
+	<AREA SHAPE=RECT COORDS="0,0,45,13"
+		HREF="/products/nws/miami?fint=06&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0606.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="06hr Forecast">
+	<AREA SHAPE=RECT COORDS="45,0,99,13"
+		HREF="/products/nws/miami?fint=12&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0612.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="12hr Forecast">
+	<AREA SHAPE=RECT COORDS="99,0,174,13"
+		HREF="/products/nws/miami?fint=24&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0624.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="24hr Forecast">
+</MAP>
+<div align="left" style="margin-left: 0px;"><pre>(Extracted from FBUS31 KWNO 290804)
+FD1US1
+DATA BASED ON 290600Z    
+VALID 291200Z   FOR USE 0800-1500Z. TEMPS NEG ABV 24000
+
+FT  3000    6000    9000   12000   18000   24000  30000  34000  39000
+EYW 9900 9900+17 2108+12 2209+06 2411-07 0611-16 052431 042942 043554
+JAX 0213 0217+17 0113+11 3612+07 3513-05 0110-15 022530 033440 044251
+MIA 2308 2312+17 2315+12 2417+06 2610-07 0106-16 031631 043142 043454
+MLB 2912 2811+15 2812+11 2911+07 3411-06 0322-15 032230 032341 043153
+PFN 3210 3309+18 3507+12 3306+06 0310-04 0317-15 022330 032339 032451
+PIE 3117 0213+16 0108+12 9900+06 0408-05 0412-14 041530 022040 033253
+TLH 2908 3307+18 3305+12 3307+06 0111-05 0313-15 041929 032439 053051
+ATL 3609 3307+18 3411+12 3309+07 3508-05 0308-15 361329 011539 061851
+CSG 3511 3409+18 3410+12 3508+07 3408-05 3612-15 011729 011939 032351
+SAV 0514 0414+16 0110+12 3511+07 3409-05 0115-15 022929 043239 054751
+HAT 1110 0807+16 0207+10 3609+06 3509-07 3510-19 024530 036041 027952
+ILM 1110 0910+16 0605+11 9900+06 3510-06 3519-18 014729 035540 025952
+RDU 1709 9900+15 9900+10 9900+06 3408-06 0323-15 013529 024240 025052
+CAE 9900 0507+16 3505+11 3209+06 3512-05 0120-15 022328 041940 033752
+CHS 0812 0515+17 0210+12 3610+07 3412-05 3616-16 023528 043940 035052
+FLO 0811 0708+16 9900+11 3206+06 3410-05 3618-16 023229 363640 024952
+GSP 9900 9900+17 3105+12 3008+06 3611-04 0320-13 031929 041039 042651
+2XG 1913 9900+16 9900+11 9900+06 3609-04 3514-15 013031 014241 033652
+</pre></div>
+<table width="525" align="center" border="0" cellpadding="0"
+	cellspacing="0" align="center">
+	<tr>
+		<td width="150">&nbsp;</td>
+		<td width="168" valign="bottom">
+		<div align="center">
+		<FORM><INPUT type="button" value="FB Winds Map"
+			onClick="location.href='/products/nws/winds/'"></FORM>
+		</div>
+		</td>
+		<td width="206">&nbsp;</td>
+	</tr>
+</table>
+<br clear="both" style="clear:both;">
+
+</div> <!-- awc_main_content -->
+</div> <!-- awc_main -->
+
+<!-- Bottom Nav content -->
+<div id="awc_botnav">
+  <div id="awc_botnav_content">
+  <p style="text-align: center; font-size: 10px; color: #1150a0">
+    Page loaded:&nbsp;
+  <A HREF="http://www.time.gov">12:52 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
+  05:52 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
+  06:52 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
+  07:52 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
+  08:52 AM  Eastern
+  </p>
+  <div style="display: table-row">
+    <div style="display: table-cell; width: 100px">&nbsp;</div>
+    <div style="display: table-cell; width: 200px">
+      <h1>ADVISORIES</h1>
+      <ul>
+        <li><a href="/sigmet">SIGMET</a></li>
+        <li><a href="/gairmet">G-AIRMET</a></li>
+        <li><a href="/cwamis">Center Weather</a></li>
+        <li><a href="/caws">Ops. Bridging - CAWS</a></li>
+      </ul>
+      <h1>FORECASTS</h1>
+      <ul>
+        <li><a href="/convection">Convection</a></li>
+        <li><a href="/turbulence">Turbulence</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>FORECASTS</h1>
+      <ul>
+        <li><a href="/icing">Icing</a></li>
+        <li><a href="/windtemp">Winds/Temps</a></li>
+        <li><a href="/progchart">Prog Charts</a></li>
+        <li><a href="/taf">TAFs</a></li>
+        <li><a href="/wafs">WAFS Forecasts</a></li>
+        <li><a href="/areafcst">Area Forecasts</a></li>
+        <li><a href="/fcstdisc">Avn Forecast Disc (AFD)</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>OBSERVATIONS</h1>
+      <ul>
+        <li><a href="/airep">Aircraft Reps</a></li>
+        <li><a href="/metar">METARs</a></li>
+        <li><a href="/cva">Ceiling and Vis</a></li>
+        <li><a href="/radar">Radar</a></li>
+        <li><a href="/satellite">Satellite</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>USER TOOLS</h1>
+      <ul>
+        <li><a href="/flightpath">FPT Application</a></li>
+        <li><a href="/dataserver">Text Data Server</a></li>
+        <li><a href="/flightfolder">Flight Folder</a></li>
+        <li><a href="/decisionsupport">Decision Support</a></li>
+        <li><a href="/briefing">Standard Briefing</a></li>
+        <li><a href="http://testbed.aviationweather.gov">Aviation Testbed</a></li>
+        <li><a href="/info/links">Aviation Links</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>ABOUT US</h1>
+      <ul>
+        <li><a href="/info">AWC</a></li>
+        <li><a href="/info/legacy">Legacy</a></li>
+        <li><a href="/help">Help</a></li>
+        <li><a href="/info/faq/">FAQ</a></li>
+        <li><a href="/contact">Feedback</a></li>
+      </ul>
+    </div>
+  </div> <!-- table -->
+  </div> <!-- awc_botnav_content -->
+</div> <!-- awc_botnav -->
+
+<!-- Footer -->
+<div id="awc_footer">
+  <div id="awc_footer_content">
+
+  <div style="width:240px; float: left; text-align:left">
+    <img src="/images/layout/usa_gov.png"/>
+  </div>
+  <div style="width:260px; float: left; text-align:left">
+    <a href="http://www.commerce.gov/">US Dept of Commerce</a><br/>
+    <a href="http://www.noaa.gov/">National Oceanic and Atmospheric Administration</A><br/>
+    <A href="http://www.weather.gov/">National Weather Service</a><br/>
+    <A href="http://www.ncep.noaa.gov/"><SPAN class="gray">National Centers for Environmental Prediction</SPAN></a><BR/>
+    <A href="/">Aviation Weather Center</a><br/>
+    7220 NW 101st Terr., Room 118<br/>
+    Kansas City, MO 64153-2371<br/>
+  </div>
+  <div style="width:220px; float: left; text-align:left">
+    <a href="http://www.weather.gov/disclaimer">Disclaimer</a><br/>
+    <a href="http://www.cio.noaa.gov/services_programs/info_quality.html">Information Quality</a><br/>
+    <A href="http://www.weather.gov/glossary">Glossary</a><br/>
+    <A href="/info">About Us</a><br/>
+    <a href="mailto:ncep.awc.avwx@noaa.gov?subject=AWC WEB Page--Feedback">
+    Contact AWC</a><br/>
+  </div>
+  <div style="width:240px; float: left; text-align:left">
+    <A href="http://www.weather.gov/privacy">Privacy Policy</a><br/>
+    <A href="http://www.rdc.noaa.gov/~foia">Freedom of Information Act (FOIA)</a><br/>
+    <a href="http://www.weather.gov/careers">Career Opportunities</a><br/>
+    Server:     WOC24 <br/>
+  </div>
+  </div>  <!-- awc_footer_content -->
+</div>  <!-- awc_footer -->
+</body>
+
+</html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<!--[if lt IE 9]>
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<![endif]-->
+<base href="https://aviationweather.gov/" /><title>AWC - NCEP Winds Aloft Forecasts - SC US</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+<meta http-equiv="content-type" content="text/html; charset=utf-8" >
+<meta name="DC.language" content="en-us" scheme="DCTERMS.RFC1766" >
+<meta name="description" content="Aviation Weather Center Homepage provides comprehensive user-friendly aviation weather Text products and graphics." >
+<meta name="keywords" content="aviation, weather, icing, turbulence, convection, pirep, metar, taf, airmet, sigmet, satellite, radar, surface, wind, temperature, aloft, airplane, NEXRAD, GOES, WSR-88D, precipitation, rain, snow, sleet, thunderstorm, en-route, prognosis, chart" >
+<meta name="DC.title" content="AWC &amp;#45; NCEP Winds Aloft Forecasts - SC US" >
+<meta name="DC.description" content="AWC &amp;#45; NCEP Winds Aloft Forecasts - SC US" >
+<meta name="DC.creator" content="NOAA's National Weather Service - Aviation Weather Center Homepage" >
+<meta name="DC.date.created" content="2005-01-26" scheme="ISO8601" >
+<meta name="DC.date.reviewed" content="2005-11-29" scheme="ISO8601" >
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="/static/javascript/winds/scripts.js"></script>
+<script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<link href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" >
+<link href="/static/css/winds/winds.css" media="screen" rel="stylesheet" type="text/css" >
+<link href="/images/favicon.ico" rel="shortcut icon" >
+<link href="/images/noaa_logo.png" rel="apple-touch-icon" >
+<link href="/css/layout.css" media="" rel="stylesheet" type="text/css" >
+
+</head>
+<body >
+<div id="awc_pagewrapper">
+<!-- Top header, banner text -->
+<div id="awc_head" >
+<div id="awc_header" >
+  <div class="awc_headerarea">
+    <div class="awc_headerleft">
+      <a href="http://www.noaa.gov"><img src="/images/layout/noaa_logo.png" border="0"/></a>
+      <a href="http://www.weather.gov"><img src="/images/layout/nws_logo.png" border="0"/></a>
+    </div> <!-- awc_headerleft -->
+    <div class="awc_headertext">
+      <h1><a href="/">AVIATION WEATHER CENTER</a><span style="font-size:14px;color:#555"></span></h1>
+      <h2><a href="http://www.noaa.gov">N O A A</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <a href="http://www.weather.gov">N A T I O N A L &nbsp;&nbsp;W E A T H E R &nbsp;&nbsp;S E R V I C E</a></h2>
+      </div> <!-- awc_headertext -->
+    <a href="http://www.commerce.gov">
+    <div class="awc_headerright">
+    </div> <!-- awc_headerright -->
+    </a>
+  </div> <!-- awc_headerarea -->
+</div> <!-- awc_header -->
+<!-- Header shadow -->
+<div id="awc_header_shadow" >
+  <div id="awc_header_shadow_content" > </div>
+</div>
+<!-- AWC Top Navigation Menu -->
+<div id="awc_topnav" >
+  <div id="awc_menu">
+  <ul>
+    <li style="float: left; width: 150px; top: -5px">
+
+	<script>
+  $(document).ready(function() {
+    $("#autocomplete").autocomplete({
+        source: function( request, response ) {
+            $.ajax({
+               url: "/popups/location?format=json",
+               dataType: "json",
+               data: request,
+               success: function(data){
+                   if (data.source.redirect) {
+                       // data.redirect contains the string URL to redirect to
+                       window.location.href = data.source.redirect;
+                   }
+                   else {
+
+                       var re = $.ui.autocomplete.escapeRegex(request.term);
+                       var matcher = new RegExp( "^" + re, "i" );
+                       var a = $.grep( data.source, function(item,index){
+                           return matcher.test(item['label']);
+                           });
+
+                       response(a);
+                       }
+                   }
+
+               });
+            }
+       });
+    $("#autocomplete").tooltip({ position: { my: "right center", at: "right-115 center" } });
+  });
+  </script>
+
+ <style>
+.ui-autocomplete {
+	max-height: 100px;
+	overflow-y: auto;
+	/* prevent horizontal scrollbar */
+	overflow-x: hidden;
+}
+
+/* IE 6 doesn't support max-height
+* we use height instead, but this forces the menu to always be this tall
+*/
+* html .ui-autocomplete {
+	height: 100px;
+}
+
+.ui-autocomplete-category {
+	font-weight: bold;
+	padding: .2em .4em;
+	margin: .8em 0 .2em;
+	line-height: 1.5;
+	text-align:left;
+}
+.ui-menu-item {
+   	text-align: left;
+}
+
+#getForecast > label {
+	display: inline-block;
+	width: 5em;
+}
+
+fieldset div {
+	margin-bottom: 2em;
+}
+
+fieldset .help {
+	display: inline-block;
+}
+
+.ui-tooltip {
+	width: 210px;
+}
+</style>
+
+
+<div class="ui-widget" style="width: 160px">
+<form id="getForecast" name="getForecast" action="/popups/location/search" method="POST" >
+    <input id="autocomplete" title="Enter City/St, or Zip Code, or ICAO identifier and click Go." autocomplete="off" onclick="this.value=(this.value=='Local Forecast'?'':this.value)" value="Local Forecast" name="inputstring" style="color:rgb(153,153,153); font-size: 8pt; height: 16px; width: 100px" type="text">
+    <input id="btnSearch" value="Go" name="btnSearch" type="submit" style="font-size: 8pt; height: 24px;">
+
+</form>
+</div>
+	</li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>HOME</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/">AWC Home</a></li>
+        <li class="awc_link" aria-haspopup="true" onClick=""><span>NCEP &gt;</span>
+          <ul aria-haspopup="false">
+	    <li class="awc_link"><a href="http://www.ncep.noaa.gov/">NCEP Home</a>
+            <li class="awc_link"><a href="/">Aviation (AWC)</a></li>
+            <li class="awc_link"><a href="http://www.cpc.ncep.noaa.gov">Climate (CPC)</a></li>
+            <li class="awc_link"><a href="http://www.nhc.noaa.gov">Hurricane (NHC)</a></li>
+            <li class="awc_link"><a href="http://www.emc.ncep.noaa.gov">Modeling (EMC)</a></li>
+            <li class="awc_link"><a href="http://www.opc.ncep.noaa.gov">Ocean (OPC)</a></li>
+            <li class="awc_link"><a href="http://www.nco.ncep.noaa.gov">Operations (NCO)</a></li>
+            <li class="awc_link"><a href="http://www.sec.noaa.gov">Space (SWPC)</a></li>
+            <li class="awc_link"><a href="http://www.spc.noaa.gov">Storm (SPC)</a></li>
+            <li class="awc_link"><a href="http://www.wpc.ncep.noaa.gov">Weather (WPC)</a></li>
+	  </ul>
+	</li>
+        <li class="awc_link"><a href="http://www.weather.gov/">NWS Home</a></li>
+        <li class="awc_link"><a href="http://www.noaa.gov/">NOAA Home</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>ADVISORIES</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/sigmet">SIGMET</a></li>
+        <li class="awc_link"><a href="/gairmet">G-AIRMET</a></li>
+        <li class="awc_link"><a href="/cwamis">Center Weather</a></li>
+        <li class="awc_link"><a href="/caws">Ops. Bridging &ndash; CAWS</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>FORECASTS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/convection">Convection</a></li>
+        <li class="awc_link"><a href="/turbulence">Turbulence</a></li>
+        <li class="awc_link"><a href="/icing">Icing</a></li>
+        <li class="awc_link"><a href="/windtemp">Winds/Temps</a></li>
+        <li class="awc_link"><a href="/progchart">Prog Charts</a>
+        <li class="awc_link"><a href="/taf">TAFs</a></li>
+        <li class="awc_link"><a href="/wafs">WAFS Forecasts</a></li>
+        <li class="awc_link"><a href="/areafcst">Area Forecasts</a></li>
+        <li class="awc_link"><a href="/fcstdisc">Avn. Forecast Disc.</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true" ><span>OBSERVATIONS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/airep">Aircraft Reps</a> </li>
+        <li class="awc_link"><a href="/metar">METARs</a> </li>
+        <li class="awc_link"><a href="/cva">Ceiling and Vis</a> </li>
+        <li class="awc_link"><a href="/radar">Radar</a></li>
+        <li class="awc_link"><a href="/satellite">Satellite</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>TOOLS</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/flightpath">Flight Path Tool</a></li>
+        <li class="awc_link"><a href="/hemst">HEMS Tool</a></li>
+        <li class="awc_link"><a href="/dataserver">Text Data Server</a></li>
+        <li class="awc_link"><a href="/flightfolder">Flight Folder</a></li>
+        <li class="awc_link"><a href="/decisionsupport">Decision Support</a></li>
+        <li class="awc_link"><a href="/briefing">Standard Briefing</a></li>
+        <li class="awc_link"><a href="http://testbed.aviationweather.gov">Aviation Testbed</a></li>
+        <li class="awc_link"><a href="/info/links">Aviation Links</a></li>
+      </ul>
+    </li>
+        <li class="awc_link" onClick="" aria-haspopup="true" ><span>NEWS</span>
+
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/news">AWC News</a></li>
+        <li class="awc_link"><a href="https://www.facebook.com/US.NOAA.AviationWeatherCenter">Facebook</a></li>
+        <li class="awc_link"><a href="http://www.weather.gov/news">NWS News</a></li>
+        <li class="awc_link"><a href="/news/front">The Front</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>SEARCH</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link">
+	  <form method="get" action="http://search.usa.gov/search">
+	  <input type="hidden" name="v:project" value="firstgov" />
+	  <label for="query">Search For</label>
+	  <input type="text" name="query" id="query" size="12" />
+	  <input type="submit" value="Go" />
+	  <p>
+	  <input type="radio" name="affiliate" checked="checked" value="nws.noaa.gov" id="nws" />
+	  <label for="nws" class="search-scope">NWS</label>
+	  <input type="radio" name="affiliate" value="noaa.gov" id="noaa" />
+	  <label for="noaa" class="search-scope">All NOAA</label>
+	  </p>
+	  </form>
+	</li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>ABOUT</span>
+      <ul aria-haspopup="false">
+        <li class="awc_link"><a href="/info">AWC</a></li>
+        <li class="awc_link"><a href="/info/legacy">Legacy</a></li>
+        <li class="awc_link"><a href="/help">Help</a></li>
+        <li class="awc_link"><a href="/info/faq">FAQ</a></li>
+        <li class="awc_link"><a href="/contact">Feedback</a></li>
+      </ul>
+    </li>
+    <li class="awc_link" onClick="" aria-haspopup="true"><span>USER</span>
+    <ul aria-haspopup="false">
+        	<li class="awc_link"><a href="/user">Login</a></li>
+    	<li class="awc_link"><a href="/user/index/create">Register</a></li>
+    
+    </ul>
+    </li>
+  </ul>
+  <br style="clear:all" clear="both" />
+  </div> <!-- awc_menu -->
+</div> <!-- awc_topnav -->
+</div>
+<!-- Main content -->
+<div id="awc_main">
+<div id="awc_main_content">
+
+
+<div style="width:550px; margin-left:200px">
+<div id="title">Forecast Winds and Temps Aloft (FTW)
+<div id="help"><a href="/products/nws/info">FYI/Help</a></div></div>
+
+<form METHOD="GET" name="fltlvl"><dt id="fint-label">&#160;</dt>
+<dd id="fint-element">
+<input type="hidden" name="fint" value="06" id="fint"></dd><table width="550" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="center"><span class="timelbl">
+<label><input type="radio" name="lvl" id="lvl-lo" value="lo" checked="checked" onClick="this.form.submit()">Low</label> <label><input type="radio" name="lvl" id="lvl-hi" value="hi" onClick="this.form.submit()">High</label></span></td>
+		<td align="center"><span class="timelbl">
+<button name="FBWindsMap" id="FBWindsMap" type="button" value="FB Winds Map" onClick='location.href="/products/nws/winds/"'>FB Winds Map</button></span></td>
+		<td width="206">
+		<table width="204" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td align="center" width="38"><span class="timelbl">0800z</span></td>
+				<td align="center" width="49"><span class="timelbl">1500z</span></td>
+				<td align="center" width="58"><span class="timelbl">0000z</span></td>
+				<td align="right" width="65"><span class="timelbl">1200z</span></td>
+			</tr>
+			<tr>
+				<td width="204" colspan="4" align="center"><A
+					href="/products/nws/ftworth?fint=06&lvl=lo"><img
+					src="/static/images/winds/btns/06hr.gif"
+					width="174" height="14" ALT="Clickable Image" USEMAP="#timeline"
+					NAME="btn1" align="center" border="0"></A></td>
+			</tr>
+			<tr>
+				<td width="204" colspan="4" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+					class="timelblref">1253 UTC</span></td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+</table>
+</form>
+<!-- FbWinds Time Bar IMAGE MAP -->
+<MAP NAME="timeline">
+	<AREA SHAPE=RECT COORDS="0,0,45,13"
+		HREF="/products/nws/ftworth?fint=06&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0606.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="06hr Forecast">
+	<AREA SHAPE=RECT COORDS="45,0,99,13"
+		HREF="/products/nws/ftworth?fint=12&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0612.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="12hr Forecast">
+	<AREA SHAPE=RECT COORDS="99,0,174,13"
+		HREF="/products/nws/ftworth?fint=24&lvl=lo"
+		onMouseover="document.images.btn1.src=tl0624.src;"
+		onMouseout="document.images.btn1.src=tl06.src;"
+		ALT="24hr Forecast">
+</MAP>
+<div align="left" style="margin-left: 0px;"><pre>(Extracted from FBUS31 KWNO 290804)
+FD1US1
+DATA BASED ON 290600Z    
+VALID 291200Z   FOR USE 0800-1500Z. TEMPS NEG ABV 24000
+
+FT  3000    6000    9000   12000   18000   24000  30000  34000  39000
+BHM 3410 3311+17 3413+12 3414+07 3308-06 0112-14 021429 021139 350951
+HSV 3210 3415+17 3617+12 0118+07 0112-05 0412-15 010829 350639 331051
+MGM 3411 3513+17 3413+12 3509+07 3506-05 3614-14 031730 031439 011551
+MOB 3406 3608+18 3606+13 9900+06 0408-05 0514-15 021630 011440 031051
+FSM 2410 2606+19 9900+13 9900+08 1310-05 1910-15 320830 990040 320651
+LIT 2810 2606+18 9900+13 9900+08 0909-05 0405-15 011330 350940 330652
+LCH 9900 1209+17 0808+12 0711+07 0410-05 0512-14 060830 070940 101052
+MSY 9900 0808+18 1009+12 1006+06 0510-04 0714-15 051030 051139 041052
+SHV 2408 2305+18 9900+13 9900+07 1013-05 1110-15 031430 040740 030651
+JAN 3309 3606+18 0108+12 0210+06 0508-04 0511-15 021030 011039 990051
+GAG      0209+22 3606+15 1607+09 2016-06 2224-16 242130 251740 201553
+OKC 2122 3005+20 0612+15 1107+09 1612-05 2216-14 222029 221240 230752
+TUL 2317 2808+19 9900+14 9900+08 1509-05 2112-15 262130 251240 240951
+BNA 3212 3416+18 3520+12 3621+07 0315-05 0612-15 031429 341238 361050
+MEM 3010 3309+19 3409+13 0208+07 0312-05 0115-15 361330 351240 990051
+TRI      9900+17 3405+11 3010+06 3611-03 0219-14 042129 031639 031852
+TYS 3007 3408+17 3410+11 3309+07 0407-04 0515-14 020630 070839 101450
+ABI      2714+21 3208+14 0610+07 1212-04 1615-14 151429 141140 151552
+AMA      0609    2608+15 1807+09 1917-05 2313-16 211531 212140 202452
+BRO 1822 1720+18 1713+13 1305+08 0811-05 0912-15 091630 112440 133653
+CLL 2216 1908+19 2105+12 9900+07 1406-04 1014-13 111430 121240 141451
+CRP 1822 1816+19 1610+13 9900+08 1011-05 1117-15 111830 111940 122352
+DAL 2116 2106+18 1605+13 1405+08 1208-04 1308-13 141030 990040 990051
+DRT 1620 1515+21 1410+15 1106+09 1310-04 1312-15 131129 141941 142452
+ELP      0205    9900+16 1408+09 1616-06 1810-16 160731 121042 132353
+HOU 2408 9900+18 9900+12 9900+07 0805-04 0815-14 091230 101440 112052
+INK      1709+21 0714+16 0817+08 1217-05 1812-15 171530 172241 162852
+LBB      9900+21 3406+15 0713+09 1710-06 2112-15 191630 192140 182452
+LRD 1731 1620+21 1412+15 1008+09 1112-05 1115-15 121530 132340 132753
+MRF              3408+16 0312+08 1315-05 1713-15 161530 152341 153152
+PSX 2014 1708+19 9900+12 9900+07 1008-04 1018-14 111730 111740 112352
+SAT 1823 1817+20 1509+14 0707+08 1210-04 1216-15 121529 131840 132352
+SPS 2221 2506+20 0606+13 1109+09 1411-05 2015-14 191730 210640 180652
+T01 9900 1405+16 9900+12 9900+07 0512-05 0616-15 081830 082040 092052
+T06 3105 1305+16 1305+12 9900+07 0511-04 0617-15 081929 082039 071552
+T07 9900 0909+17 1307+11 9900+06 0512-05 0618-15 062130 052040 062452
+4J3 2907 0307+16 0407+11 0308+06 0213-05 0418-14 032330 042639 042252
+H51 1908 9900+18 9900+12 9900+07 0815-05 0919-15 091830 101540 091653
+H52 3005 9900+16 2508+12 9900+07 0512-06 0616-16 061129 061540 072453
+H61 3105 2807+16 2708+11 2709+05 3515-05 3611-15 031330 051441 043054
+</pre></div>
+<table width="525" align="center" border="0" cellpadding="0"
+	cellspacing="0" align="center">
+	<tr>
+		<td width="150">&nbsp;</td>
+		<td width="168" valign="bottom">
+		<div align="center">
+		<FORM><INPUT type="button" value="FB Winds Map"
+			onClick="location.href='/products/nws/winds/'"></FORM>
+		</div>
+		</td>
+		<td width="206">&nbsp;</td>
+	</tr>
+</table>
+<br clear="both" style="clear:both;">
+
+</div> <!-- awc_main_content -->
+</div> <!-- awc_main -->
+
+<!-- Bottom Nav content -->
+<div id="awc_botnav">
+  <div id="awc_botnav_content">
+  <p style="text-align: center; font-size: 10px; color: #1150a0">
+    Page loaded:&nbsp;
+  <A HREF="http://www.time.gov">12:53 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
+  05:53 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
+  06:53 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
+  07:53 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
+  08:53 AM  Eastern
+  </p>
+  <div style="display: table-row">
+    <div style="display: table-cell; width: 100px">&nbsp;</div>
+    <div style="display: table-cell; width: 200px">
+      <h1>ADVISORIES</h1>
+      <ul>
+        <li><a href="/sigmet">SIGMET</a></li>
+        <li><a href="/gairmet">G-AIRMET</a></li>
+        <li><a href="/cwamis">Center Weather</a></li>
+        <li><a href="/caws">Ops. Bridging - CAWS</a></li>
+      </ul>
+      <h1>FORECASTS</h1>
+      <ul>
+        <li><a href="/convection">Convection</a></li>
+        <li><a href="/turbulence">Turbulence</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>FORECASTS</h1>
+      <ul>
+        <li><a href="/icing">Icing</a></li>
+        <li><a href="/windtemp">Winds/Temps</a></li>
+        <li><a href="/progchart">Prog Charts</a></li>
+        <li><a href="/taf">TAFs</a></li>
+        <li><a href="/wafs">WAFS Forecasts</a></li>
+        <li><a href="/areafcst">Area Forecasts</a></li>
+        <li><a href="/fcstdisc">Avn Forecast Disc (AFD)</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>OBSERVATIONS</h1>
+      <ul>
+        <li><a href="/airep">Aircraft Reps</a></li>
+        <li><a href="/metar">METARs</a></li>
+        <li><a href="/cva">Ceiling and Vis</a></li>
+        <li><a href="/radar">Radar</a></li>
+        <li><a href="/satellite">Satellite</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>USER TOOLS</h1>
+      <ul>
+        <li><a href="/flightpath">FPT Application</a></li>
+        <li><a href="/dataserver">Text Data Server</a></li>
+        <li><a href="/flightfolder">Flight Folder</a></li>
+        <li><a href="/decisionsupport">Decision Support</a></li>
+        <li><a href="/briefing">Standard Briefing</a></li>
+        <li><a href="http://testbed.aviationweather.gov">Aviation Testbed</a></li>
+        <li><a href="/info/links">Aviation Links</a></li>
+      </ul>
+    </div>
+    <div style="display: table-cell; width: 200px">
+      <h1>ABOUT US</h1>
+      <ul>
+        <li><a href="/info">AWC</a></li>
+        <li><a href="/info/legacy">Legacy</a></li>
+        <li><a href="/help">Help</a></li>
+        <li><a href="/info/faq/">FAQ</a></li>
+        <li><a href="/contact">Feedback</a></li>
+      </ul>
+    </div>
+  </div> <!-- table -->
+  </div> <!-- awc_botnav_content -->
+</div> <!-- awc_botnav -->
+
+<!-- Footer -->
+<div id="awc_footer">
+  <div id="awc_footer_content">
+
+  <div style="width:240px; float: left; text-align:left">
+    <img src="/images/layout/usa_gov.png"/>
+  </div>
+  <div style="width:260px; float: left; text-align:left">
+    <a href="http://www.commerce.gov/">US Dept of Commerce</a><br/>
+    <a href="http://www.noaa.gov/">National Oceanic and Atmospheric Administration</A><br/>
+    <A href="http://www.weather.gov/">National Weather Service</a><br/>
+    <A href="http://www.ncep.noaa.gov/"><SPAN class="gray">National Centers for Environmental Prediction</SPAN></a><BR/>
+    <A href="/">Aviation Weather Center</a><br/>
+    7220 NW 101st Terr., Room 118<br/>
+    Kansas City, MO 64153-2371<br/>
+  </div>
+  <div style="width:220px; float: left; text-align:left">
+    <a href="http://www.weather.gov/disclaimer">Disclaimer</a><br/>
+    <a href="http://www.cio.noaa.gov/services_programs/info_quality.html">Information Quality</a><br/>
+    <A href="http://www.weather.gov/glossary">Glossary</a><br/>
+    <A href="/info">About Us</a><br/>
+    <a href="mailto:ncep.awc.avwx@noaa.gov?subject=AWC WEB Page--Feedback">
+    Contact AWC</a><br/>
+  </div>
+  <div style="width:240px; float: left; text-align:left">
+    <A href="http://www.weather.gov/privacy">Privacy Policy</a><br/>
+    <A href="http://www.rdc.noaa.gov/~foia">Freedom of Information Act (FOIA)</a><br/>
+    <a href="http://www.weather.gov/careers">Career Opportunities</a><br/>
+    Server:     WOC25 <br/>
+  </div>
+  </div>  <!-- awc_footer_content -->
+</div>  <!-- awc_footer -->
+</body>
+
+</html>
