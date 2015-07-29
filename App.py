@@ -51,12 +51,6 @@ def search():
 	altitude = request.form['alt']
 	speed = request.form['speed']
 
-	msg = Message("Route planned from " + airp1 + " to " + airp2, sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com'])
-	msg.body = """
-            From: %s To: %s,
-            Speed: %s, Altitude: %s
-            """ % (airp1, airp2, speed, altitude)
-	mail.send(msg)
 	# need to get airplane parameters, store them in session
 	try: 
 		tail_num = request.form['tail_num']
@@ -92,10 +86,13 @@ def search():
 	for x in range(len(myRoute[2].courseSegs)):
 		forms.append(placeform(place=myRoute[2].courseSegs[x].to_poi.name, num=x))
 
+	msg = Message("Route planned from " + airp1 + " to " + airp2, sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com'])
+	msg.body = str(myRoute[2].courseSegs)[1:-1]
+	mail.send(msg)
+	
 	cache.set('myRoute', myRoute, timeout=300)
 	messages = myRoute[4]
-	print 'messages: ' + str(messages)
-	print len(messages)
+
 	showMsgs = False 
 	if(len(messages) is not 0): 
 		showMsgs = True
@@ -108,5 +105,5 @@ def init():
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.debug = True
+    app.debug = False
     app.run(host='0.0.0.0', port=port)

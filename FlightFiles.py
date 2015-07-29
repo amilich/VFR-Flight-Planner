@@ -137,7 +137,6 @@ class Segment:
 		elif(self.isDest or self.alt == 0):
 			self.w, self.vw = getWind(self.to_poi.name)
 		else: 
-			print 'Aloft: ' + str(self.aloft)
 			# aloft = getWindsAloft(self.from_poi.lat, self.from_poi.lon, self.alt)
 			aloft = str(self.aloft)
 			#if("9900" in str(aloft)): 
@@ -157,7 +156,6 @@ class Segment:
 			print str(e) 
 
 	def __repr__(self):
-		print str("{0:.2f}".format(self.length*km_to_nm))
 		return self.from_poi.name + " -> " + self.to_poi.name + " (" + str("{0:.2f}".format(self.length*km_to_nm)) + " mi, " + str(self.time) + " hrs); " + str(self.alt) + " @ " + str(self.tas) + " kt. GS=" + str(self.gs) + "; CH=" + str(self.hdg) + "." 
 	
 	@classmethod
@@ -525,18 +523,13 @@ class Route:
 			return 
 		currentAlt = 0
 		currentDist = 0
-		print 'data'
-		print currentDist, self.climb_dist
-		print 'done data'
 		remove = []
 		if(self.courseSegs[0].length < self.climb_dist): 
 			for x in range(len(self.courseSegs)):
 				print self.courseSegs[x].length
 				if(currentDist > self.climb_dist):
-					print 'climb is finished'
 					break
 				# still needs updating 
-				print 'need to orchestrate climb across waypoints'
 				# need to set the custom altitude of the leg 
 				# ASSUMPTION: climb distance is the LATERAL distance 
 				# courseProg = self.courseSegs[x].length 
