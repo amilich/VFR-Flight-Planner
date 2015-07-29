@@ -14,6 +14,7 @@ cache = Cache(app,config={'CACHE_TYPE': 'simple'})
 
 @app.route('/fplanner', methods = ['POST'])
 def search():
+	# render_template("flightplan.html")
 	try: 
 		airp1 = request.form['orig']
 		airp2 = request.form['dest']

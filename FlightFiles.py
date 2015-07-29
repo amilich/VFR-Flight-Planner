@@ -405,8 +405,8 @@ def createSegments(origin, destination, course, alt, tas, climb_speed = 75, desc
 	for x in range(len(landmarks)-1): # - 2 bc final in last thing?
 		if x == 0: 
 			nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], getFieldElevation(origin.name), climb_speed, True, False, x) # starting alt is field elevation 
-		elif x == len(landmarks)-2: 
-			nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], getFieldElevation(destination.name), descent_speed, False, True, x) # ending is field too
+		#elif x == len(landmarks)-2 and len(landmarks) is not 3: # we do not want field elevation here
+		#	nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], getFieldElevation(destination.name), descent_speed, False, True, x) # ending is field too
 		else: 
 			nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], alt, tas, num=x) # ending is field elevation
 		segments.append(nextLeg)
