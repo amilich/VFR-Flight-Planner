@@ -17,6 +17,9 @@ import pygmaps
 		Simple weight and balance 
 		[DONE] Elevation awareness and maps 
 
+	Possible inefficiencies: 
+		Should search for waypoints after TOC 
+
 """
 
 class Airplane: 
@@ -245,13 +248,11 @@ def getWindsAloft(lat, lon, alt):
 	for item in windLocs: 
 		item.dist = item.latlon.distance(loc.latlon)
 	sortedAirports = sorted(windLocs, key=lambda x: x.dist, reverse=False)
-	print sortedAirports
 	#dataLine = []
 	#for line in str(found).split("\n"):
 	#	if sortedAirports[0].name[1:] in line: 
 	#		dataLine = line.split()
 	dataLine = sortedAirports[0].data.split(" ")
-	print dataLine
 	alt = float(alt)
 	# print dataLine
 	# print alt
@@ -526,50 +527,39 @@ class Route:
 			return 
 		currentAlt = 0
 		currentDist = 0
-		for x in range(len(self.courseSegs)):
-			if(currentDist > self.climb_dist):
-				print 'climb is finished'
-				break
-			if(currentDist + self.courseSegs[x].length < self.climb_dist): 
+		print 'data'
+		print currentDist, self.climb_dist
+		print 'done data'
+		remove = []
+		if(self.courseSegs[0].length < self.climb_dist): 
+			for x in range(len(self.courseSegs)):
+				print self.courseSegs[x].length
+				if(currentDist > self.climb_dist):
+					print 'climb is finished'
+					break
 				# still needs updating 
 				print 'need to orchestrate climb across waypoints'
 				# need to set the custom altitude of the leg 
 				# ASSUMPTION: climb distance is the LATERAL distance 
-				courseProg = self.courseSegs[x].length 
+				# courseProg = self.courseSegs[x].length 
 				# tan(angle) = cruising_alt*0.000164579/self.climb_dist (feet to nm)
-				climb_angle = math.atan(self.cruising_alt*feet_to_nm/self.climb_dist)
-				currentAlt += self.courseSegs[x].length*math.tan(climb_angle) 
-				print currentAlt
-			else: 
-				print 'climb is within a single waypoint - need to add TOC waypoint'
-				# create a new GPS location
-				# similar to changeRoute method 
-				# need to offset it the climb distance
-				heading = self.courseSegs[x].course[1] 
-				# print heading 
-				offset = str(self.courseSegs[x].from_poi.latlon.offset(heading, self.climb_dist))
-				offsetLatLon = (float(offset.split(", ")[0]), float(offset.split(", ")[1]))
-				offsetObj = AirportDist("TOC", offsetLatLon[0], offsetLatLon[1])
-				# offsetObj.dist = offsetObj.latlon.distance(self.origin)
-				prevLandmarks = []
-				y=0
-				insert=True
-				if len(self.courseSegs) > 1: 
-					while y < len(self.courseSegs):
-						if y == x+1: 
-							prevLandmarks.append(offsetObj)	
-						prevLandmarks.append(self.courseSegs[y].from_poi)
-						y += 1
-					prevLandmarks.append(self.courseSegs[len(self.courseSegs)-1].to_poi)
-				else: 
-					prevLandmarks.append(self.origin)
-					prevLandmarks.append(offsetObj)
-					prevLandmarks.append(self.destination)
-				print prevLandmarks
-				newLandmarks = list(prevLandmarks)
-
-				self.reset(self.course, self.origin, self.destination, self.routeType, self.night, newLandmarks, self.cruising_alt, self.cruise_speed, self.climb_speed, self.climb_dist, self.gph, self.descent_speed, climb_done = True, doWeather = True)
-				return
+				# climb_angle = math.atan(self.cruising_alt*feet_to_nm/self.climb_dist)
+				# currentAlt += self.courseSegs[x].length*math.tan(climb_angle) 
+				# print currentAlt
+				currentDist += self.courseSegs[x].length
+				remove.append(x)
+		newLandmarks = [] 
+		newLandmarks.append(self.origin)
+		# now add TOC 
+		heading = self.courseSegs[0].course[1] 
+		offset = str(self.origin.latlon.offset(heading, self.climb_dist))
+		offsetLatLon = (float(offset.split(", ")[0]), float(offset.split(", ")[1]))
+		offsetObj = AirportDist("TOC", offsetLatLon[0], offsetLatLon[1])
+		newLandmarks.append(offsetObj)
+		for x in range(len(self.courseSegs)): 
+			if x not in remove: 
+				newLandmarks.append(self.courseSegs[x].to_poi)
+		self.reset(self.course, self.origin, self.destination, self.routeType, self.night, newLandmarks, self.cruising_alt, self.cruise_speed, self.climb_speed, self.climb_dist, self.gph, self.descent_speed, climb_done = True, doWeather = True)
 		return 
 
 	def calculateFuelTime(self): # fuel includes taxi; time does not
@@ -710,8 +700,8 @@ def changeRoute(r, n, p, home, dest, altitude, airspeed): # route, leg # to chan
 
 if __name__ == "__main__":
 	# testing features 
-	home = "KLAX" 
-	dest = "KSFO"
+	home = "KHPN" 
+	dest = "KGON"
 
 	a = createRoute(home, dest, 1000, 110)
 	# print a[1].courseSegs
