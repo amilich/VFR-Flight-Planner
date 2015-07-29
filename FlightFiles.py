@@ -194,35 +194,45 @@ def getWind(loc):
 			wind = (winddir, item[3:5])
 	return wind
 
-# pulls from all winds aloft sources on aviationweather.gov
-def getWindsAloft(lat, lon, alt): 
-	loc = AirportDist("windLoc", lat, lon)
-
-	# url = 'https://aviationweather.gov/products/nws/boston'
+def setWindsAloft(): 
 	urls = ['https://aviationweather.gov/products/nws/boston', 'https://aviationweather.gov/products/nws/chicago', 'https://aviationweather.gov/products/nws/saltlakecity', 'https://aviationweather.gov/products/nws/sanfrancisco', 'https://aviationweather.gov/products/nws/miami', 'https://aviationweather.gov/products/nws/ftworth']
-	found = []
+	f = open('data/aloftdata.txt','r+')
+	f.truncate()
 
 	for url in urls: 
 		page = urllib.urlopen(url)
 		page = page.read()
-		soup = BeautifulSoup(''.join(page))
-		found += soup.findAll('pre')
+		f.write(page)
 
+	f.close() 
+	return 
+
+# pulls from all winds aloft sources on aviationweather.gov
+def getWindsAloft(lat, lon, alt): 
+	loc = AirportDist("windLoc", lat, lon)
+	aloftData = ""
+	with open('data/aloftdata.txt', 'r') as wind_file:
+		content = wind_file.read()
+
+	found = []
+	soup = BeautifulSoup(''.join(content))
+	found += soup.findAll('pre')
 	windLocs = []
-	rawdata = ("FT" + str(found).split("FT")[1]).split("\n")[1:]
-	for line in rawdata:
+	for line in str(found).split("\n"):
 		if "pre" in line: 
-			break
-		airpt = str(line.split()[0])
-		latlon = getLatLon(airpt)
-		#print latlon
-		windLocs.append(AirportDist(airpt, latlon[0], latlon[1]))
+			continue
+		try: 
+			airpt = str(line.split()[0])
+			latlon = getLatLon(airpt)
+			windLocs.append(AirportDist(airpt, latlon[0], latlon[1]))
+		except:
+			continue
 	for item in windLocs: 
 		item.dist = item.latlon.distance(loc.latlon)
 
 	sortedAirports = sorted(windLocs, key=lambda x: x.dist, reverse=False)
 	dataLine = []
-	for line in rawdata: 
+	for line in str(found).split("\n"):
 		if sortedAirports[0].name[1:] in line: 
 			dataLine = line.split()
 	alt = float(alt)
@@ -420,7 +430,7 @@ class Route:
 	def __init__(self, course, origin, destination, routeType="direct", night = False, custom=[], cruising_alt=3500, cruise_speed=110, climb_speed=75, climb_dist=7, gph=10, descent_speed=90): 
 		self.reset(course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, climb_speed, climb_dist, gph, descent_speed)
 
-	def reset(self, course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, climb_speed, climb_dist, gph, descent_speed): 
+	def reset(self, course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, climb_speed, climb_dist, gph, descent_speed, climb_done=False): 
 		self.origin = origin 
 		self.destination = destination
 		self.climb_speed = climb_speed
@@ -436,10 +446,13 @@ class Route:
 		self.descent_speed = descent_speed
 		#perform route calculations
 		self.course = course 
-		if(routeType.lower() == "direct"): 
-			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, self.climb_speed, self.descent_speed, custom=custom)
-		else: 
+		if(routeType.lower() is not "direct" or climb_done): 
 			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, self.climb_speed, self.descent_speed, custom=custom, isCustom=True)
+			print 'now using customized - zipping through!'
+		else: 
+			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, self.climb_speed, self.descent_speed, custom=custom)
+			print 'using old way for some reason'
+			
 		self.calculateFuelTime()
 
 	def insertClimb(self): 
@@ -463,7 +476,7 @@ class Route:
 				currentAlt += self.courseSegs[x].length*math.tan(climb_angle) 
 				print currentAlt
 			else: 
-				print 'climb is within a single waypoint - need to add TOC wapoint'
+				print 'climb is within a single waypoint - need to add TOC waypoint'
 				# create a new GPS location
 				# similar to changeRoute method 
 				# need to offset it the climb distance
@@ -478,7 +491,6 @@ class Route:
 				insert=True
 				if len(self.courseSegs) > 1: 
 					while y < len(self.courseSegs):
-						print y, x
 						if y == x+1: 
 							prevLandmarks.append(offsetObj)	
 						prevLandmarks.append(self.courseSegs[y].from_poi)
@@ -491,7 +503,7 @@ class Route:
 				print prevLandmarks
 				newLandmarks = list(prevLandmarks)
 
-				self.reset(self.course, self.origin, self.destination, self.routeType, self.night, newLandmarks, self.cruising_alt, self.cruise_speed, self.climb_speed, self.climb_dist, self.gph, self.descent_speed)
+				self.reset(self.course, self.origin, self.destination, self.routeType, self.night, newLandmarks, self.cruising_alt, self.cruise_speed, self.climb_speed, self.climb_dist, self.gph, self.descent_speed, climb_done = True)
 				return
 		return 
 
@@ -567,12 +579,16 @@ def createRoute(home, dest, altitude, airspeed, custom=[]):
 	rType = "direct" if len(custom) == 0 else "custom"
 	route = Route(course, origin, destination, routeType=rType, custom=custom, cruising_alt=final_alt, cruise_speed=airspeed, climb_speed=75, climb_dist=7)
 
+	print 'done with the route'
+
 	noTOC = copy.copy(route)
 	route.insertClimb()
+	print 'done with climb'
 
 	messages.append("Added Top of Climb (TOC) waypoint")
 
 	# map creation
+	print 'creating map'
 	mymap = pygmaps.maps(float(ll[0]), float(ll[1]), 10)
 	mymap.addpoint(float(ll[0]), float(ll[1]))
 	path = []
@@ -631,10 +647,12 @@ if __name__ == "__main__":
 	# testing features 
 	home = "KHPN" 
 	dest = "KTEB"
+
+	setWindsAloft()
 	a = createRoute(home, dest, 1000, 110)
 	# print a[1].courseSegs
 	print a[2].courseSegs
-	num = "0"
+	#num = "0"
 	#b = changeRoute(a[1], int(num), "KLGA", home, dest, 3500, 110)
 	#print b[1].courseSegs
 	#print b[2].courseSegs
