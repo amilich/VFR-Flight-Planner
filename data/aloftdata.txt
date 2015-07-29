@@ -286,7 +286,7 @@ fieldset .help {
 			</tr>
 			<tr>
 				<td width="204" colspan="4" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-					class="timelblref">1252 UTC</span></td>
+					class="timelblref">1318 UTC</span></td>
 			</tr>
 		</table>
 		</td>
@@ -366,11 +366,11 @@ EKN      9900+16 9900+11 9900+06 3209-05 0120-13 362930 013739 364651
   <div id="awc_botnav_content">
   <p style="text-align: center; font-size: 10px; color: #1150a0">
     Page loaded:&nbsp;
-  <A HREF="http://www.time.gov">12:52 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
-  05:52 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
-  06:52 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
-  07:52 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
-  08:52 AM  Eastern
+  <A HREF="http://www.time.gov">13:18 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
+  06:18 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
+  07:18 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
+  08:18 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
+  09:18 AM  Eastern
   </p>
   <div style="display: table-row">
     <div style="display: table-cell; width: 100px">&nbsp;</div>
@@ -464,7 +464,7 @@ EKN      9900+16 9900+11 9900+06 3209-05 0120-13 362930 013739 364651
     <A href="http://www.weather.gov/privacy">Privacy Policy</a><br/>
     <A href="http://www.rdc.noaa.gov/~foia">Freedom of Information Act (FOIA)</a><br/>
     <a href="http://www.weather.gov/careers">Career Opportunities</a><br/>
-    Server:     WOC25 <br/>
+    Server:     WOC24 <br/>
   </div>
   </div>  <!-- awc_footer_content -->
 </div>  <!-- awc_footer -->
@@ -759,7 +759,7 @@ fieldset .help {
 			</tr>
 			<tr>
 				<td width="204" colspan="4" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-					class="timelblref">1252 UTC</span></td>
+					class="timelblref">1318 UTC</span></td>
 			</tr>
 		</table>
 		</td>
@@ -855,11 +855,11 @@ LSE 2928 2831+14 2642+12 2548+07 2540-04 2543-16 266530 267239 257351
   <div id="awc_botnav_content">
   <p style="text-align: center; font-size: 10px; color: #1150a0">
     Page loaded:&nbsp;
-  <A HREF="http://www.time.gov">12:52 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
-  05:52 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
-  06:52 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
-  07:52 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
-  08:52 AM  Eastern
+  <A HREF="http://www.time.gov">13:18 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
+  06:18 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
+  07:18 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
+  08:18 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
+  09:18 AM  Eastern
   </p>
   <div style="display: table-row">
     <div style="display: table-cell; width: 100px">&nbsp;</div>
@@ -1249,7 +1249,7 @@ fieldset .help {
 			</tr>
 			<tr>
 				<td width="204" colspan="4" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-					class="timelblref">1252 UTC</span></td>
+					class="timelblref">1318 UTC</span></td>
 			</tr>
 		</table>
 		</td>
@@ -1335,11 +1335,11 @@ RKS              0608    2507+05 2724-10 2737-21 265036 256145 248553
   <div id="awc_botnav_content">
   <p style="text-align: center; font-size: 10px; color: #1150a0">
     Page loaded:&nbsp;
-  <A HREF="http://www.time.gov">12:52 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
-  05:52 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
-  06:52 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
-  07:52 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
-  08:52 AM  Eastern
+  <A HREF="http://www.time.gov">13:18 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
+  06:18 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
+  07:18 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
+  08:18 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
+  09:18 AM  Eastern
   </p>
   <div style="display: table-row">
     <div style="display: table-cell; width: 100px">&nbsp;</div>
@@ -1729,7 +1729,7 @@ fieldset .help {
 			</tr>
 			<tr>
 				<td width="204" colspan="4" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-					class="timelblref">1252 UTC</span></td>
+					class="timelblref">1318 UTC</span></td>
 			</tr>
 		</table>
 		</td>
@@ -1805,11 +1805,11 @@ YKM 3207 3007+14 3105+08 3311+02 3021-12 2926-23 293439 283649 274957
   <div id="awc_botnav_content">
   <p style="text-align: center; font-size: 10px; color: #1150a0">
     Page loaded:&nbsp;
-  <A HREF="http://www.time.gov">12:52 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
-  05:52 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
-  06:52 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
-  07:52 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
-  08:52 AM  Eastern
+  <A HREF="http://www.time.gov">13:18 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
+  06:18 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
+  07:18 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
+  08:18 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
+  09:18 AM  Eastern
   </p>
   <div style="display: table-row">
     <div style="display: table-cell; width: 100px">&nbsp;</div>
@@ -2199,7 +2199,7 @@ fieldset .help {
 			</tr>
 			<tr>
 				<td width="204" colspan="4" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-					class="timelblref">1252 UTC</span></td>
+					class="timelblref">1318 UTC</span></td>
 			</tr>
 		</table>
 		</td>
@@ -2272,11 +2272,11 @@ GSP 9900 9900+17 3105+12 3008+06 3611-04 0320-13 031929 041039 042651
   <div id="awc_botnav_content">
   <p style="text-align: center; font-size: 10px; color: #1150a0">
     Page loaded:&nbsp;
-  <A HREF="http://www.time.gov">12:52 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
-  05:52 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
-  06:52 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
-  07:52 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
-  08:52 AM  Eastern
+  <A HREF="http://www.time.gov">13:18 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
+  06:18 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
+  07:18 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
+  08:18 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
+  09:18 AM  Eastern
   </p>
   <div style="display: table-row">
     <div style="display: table-cell; width: 100px">&nbsp;</div>
@@ -2666,7 +2666,7 @@ fieldset .help {
 			</tr>
 			<tr>
 				<td width="204" colspan="4" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-					class="timelblref">1253 UTC</span></td>
+					class="timelblref">1318 UTC</span></td>
 			</tr>
 		</table>
 		</td>
@@ -2761,11 +2761,11 @@ H61 3105 2807+16 2708+11 2709+05 3515-05 3611-15 031330 051441 043054
   <div id="awc_botnav_content">
   <p style="text-align: center; font-size: 10px; color: #1150a0">
     Page loaded:&nbsp;
-  <A HREF="http://www.time.gov">12:53 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
-  05:53 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
-  06:53 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
-  07:53 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
-  08:53 AM  Eastern
+  <A HREF="http://www.time.gov">13:18 UTC</A>&nbsp;&nbsp;|&nbsp;&nbsp;
+  06:18 AM  Pacific&nbsp;&nbsp;|&nbsp;&nbsp;
+  07:18 AM  Mountain&nbsp;&nbsp;|&nbsp;&nbsp;
+  08:18 AM  Central&nbsp;&nbsp;|&nbsp;&nbsp;
+  09:18 AM  Eastern
   </p>
   <div style="display: table-row">
     <div style="display: table-cell; width: 100px">&nbsp;</div>

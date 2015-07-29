@@ -92,7 +92,7 @@ class AirportDist:
 		return str(self.name) + ": " +  str(self.dist)
 
 class Segment: 
-	def __init__(self, from_poi, to_poi, true_hdg, alt, tas, isOrigin = False, isDest = False, num=0):
+	def __init__(self, from_poi, to_poi, true_hdg, alt, tas, isOrigin = False, isDest = False, num=0, aloft="0000+00"):
 		# initialize arguments 
 		self.from_poi = from_poi # Airport object 
 		self.to_poi = to_poi # Airport object 
@@ -104,6 +104,7 @@ class Segment:
 		self.isOrigin = isOrigin # Boolean 
 		self.isDest = isDest # Boolean 
 		self.num=num # integer
+		self.aloft = aloft
 		# initialize complex data
 		self.length = from_poi.latlon.distance(to_poi.latlon)*km_to_nm # important! convert to miles
 		self.magCorrect()
@@ -133,7 +134,9 @@ class Segment:
 			self.w, self.vw = getWind(self.to_poi.name)
 		else: 
 			#print 'Aloft'
-			aloft = getWindsAloft(self.from_poi.lat, self.from_poi.lon, self.alt)
+			# aloft = getWindsAloft(self.from_poi.lat, self.from_poi.lon, self.alt)
+			aloft = self.aloft
+			print 'ALOFT: ' + str(aloft)
 			self.w = 10*aloft[:2] # only 2 digits
 			self.vw = aloft[2:4]
 			self.temp = aloft[4:]
@@ -210,13 +213,16 @@ def setWindsAloft():
 # pulls from all winds aloft sources on aviationweather.gov
 def getWindsAloft(lat, lon, alt): 
 	loc = AirportDist("windLoc", lat, lon)
-	aloftData = ""
-	with open('data/aloftdata.txt', 'r') as wind_file:
-		content = wind_file.read()
 
+	# url = 'https://aviationweather.gov/products/nws/boston'
+	urls = ['https://aviationweather.gov/products/nws/boston', 'https://aviationweather.gov/products/nws/chicago', 'https://aviationweather.gov/products/nws/saltlakecity', 'https://aviationweather.gov/products/nws/sanfrancisco', 'https://aviationweather.gov/products/nws/miami', 'https://aviationweather.gov/products/nws/ftworth']
 	found = []
-	soup = BeautifulSoup(''.join(content))
-	found += soup.findAll('pre')
+
+	for url in urls: 
+		page = urllib.urlopen(url)
+		page = page.read()
+		soup = BeautifulSoup(''.join(page))
+		found += soup.findAll('pre')
 	windLocs = []
 	for line in str(found).split("\n"):
 		if "pre" in line: 
@@ -406,19 +412,29 @@ def getFieldElevation(icao):
 				alt = line.split(", ")[3]
 				return float(alt)
 
+def getMid(num): 
+	if(num%2 == 0): 
+		return int(num/2)
+	return int((num-1)/2)
+
 def createSegments(origin, destination, course, alt, tas, climb_speed = 75, descent_speed = 90, custom = [], isCustom=False): 
 	if len(custom) == 0:
 		landmarks = calculateRouteLandmarks(origin, destination, course)
 	else: 
 		landmarks = custom
 	segments = []
+	middle = len(landmarks)
+	num = getMid(len(landmarks))
+	# print len(landmarks), num
+	wAloft = getWindsAloft(landmarks[num].lat, landmarks[num].lon, alt)
+	# print "for trip: " + wAloft
 	for x in range(len(landmarks)-1): # - 2 bc final in last thing?
 		if x == 0: 
-			nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], getFieldElevation(origin.name), climb_speed, True, False, x) # starting alt is field elevation 
+			nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], getFieldElevation(origin.name), climb_speed, True, False, x, aloft=wAloft) # starting alt is field elevation 
 		#elif x == len(landmarks)-2 and len(landmarks) is not 3: # we do not want field elevation here
 		#	nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], getFieldElevation(destination.name), descent_speed, False, True, x) # ending is field too
 		else: 
-			nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], alt, tas, num=x) # ending is field elevation
+			nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], alt, tas, num=x, aloft=wAloft) # ending is field elevation
 		segments.append(nextLeg)
 		#print "done from " + landmarks[x].name + " to " + landmarks[x+1].name
 	return segments 
