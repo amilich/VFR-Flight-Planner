@@ -5,7 +5,7 @@ from geopy.distance import vincenty
 from LatLon import LatLon, Latitude, Longitude
 from geomag import mag_heading
 from BeautifulSoup import BeautifulSoup
-from Downloadmap import *
+from downloadmap import *
 from Elevations import *
 import urllib, re, sys, os, math, copy
 import pygmaps 
