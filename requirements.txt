@@ -21,7 +21,6 @@ Jinja2==2.8
 LatLon==1.0.2
 lxml==3.4.4
 MarkupSafe==0.23
-mimerender==0.5.5
 Pillow==2.9.0
 pycparser==2.14
 PyPDF2==1.25.1

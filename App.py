@@ -1,5 +1,4 @@
-from flask import Flask, render_template, g, Markup, session, request, redirect
-from flask import make_response
+from flask import Flask, render_template, g, Markup, session, request, redirect, make_response
 from flask_wtf import Form
 from flask_mail import Mail, Message
 from wtforms import StringField
@@ -9,7 +8,6 @@ from FlightFiles import *
 from flask.ext.cache import Cache 
 from forms import *
 import os
-import mimerender
 # flask cache extension; create app, cache
 
 app = Flask(__name__)
@@ -24,17 +22,12 @@ app.config['MAIL_USERNAME'] = gmail_name
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_KEY')
 mail = Mail(app)
 
-# for pdf functions
-mimerender.register_mime('pdf', ('application/pdf',))
-mimerender = mimerender.FlaskMimeRender(global_charset='UTF-8')
-
 @app.route('/savewb')
 def saveWeightBalance():
 	print 'wb'
 	return 
 
 @app.route('/saveplan', methods=['GET'])
-@mimerender(default='html', html=lambda html: html, pdf=gen_pdf, override_input_key='format')
 def savePlan(): 
 	try: 
 		print 'get'
@@ -43,14 +36,11 @@ def savePlan():
 		return "PDF generation failed."
 	map_content = str(myRoute[0])
 	
-	forms = []
-	counter = 0
-	for x in range(len(myRoute[2].courseSegs)):
-		forms.append(placeform(place=myRoute[2].courseSegs[x].to_poi.name, num=x))
-	
-	html = render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3])
-	#html = render_template('pdfroute.html', map=map_content, theRoute = myRoute[2].courseSegs, elevation=myRoute[3])
-	return { 'html': html }
+	route_pdf = gen_pdf(render_template('pdfroute.html', map=Markup(map_content, theRoute = myRoute[2].courseSegs, elevation=myRoute[3])))
+	response = make_response(route_pdf)
+	response.mimetype = 'application/pdf'
+	response.headers["Content-Disposition"] = "attachment; filename=route.pdf"
+	return response
 
 # for route changes
 @app.route('/update', methods = ['POST'])
@@ -139,5 +129,5 @@ def init():
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.debug = True
+    app.debug = True 
     app.run(host='0.0.0.0', port=port)
