@@ -511,10 +511,9 @@ class Route:
 		self.course = course 
 		if(routeType.lower() is not "direct" or climb_done): 
 			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, self.climb_speed, self.descent_speed, custom=custom, isCustom=True, doWeather=doWeather)
-			print 'now using customized - zipping through!'
+			# using custom route or route with climb
 		else: 
 			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, self.climb_speed, self.descent_speed, custom=custom, doWeather=doWeather)
-			print 'using old way for some reason'
 			
 		self.calculateFuelTime()
 
@@ -654,16 +653,13 @@ def createRoute(home, dest, altitude, airspeed, custom=[]):
 # creates a static map for PDF viewing; should use url encoder
 def makeStaticMap(segments,destination):
 	# clip art: http://images.all-free-download.com/images/graphiclarge/silhouette_plane_clip_art_15576.jpg
-	base_url = "https://maps.googleapis.com/maps/api/staticmap?zoom=8&size=500x200&maptype=terrain" 
+	base_url = "https://maps.googleapis.com/maps/api/staticmap?&size=500x200&maptype=terrain" 
 	num = 1 # number each label on map
-	for item in segments: 
-		base_url += "&markers=color:blue%%7Clabel:%s%%7C%s,%s" % (num, item.from_poi.lat, item.from_poi.lon)
-		num += 1
-	base_url += "&markers=color:blue%%7Clabel:%s%%7C%s,%s" % (num, destination.lat, destination.lon)
-
-	query_args = { 'q':'query string', 'foo':'bar' , 'foo' : 'bar2'}
-	encoded_args = urllib.urlencode(query_args)
-	print 'Encoded:', encoded_args
+	if len(segments) < 10: 
+		for item in segments: 
+			base_url += "&markers=color:blue%%7Clabel:%s%%7C%s,%s" % (num, item.from_poi.lat, item.from_poi.lon)
+			num += 1
+		base_url += "&markers=color:blue%%7Clabel:%s%%7C%s,%s" % (num, destination.lat, destination.lon)
 	# # add red path
 	base_url += "&path=color:red%7Cweight:5%7C"
 	for item in segments: 

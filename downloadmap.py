@@ -31,7 +31,7 @@ def getHtml(myMap):
 			string += ('\t\tbounds.extend(marker.position);\n')
 			string += ('\t\tmarker.setMap(map);\n')
 			string += ('\n')
-		string += ('\tmap.fitBounds(bounds);\n')
+		string += ('\t\tmap.fitBounds(bounds);\n')
 		clickable = False
 		geodesic = True
 		strokeColor = "#000000"

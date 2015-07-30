@@ -32,7 +32,6 @@ def savePlan():
 	try: 
 		myRoute = cache.get('myRoute')
 		map_content = str(makeStaticMap(myRoute[2].courseSegs, myRoute[2].destination)).replace("\n", "")
-		print map_content
 		route_pdf = gen_pdf(render_template('pdfroute.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, elevation=myRoute[3]))
 		response = make_response(route_pdf)
 		response.mimetype = 'application/pdf'
