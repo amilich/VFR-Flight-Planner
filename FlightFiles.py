@@ -15,6 +15,7 @@ import pygmaps
 		Climbs across waypoints 
 		Fuel stops (unicom, etc.)
 		Simple weight and balance 
+		Add loading page for update routes 
 		[DONE] Elevation awareness and maps 
 
 	Possible inefficiencies: 
@@ -618,7 +619,7 @@ def createRoute(home, dest, altitude, airspeed, custom=[]):
 	cruising_alt = elevation_data[0]
 	elevation_map = elevation_data[1]
 	final_alt = altitude
-	if(float(cruising_alt) > float(altitude)): 
+	if(float(cruising_alt) > float(altitude) or True): # TODO: should be if one is not even/odd etc. 
 		final_alt = cruising_alt
 		messages.append("Changed cruising altitude")
 	rType = "direct" if len(custom) == 0 else "custom"

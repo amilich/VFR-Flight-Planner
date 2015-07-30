@@ -1,12 +1,15 @@
 from flask import Flask, render_template, g, Markup, session, request, redirect
+from flask import make_response
 from flask_wtf import Form
 from flask_mail import Mail, Message
 from wtforms import StringField
 from wtforms.validators import DataRequired
+from pdf import gen_pdf
 from FlightFiles import *
+from flask.ext.cache import Cache 
 from forms import *
 import os
-from flask.ext.cache import Cache 
+import mimerender
 # flask cache extension; create app, cache
 
 app = Flask(__name__)
@@ -20,6 +23,34 @@ app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = gmail_name
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_KEY')
 mail = Mail(app)
+
+# for pdf functions
+mimerender.register_mime('pdf', ('application/pdf',))
+mimerender = mimerender.FlaskMimeRender(global_charset='UTF-8')
+
+@app.route('/savewb')
+def saveWeightBalance():
+	print 'wb'
+	return 
+
+@app.route('/saveplan', methods=['GET'])
+@mimerender(default='html', html=lambda html: html, pdf=gen_pdf, override_input_key='format')
+def savePlan(): 
+	try: 
+		print 'get'
+		myRoute = cache.get('myRoute')
+	except: 
+		return "PDF generation failed."
+	map_content = str(myRoute[0])
+	
+	forms = []
+	counter = 0
+	for x in range(len(myRoute[2].courseSegs)):
+		forms.append(placeform(place=myRoute[2].courseSegs[x].to_poi.name, num=x))
+	
+	html = render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3])
+	#html = render_template('pdfroute.html', map=map_content, theRoute = myRoute[2].courseSegs, elevation=myRoute[3])
+	return { 'html': html }
 
 # for route changes
 @app.route('/update', methods = ['POST'])
@@ -85,10 +116,6 @@ def search():
 	counter = 0
 	for x in range(len(myRoute[2].courseSegs)):
 		forms.append(placeform(place=myRoute[2].courseSegs[x].to_poi.name, num=x))
-
-	msg = Message("Route planned from " + airp1 + " to " + airp2, sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com'])
-	msg.body = str(myRoute[2].courseSegs)[1:-1]
-	mail.send(msg)
 	
 	cache.set('myRoute', myRoute, timeout=300)
 	messages = myRoute[4]
@@ -96,6 +123,13 @@ def search():
 	showMsgs = False 
 	if(len(messages) is not 0): 
 		showMsgs = True
+
+	msg = Message("Route planned from " + airp1 + " to " + airp2, sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com'])
+	msg.body = str(myRoute[2].courseSegs)[1:-1]
+	route_pdf = gen_pdf(render_template('plan.html', map="", theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = False))
+	msg.attach("route.pdf", "application/pdf", route_pdf)
+	mail.send(msg)
+
 	return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs)
 
 @app.route('/')
@@ -105,5 +139,5 @@ def init():
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.debug = False
+    app.debug = True
     app.run(host='0.0.0.0', port=port)

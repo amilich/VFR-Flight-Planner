@@ -1,0 +1,15 @@
+<center>
+Your Route
+</center>
+
+{{ elevation }}
+
+{% 
+	for item in theRoute[:-1]
+%}
+	{% for thing in item.getData() %}
+		<td> {{ thing }} </td>
+	{% endfor %}
+{% 
+	endfor 
+%} 
