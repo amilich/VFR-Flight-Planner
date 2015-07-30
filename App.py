@@ -32,15 +32,14 @@ def savePlan():
 	try: 
 		print 'get'
 		myRoute = cache.get('myRoute')
+		map_content = str(myRoute[0])
+		route_pdf = gen_pdf(render_template('pdfroute.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, elevation=myRoute[3]))
+		response = make_response(route_pdf)
+		response.mimetype = 'application/pdf'
+		response.headers["Content-Disposition"] = "attachment; filename=route.pdf"
+		return response
 	except: 
 		return "PDF generation failed."
-	map_content = str(myRoute[0])
-	
-	route_pdf = gen_pdf(render_template('pdfroute.html', map=Markup(map_content, theRoute = myRoute[2].courseSegs, elevation=myRoute[3])))
-	response = make_response(route_pdf)
-	response.mimetype = 'application/pdf'
-	response.headers["Content-Disposition"] = "attachment; filename=route.pdf"
-	return response
 
 # for route changes
 @app.route('/update', methods = ['POST'])
@@ -129,5 +128,5 @@ def init():
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.debug = True 
+    app.debug = False 
     app.run(host='0.0.0.0', port=port)

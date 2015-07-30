@@ -648,7 +648,18 @@ def createRoute(home, dest, altitude, airspeed, custom=[]):
 		# mymap.addpath(tempPath,"#000000")
 		#print item
 	mymap.addpath(path,"#4169E1")
-	return (getHtml(mymap), noTOC, route, elevation_map, messages)
+	static_map = makeStaticMap(route.courseSegs, destination, mapLL)
+
+	return (getHtml(mymap), noTOC, route, elevation_map, messages, static_map)
+
+def makeStaticMap(segments,destination, center):
+	print center 
+	base_url = "https://maps.googleapis.com/maps/api/staticmap?center=%s,%s&zoom=6&size=1000x400&maptype=terrain" % (str(center[0]), str(center[1]))
+	for item in segments: # %% escapes percent
+		base_url += "&markers=color:blue%%7Clabel:%s%%7C%s,%s" % (item.from_poi.name, item.from_poi.lat, item.from_poi.lon)
+	base_url += "&markers=color:blue%7Clabel:%s%%7C%s,%s" % (destination.name, destination.lat, destination.lon)
+	print base_url
+	return ""
 
 def getData(filename, p, prevLoc, r, allowSpaces = False):
 	potChanges = []
@@ -689,12 +700,14 @@ def changeRoute(r, n, p, home, dest, altitude, airspeed): # route, leg # to chan
 
 if __name__ == "__main__":
 	# testing features 
+	print 'start'
 	home = "KHPN" 
 	dest = "KGON"
 
 	a = createRoute(home, dest, 1000, 110)
 	# print a[1].courseSegs
 	print a[2].courseSegs
+	print a[5]
 	#num = "0"
 	#b = changeRoute(a[1], int(num), "KLGA", home, dest, 3500, 110)
 	#print b[1].courseSegs
