@@ -652,14 +652,21 @@ def createRoute(home, dest, altitude, airspeed, custom=[]):
 
 	return (getHtml(mymap), noTOC, route, elevation_map, messages, static_map)
 
+# creates a static map for PDF viewing; should use url encoder
 def makeStaticMap(segments,destination, center):
-	print center 
-	base_url = "https://maps.googleapis.com/maps/api/staticmap?center=%s,%s&zoom=6&size=1000x400&maptype=terrain" % (str(center[0]), str(center[1]))
-	for item in segments: # %% escapes percent
-		base_url += "&markers=color:blue%%7Clabel:%s%%7C%s,%s" % (item.from_poi.name, item.from_poi.lat, item.from_poi.lon)
-	base_url += "&markers=color:blue%7Clabel:%s%%7C%s,%s" % (destination.name, destination.lat, destination.lon)
-	print base_url
-	return ""
+	# clip art: http://images.all-free-download.com/images/graphiclarge/silhouette_plane_clip_art_15576.jpg
+	base_url = "https://maps.googleapis.com/maps/api/staticmap?center=%s,%s&zoom=8&size=1000x400&maptype=terrain" % (str(center[0]), str(center[1]))
+	num = 1 # number each label on map
+	for item in segments: 
+		base_url += "&markers=color:blue%%7Clabel:%s%%7C%s,%s" % (num, item.from_poi.lat, item.from_poi.lon)
+		num += 1
+	base_url += "&markers=color:blue%%7Clabel:%s%%7C%s,%s" % (num, destination.lat, destination.lon)
+	# add red path
+	base_url += "&path=color:red%7Cweight:5%7C"
+	for item in segments: 
+		base_url +=  str(item.from_poi.lat) + "," + str(item.from_poi.lon) + "%7C"
+	base_url += str(destination.lat) + ", " + str(destination.lon)
+	return base_url
 
 def getData(filename, p, prevLoc, r, allowSpaces = False):
 	potChanges = []
