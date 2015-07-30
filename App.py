@@ -30,15 +30,16 @@ def saveWeightBalance():
 @app.route('/saveplan', methods=['GET'])
 def savePlan(): 
 	try: 
-		print 'get'
 		myRoute = cache.get('myRoute')
-		map_content = str(myRoute[0])
+		map_content = str(makeStaticMap(myRoute[2].courseSegs, myRoute[2].destination)).replace("\n", "")
+		print map_content
 		route_pdf = gen_pdf(render_template('pdfroute.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, elevation=myRoute[3]))
 		response = make_response(route_pdf)
 		response.mimetype = 'application/pdf'
 		response.headers["Content-Disposition"] = "attachment; filename=route.pdf"
 		return response
-	except: 
+	except Exception, e: 
+		print str(e)
 		return "PDF generation failed."
 
 # for route changes
@@ -128,5 +129,5 @@ def init():
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.debug = False 
+    app.debug = True 
     app.run(host='0.0.0.0', port=port)

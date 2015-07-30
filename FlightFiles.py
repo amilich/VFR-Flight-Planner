@@ -648,24 +648,27 @@ def createRoute(home, dest, altitude, airspeed, custom=[]):
 		# mymap.addpath(tempPath,"#000000")
 		#print item
 	mymap.addpath(path,"#4169E1")
-	static_map = makeStaticMap(route.courseSegs, destination, mapLL)
 
-	return (getHtml(mymap), noTOC, route, elevation_map, messages, static_map)
+	return (getHtml(mymap), noTOC, route, elevation_map, messages)
 
 # creates a static map for PDF viewing; should use url encoder
-def makeStaticMap(segments,destination, center):
+def makeStaticMap(segments,destination):
 	# clip art: http://images.all-free-download.com/images/graphiclarge/silhouette_plane_clip_art_15576.jpg
-	base_url = "https://maps.googleapis.com/maps/api/staticmap?center=%s,%s&zoom=8&size=1000x400&maptype=terrain" % (str(center[0]), str(center[1]))
+	base_url = "https://maps.googleapis.com/maps/api/staticmap?zoom=8&size=500x200&maptype=terrain" 
 	num = 1 # number each label on map
 	for item in segments: 
 		base_url += "&markers=color:blue%%7Clabel:%s%%7C%s,%s" % (num, item.from_poi.lat, item.from_poi.lon)
 		num += 1
 	base_url += "&markers=color:blue%%7Clabel:%s%%7C%s,%s" % (num, destination.lat, destination.lon)
-	# add red path
+
+	query_args = { 'q':'query string', 'foo':'bar' , 'foo' : 'bar2'}
+	encoded_args = urllib.urlencode(query_args)
+	print 'Encoded:', encoded_args
+	# # add red path
 	base_url += "&path=color:red%7Cweight:5%7C"
 	for item in segments: 
 		base_url +=  str(item.from_poi.lat) + "," + str(item.from_poi.lon) + "%7C"
-	base_url += str(destination.lat) + ", " + str(destination.lon)
+	base_url += str(destination.lat) + "," + str(destination.lon)
 	return base_url
 
 def getData(filename, p, prevLoc, r, allowSpaces = False):
@@ -714,7 +717,7 @@ if __name__ == "__main__":
 	a = createRoute(home, dest, 1000, 110)
 	# print a[1].courseSegs
 	print a[2].courseSegs
-	print a[5]
+	print makeStaticMap(a[2].courseSegs, a[2].destination)
 	#num = "0"
 	#b = changeRoute(a[1], int(num), "KLGA", home, dest, 3500, 110)
 	#print b[1].courseSegs
