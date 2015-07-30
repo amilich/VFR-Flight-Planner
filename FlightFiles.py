@@ -510,8 +510,6 @@ class Route:
 		#perform route calculations
 		self.course = course 
 		if(routeType.lower() is not "direct" or climb_done): 
-			print 'custom: '
-			print custom
 			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, self.climb_speed, self.descent_speed, custom=custom, isCustom=True, doWeather=doWeather)
 			# using custom route or route with climb
 		else: 
