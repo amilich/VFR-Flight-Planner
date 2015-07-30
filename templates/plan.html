@@ -10,8 +10,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <head>
-        
+
     </head>
+
+    <span id="buttons">&nbsp;</span>
+    <script>
+        if (screen.width < 900) {
+            console.log("Screen less than 900px")
+            var routebtn = document.createElement('BUTTON');
+            routebtn.innerHTML = 'Save PDF of Route';
+            routebtn.onclick = function(){
+                window.location.href = "/saveplan"
+            }; 
+            var buttons = document.getElementById("buttons");
+            buttons.appendChild(routebtn)
+        }
+    </script>
+
     {% if showMsgs %} 
         {% for msg in messages %}
             <div class="alert alert-danger fade in" style="width:100%">
@@ -98,7 +113,7 @@
             </div>
         </div>
     </body>
-    <br><br><br><br>
+    <br><br><br>
     <footer>
         <div class="navbar navbar-inverse navbar-fixed-bottom">
             <div class="container">
