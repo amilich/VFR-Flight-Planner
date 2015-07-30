@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired
 from pdf import gen_pdf
 from FlightFiles import *
 from flask.ext.cache import Cache 
-from Forms import *
+from forms import *
 import os
 # flask cache extension; create app, cache
 
