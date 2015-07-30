@@ -84,7 +84,7 @@ class Environment:
 		return 
 
 class AirportDist:
-	def __init__(self, name, lat, lon, dist=-1, data=""):
+	def __init__(self, name, lat, lon, dist=-1, data="", setting="normal"):
 		self.name = name
 		self.dist = dist
 		self.lat = lat
@@ -92,6 +92,7 @@ class AirportDist:
 		self.priority = 0
 		self.latlon = LatLon(Latitude(lat), Longitude(lon))
 		self.data = data
+		self.setting = setting
 	def __repr__(self): 
 		return str(self.name) + ": " +  str(self.dist)
 
@@ -509,6 +510,8 @@ class Route:
 		#perform route calculations
 		self.course = course 
 		if(routeType.lower() is not "direct" or climb_done): 
+			print 'custom: '
+			print custom
 			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, self.climb_speed, self.descent_speed, custom=custom, isCustom=True, doWeather=doWeather)
 			# using custom route or route with climb
 		else: 
@@ -525,19 +528,12 @@ class Route:
 		remove = []
 		if(self.courseSegs[0].length < self.climb_dist): 
 			for x in range(len(self.courseSegs)):
-				print self.courseSegs[x].length
 				if(currentDist > self.climb_dist):
 					break
-				# still needs updating 
-				# need to set the custom altitude of the leg 
-				# ASSUMPTION: climb distance is the LATERAL distance 
-				# courseProg = self.courseSegs[x].length 
-				# tan(angle) = cruising_alt*0.000164579/self.climb_dist (feet to nm)
-				# climb_angle = math.atan(self.cruising_alt*feet_to_nm/self.climb_dist)
-				# currentAlt += self.courseSegs[x].length*math.tan(climb_angle) 
-				# print currentAlt
+				# climb distance is the LATERAL distance 
 				currentDist += self.courseSegs[x].length
-				remove.append(x)
+				if "custom" not in self.courseSegs[x].to_poi.setting: # TODO: check if this should also be from_poi
+					remove.append(x)
 		newLandmarks = [] 
 		newLandmarks.append(self.origin)
 		# now add TOC 
@@ -605,7 +601,7 @@ def getProperAlt(origin, destination, course):
 
 	return (cruise_alt, pathMap)
 
-def createRoute(home, dest, altitude, airspeed, custom=[]): 
+def createRoute(home, dest, altitude, airspeed, custom=[], changed=False): 
 	messages = []
 
 	ll = getLatLon(home)
@@ -687,21 +683,20 @@ def getData(filename, p, prevLoc, r, allowSpaces = False):
 	return potChanges
 
 def changeRoute(r, n, p, home, dest, altitude, airspeed): # route, leg # to change, where to change it to 
-	print 'changing'
 	prevLoc = r.courseSegs[n].from_poi
 	potChanges = []
 	potChanges += (getData("data/cities.txt", p, prevLoc, r, True))
 	potChanges += (getData("data/airports.txt", p, prevLoc, r, True))
 	selectedChange = sorted(potChanges, key=lambda x: x.dist, reverse=False)[0]
-	print selectedChange
 	# it will now select the closest one
 	prevLandmarks = []
 	for item in r.courseSegs: 
 		prevLandmarks.append(item.from_poi)
 	prevLandmarks.append(item.to_poi)
 	newLandmarks = list(prevLandmarks)
+	selectedChange.setting = "custom"
 	newLandmarks[n+1] = selectedChange # increment by one because you are using the TO poi (+1)
-	return createRoute(home, dest, altitude, airspeed, newLandmarks)
+	return createRoute(home, dest, altitude, airspeed, newLandmarks, True)
 
 if __name__ == "__main__":
 	# testing features 
@@ -712,11 +707,10 @@ if __name__ == "__main__":
 	a = createRoute(home, dest, 1000, 110)
 	# print a[1].courseSegs
 	print a[2].courseSegs
-	print makeStaticMap(a[2].courseSegs, a[2].destination)
-	#num = "0"
-	#b = changeRoute(a[1], int(num), "KLGA", home, dest, 3500, 110)
-	#print b[1].courseSegs
-	#print b[2].courseSegs
+	num = "0"
+	b = changeRoute(a[1], int(num), "Stamford", home, dest, 3500, 110)
+	print b[1].courseSegs
+	print b[2].courseSegs
 
 	# print "Fuel required: " + str(route.fuelRequired)
 	# print "Time required: " + str(route.time)
