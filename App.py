@@ -3,7 +3,7 @@ from flask_wtf import Form
 from flask_mail import Mail, Message
 from wtforms import StringField
 from wtforms.validators import DataRequired
-from Pdf import gen_pdf
+from pdf import gen_pdf
 from FlightFiles import *
 from flask.ext.cache import Cache 
 from Forms import *
