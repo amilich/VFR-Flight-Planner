@@ -41,7 +41,6 @@ class Airplane:
 		self.bag1_arm = bag1_arm
 		self.bag2_arm = bag2_arm
 		self.calcCG()
-		print self
 
 		# ** NOTE ** need to log the tail number in database (can be done in App.py)
 
