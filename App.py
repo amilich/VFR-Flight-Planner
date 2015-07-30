@@ -3,10 +3,10 @@ from flask_wtf import Form
 from flask_mail import Mail, Message
 from wtforms import StringField
 from wtforms.validators import DataRequired
-from pdf import gen_pdf
+from Pdf import gen_pdf
 from FlightFiles import *
 from flask.ext.cache import Cache 
-from forms import *
+from Forms import *
 import os
 # flask cache extension; create app, cache
 
@@ -129,5 +129,5 @@ def init():
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.debug = True 
+    app.debug = False 
     app.run(host='0.0.0.0', port=port)

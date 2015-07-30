@@ -14,6 +14,7 @@ def getHtml(myMap):
 		string += ('\t\t\tcenter: centerlatlng,\n')
 		string += ('\t\t\tmapTypeId: google.maps.MapTypeId.TERRAIN\n')
 		string += ('\t\t};\n')
+		string += ('\t\tvar bounds = new google.maps.LatLngBounds();\n')
 		string += ('\t\tvar map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);\n')
 		string += ('\n')
 		for point in  myMap.points:
@@ -27,9 +28,10 @@ def getHtml(myMap):
 			string += ('\t\ticon: img,\n')
 			string += ('\t\tposition: latlng\n')
 			string += ('\t\t});\n')
+			string += ('\t\tbounds.extend(marker.position);\n')
 			string += ('\t\tmarker.setMap(map);\n')
 			string += ('\n')
-
+		string += ('\tmap.fitBounds(bounds);\n')
 		clickable = False
 		geodesic = True
 		strokeColor = "#000000"
