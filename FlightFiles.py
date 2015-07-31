@@ -10,15 +10,29 @@ import urllib, re, sys, os, math, copy
 import pygmaps 
 
 """
-	TODO: 
-		Climbs across waypoints 
-		Fuel stops (unicom, etc.)
-		Simple weight and balance 
-		Add loading page for update routes 
-		[DONE] Elevation awareness and maps 
+	VFR-Flight-Planner
 
-	Possible inefficiencies: 
-		Should search for waypoints after TOC 
+	@author 	Andrew Milich 
+	@version 	0.2
+
+	This application is designed to simplify the extensive planning prior to VFR flghts. 
+	It finds cities and airports along the route to ensure a pilot remains on course, 
+	finds weather throughout the trip, and corrects for magnetic deviation in each 
+	segment. After creating an elevation map, the application will detect potential 
+	altitude hazards and suggest a new cruising altitude. A user can also perform simple 
+	weight, balance, performance, and weather calculations. 
+
+	Potential features: 
+		* Diversion airports 
+		* Fuel stops (unicom, etc.)
+		* Simple weight and balance 
+		* Add loading page for update route 
+		* [DONE] Elevation awareness and maps 
+		* [DONE] Climbs across waypoints 
+		* [DONE] Save routes as PDF 
+
+	Possible improvements: 
+		* Search for waypoints after TOC 
 
 """
 
@@ -29,7 +43,9 @@ nm_to_km = 1.852
 feet_to_nm = 0.000164579
 meters_to_feet = 3.28084
 
-# An airplane is used to store relevant information for weight and balance calculations
+"""
+An airplane is used to store relevant information for weight and balance calculations. 
+"""
 class Airplane: 
 	# ** NOTE ** for now, all data is for C172 
 	def __init__(self, tail_number, plane_type, empty_weight, empty_arm, fuel, pax1, pax2, bag1, bag2, fuel_arm=48, pax1_arm=37, pax2_arm=73, bag1_arm=95, bag2_arm=123):
@@ -76,7 +92,9 @@ class Airplane:
 			self.arm = arm 
 			self.moment = self.weight*self.arm
 
-# An environment can be used for weather, weight, balance, and performance calculations. 
+"""
+An environment can be used for weather, weight, balance, and performance calculations. 
+"""
 class Environment: 
 	# set the environment parameters from weather 
 	def __init__(self, location, temp, pres, elevation, sky_cond, visibility): 
@@ -651,7 +669,23 @@ def getProperAlt(origin, destination, course):
 
 	return (cruise_alt, pathMap)
 
-def createRoute(home, dest, altitude, airspeed, custom=[], changed=False): 
+"""
+Creates route, map data, an elevation map, and relevant messages. 
+
+@type 	home: str
+@param 	home: origin airport code 
+@type 	dest: str
+@param 	dest: destination airport code 
+@type 	altitude: float
+@param 	altitude: desired cruising altitude (may be changed by application if inappropriate)
+@type 	airspeed: float
+@param 	airspeed: desired true airspeed 
+@type 	custom: list
+@param 	custom: custom list of landmarks 
+@rtype 	tuple 
+@return route segments, map code, elevation map, and messages
+"""
+def createRoute(home, dest, altitude, airspeed, custom=[]): 
 	messages = []
 
 	ll = getLatLon(home)
@@ -737,7 +771,7 @@ def changeRoute(r, n, p, home, dest, altitude, airspeed): # route, leg # to chan
 	newLandmarks = list(prevLandmarks)
 	selectedChange.setting = "custom"
 	newLandmarks[n+1] = selectedChange # increment by one because you are using the TO poi (+1)
-	return createRoute(home, dest, altitude, airspeed, newLandmarks, True)
+	return createRoute(home, dest, altitude, airspeed, newLandmarks)
 
 if __name__ == "__main__":
 	# testing features 
