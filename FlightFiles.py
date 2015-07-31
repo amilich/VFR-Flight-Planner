@@ -53,7 +53,9 @@ class Airplane:
 	def __repr__(self):
 		return "I am an airplane of type: {" + self.plane_type + "} and CG=" + str(self.cg) + "."
 
-	# calculate the center of gravity 
+	"""
+	Calculates the center of gravity of an airpoane given each weight parameter 
+	"""
 	def calcCG(self):
 		self.weight = float(self.empty_weight) + float(self.fuel) + float(self.pax1) + float(self.pax2) + float(self.bag1) + float(self.bag2)
 		self.moment = float(self.empty_weight)*float(self.empty_arm) + float(self.fuel)*float(self.fuel_arm) + float(self.pax1)*float(self.pax1_arm) + float(self.pax2)*float(self.pax2_arm) + float(self.bag1)*float(self.bag1_arm) + float(self.bag2)*float(self.bag2_arm)
@@ -191,7 +193,14 @@ class Segment:
 		# https://en.wikipedia.org/wiki/E6B
 		return math.sqrt(math.pow(va, 2) + math.pow(vw, 2) - 2*va*vw*math.cos(math.pi*(d-w+self.calcWindCorrectionAngle(d, va, w, vw))/180))
 
-# gets the METAR information from a particular airport
+""" 
+Retreives the METAR information from a particular airport. 
+
+@type 	loc: Point_Of_Interest
+@param 	loc: Airport used to get weather
+@rtype 	str 
+@return full METAR information 
+"""
 def getWeather(loc):
 	try: 
 		url = 'http://www.aviationweather.gov/adds/metars/?station_ids=%s&std_trans=standard&chk_metars=on&hoursStr=most+recent+only&submitmet=Submit' % (loc)
@@ -203,7 +212,14 @@ def getWeather(loc):
 	except: 
 		return ""
 
-# gets the wind at an airport
+"""
+Finds the wind at a particular airport.
+
+@type 	loc: Point_Of_Interest
+@param 	loc: Airport used to get weather
+@rtype 	tuple
+@return tuple of wind direction and strength 
+"""
 def getWind(loc):
 	weather = getWeather(loc)
 	wind = ()
@@ -216,7 +232,18 @@ def getWind(loc):
 			wind = (winddir, windstrength)
 	return wind
 
-# pulls from all winds aloft sources on aviationweather.gov
+"""
+Pulls from all winds aloft sources on aviationweather.gov. 
+
+@type 	lat: float
+@param 	lon: Latitude to find winds aloft
+@type 	lat: float
+@param 	lon: Longitude to find winds aloft
+@type 	alt: float
+@param 	alt: Altitude to find winds aloft
+@rtype 	str 
+@return winds aloft (direction and velocity)
+"""
 def getWindsAloft(lat, lon, alt): 
 	loc = Point_Of_Interest("windLoc", lat, lon)
 
@@ -277,7 +304,16 @@ def getWindsAloft(lat, lon, alt):
 		print 'ret 0'
 		return "0000"
 
-# used to create general course
+"""
+Finds the distance and heading between two locations. 
+
+@type 	poi1: Point_Of_Interest
+@param 	poi1: Origin point 
+@type 	poi2: Point_Of_Interest
+@param 	poi2: Destination point 
+@rtype 	tuple
+@return distance and heading in tuple
+"""
 def getDistHeading(poi1, poi2): 
 	try: 
 		return (poi1.latlon.distance(poi2.latlon)*km_to_nm, poi1.latlon.heading_initial(poi2.latlon))
@@ -285,7 +321,14 @@ def getDistHeading(poi1, poi2):
 		'error'
 		return (float("inf"), 0) #should be out of range, but need better fix
 
-# gets latitude and longitude of airport
+"""
+Finds latitude and longitude of airport from file.
+
+@type 	icao: str 
+@param 	icao: airport code
+@rtype 	tuple
+@return latitude and longitude 
+"""
 def getLatLon(icao):
 	coords = ()
 	with open("data/airports.txt") as f: # search in all airports, but use lare ones for landmarks
@@ -324,8 +367,17 @@ def getDistancesInRange(origin, dest, course):
 			if(tempDist < math.ceil(course[0])):
 				distances.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
 	return distances 
+ 
+"""
+Calculates the difference between two headings. 
 
-# calculates the difference between two headings
+@type 	h1: float
+@param 	h1: first heading 
+@type 	h2: float
+@param 	h2: second heading
+@rtype 	tuple
+@return latitude and longitude 
+"""
 def getHeadingDiff(h1, h2): 
 	diff = h2 - h1
 	absDiff = abs(diff)
