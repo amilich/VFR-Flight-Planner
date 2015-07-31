@@ -8,7 +8,6 @@ from FlightFiles import *
 from flask.ext.cache import Cache 
 from forms import *
 import os
-# flask cache extension; create app, cache
 
 app = Flask(__name__)
 app.secret_key = 'xbf\xcb7\x0bv\xcf\xc0N\xe1\x86\x98g9\xfei\xdc\xab\xc6\x05\xff%\xd3\xdf'

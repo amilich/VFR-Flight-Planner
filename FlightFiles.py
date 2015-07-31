@@ -21,6 +21,7 @@ import pygmaps
 		Should search for waypoints after TOC 
 
 """
+
 # conversion constants
 km_to_nm = 0.539957
 km_to_miles = 0.621371
@@ -69,6 +70,12 @@ class Airplane:
 	def createWeightBalance(self):
 		return 
 
+	class Weight: 
+		def __init__(self, weight, arm): 
+			self.weight = weight 
+			self.arm = arm 
+			self.moment = self.weight*self.arm
+
 # An environment can be used for weather, weight, balance, and performance calculations. 
 class Environment: 
 	# set the environment parameters from weather 
@@ -94,7 +101,9 @@ class Environment:
 	def calcFlightConditions(self):
 		return 
 
-# A point of interest can be an airport, city, or latitude/longitude location. It is used as origin and destination info for Segments. 
+"""
+A point of interest can be an airport, city, or latitude/longitude location. It is used as origin and destination info for Segments. 
+"""
 class Point_Of_Interest:
 	def __init__(self, name, lat, lon, dist=-1, data="", setting="normal"):
 		self.name = name
@@ -108,7 +117,9 @@ class Point_Of_Interest:
 	def __repr__(self): 
 		return str(self.name) + ": " +  str(self.dist)
 
-# Segments, which comprise a route, contain individual altitudes, headings, origins, destinations, wind, and other relevant pieces of data
+"""
+Segments, which comprise a route, contain individual altitudes, headings, origins, destinations, wind, and other relevant pieces of data. 
+"""
 class Segment: 
 	def __init__(self, from_poi, to_poi, true_hdg, alt, tas, isOrigin = False, isDest = False, num=0, aloft="0000+00"):
 		# initialize arguments 
@@ -280,7 +291,7 @@ def getWindsAloft(lat, lon, alt):
 
 	dataLine = sortedAirports[0].data.split(" ")
 	alt = float(alt)
-	# information for winds aloft data 
+	# information for winds aloft data - these are the altitude thresholds for each observation 
 	# FT  3000    6000    9000   12000   18000   24000  30000  34000  39000 
 	if alt >= 0 and alt < 4500: # 3000  
 		return dataLine[1]
@@ -341,7 +352,18 @@ def getLatLon(icao):
 				continue
 	return coords 
 
-# gets the landmarks that are in range of an origin point 
+"""
+Finds the landmarks that are in range of an origin point. 
+
+@type 	origin: Point_Of_Interest
+@param 	origin: origin location 
+@type 	dest: Point_Of_Interest
+@param 	dest: destination location 
+@type 	course: tuple
+@param 	course: course heading and distance 
+@rtype 	list
+@return list of Point_Of_Interest 
+"""
 def getDistancesInRange(origin, dest, course): 
 	distances = []
 	originLoc = origin.latlon
@@ -389,7 +411,18 @@ def getHeadingDiff(h1, h2):
 		return absDiff - 360
 	return 360 - absDiff
 
-# determines if a location can be used as a subsequent landmark from a base point (ex. origin to first waypoint)
+"""
+Determines if a location can be used as a subsequent landmark from a base point (ex. origin to first waypoint). 
+
+@type 	base: Point_Of_Interest
+@param 	base: base location to check if landmark is valid 
+@type 	poi: Point_Of_Interest
+@param 	poi: landmark to check
+@type 	course: distance and heading of entire course 
+@param 	tolerance: tolerance (slowly increased) for finding landmarks 
+@rtype 	boolean 
+@return whether landmark is valid
+"""
 def isValidLandmark(base, poi, course, tolerance): 
 	l1 = base.latlon 
 	l2 = poi.latlon
@@ -504,6 +537,9 @@ def createSegments(origin, destination, course, alt, tas, climb_speed = 75, desc
 		segments.append(nextLeg)
 	return segments 
 
+"""
+A route contains a list of segments and airplane parameters replated to a particular flight. 
+"""
 class Route: 
 	def __init__(self, course, origin, destination, routeType="direct", night = False, custom=[], cruising_alt=3500, cruise_speed=110, climb_speed=75, climb_dist=7, gph=10, descent_speed=90, doWeather=True): 
 		self.reset(course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, climb_speed, climb_dist, gph, descent_speed, doWeather=doWeather)
@@ -611,7 +647,6 @@ def getProperAlt(origin, destination, course):
 	if(cruise_alt < 1500):
 		cruise_alt += 2000
 
-	# elevrange = "-500,"+str(cruise_alt)
 	pathMap = getChart(elevations)
 
 	return (cruise_alt, pathMap)
