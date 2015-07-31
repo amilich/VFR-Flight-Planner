@@ -1,4 +1,3 @@
-#from googleplaces import GooglePlaces, types, lang
 from __future__ import division
 from geopy.geocoders import Nominatim
 from geopy.distance import vincenty
