@@ -133,7 +133,6 @@ class Segment:
 		self.aloft = aloft
 		# initialize complex data
 		self.length = from_poi.latlon.distance(to_poi.latlon)*km_to_nm # important! convert to miles
-		print self.length
 		self.magCorrect()
 		self.getWind()
 		self.setCorrectedCourse()
@@ -175,7 +174,10 @@ class Segment:
 
 	def convertToString(self, num): # for custom route planning
 		try: 
-			return "<td>" + self.from_poi.name + "</td><td>&rarr;</td><td>" + "<form action=\"/update\" method=\"post\"><input type='text' value='" + self.to_poi.name + "' name=\"to\" readonly='false' ondblclick=\"this.readOnly='';\"> <input type=\"hidden\" name=\"num\" value=\"" + str(num) + "\"> </form> " + "</td><td>" + str("{0:.2f}".format(self.length*km_to_nm))+ "</td><td>" + str(self.alt) + "</td><td>" + str(self.tas) + "</td><td>" + str(self.gs) + "</td><td>" + str(self.hdg) + "</td>"
+			return "<td>" + self.from_poi.name + "</td><td>&rarr;</td><td>" + "<form action=\"/update\" method=\"post\"><input type='text' value='" + \
+			self.to_poi.name + "' name=\"to\" readonly='false' ondblclick=\"this.readOnly='';\"> <input type=\"hidden\" name=\"num\" value=\"" + \
+			str(num) + "\"> </form> " + "</td><td>" + str("{0:.2f}".format(self.length*km_to_nm))+ "</td><td>" + str(self.alt) + "</td><td>" + \
+			str(self.tas) + "</td><td>" + str(self.gs) + "</td><td>" + str(self.hdg) + "</td>"
 		except Exception,e: 
 			print str(e) 
 
@@ -451,7 +453,6 @@ def getValidLandmarks(origin, validDistances, course, tolerance):
 def prioritizeLandmarks(landmarks, origin, course): #only used by above method
 	for landmark in landmarks: 
 		if landmark.name.isupper():
-			#print 'airport'
 			landmark.priority += 8 # tweak these numbers
 		diff = abs(origin.latlon.heading_initial(landmark.latlon) - course[1])
 		if diff < 5: 
@@ -493,7 +494,14 @@ def calculateRouteLandmarks(origin, destination, course):
 		course = getDistHeading(currentLandmark, destination)
 	return routeLandmarks 
 
-# finds the field elevation of an airport
+"""
+Finds the field elevation of an airport. 
+
+@type 	icao: str 
+@param 	icao: airport code to find elevation 
+@rtype	float 
+@return the field elevation 
+"""
 def getFieldElevation(icao): 
 	with open("data/airportalt.txt") as f:
 		lines = f.readlines()
@@ -586,7 +594,6 @@ class Route:
 		newLandmarks.append(self.origin)
 		# now add TOC 
 		heading = self.courseSegs[0].course[1] 
-		print 'offset: ' + str(self.climb_dist*nm_to_km)
 		offset = str(self.origin.latlon.offset(heading, float(self.climb_dist)*nm_to_km))
 		offsetLatLon = (float(offset.split(", ")[0]), float(offset.split(", ")[1]))
 		offsetObj = Point_Of_Interest("TOC", offsetLatLon[0], offsetLatLon[1])
@@ -613,10 +620,29 @@ class Route:
 		self.fuelRequired += self.fuelTaxi
 		return 
 
-# rounds to next thousand 
+"""
+Rounds number up to nearest thousand. 
+
+@type 	num: float 
+@param 	num: number to round 
+@rtype 	float 
+@return rounded number
+"""
 def roundthousand(num):
 	return int(math.ceil(num/1000.0))*1000
 
+"""
+Finds a cruising altitude appropriate for route. 
+
+@type 	origin: Point_Of_Interest
+@param 	origin: origin location 
+@type 	dest: Point_Of_Interest
+@param 	dest: destination location 
+@type 	course: tuple
+@param 	course: course heading and distance 
+@rtype 	float
+@return proper cruising altitude 
+"""
 def getProperAlt(origin, destination, course):
 	start = str(origin.latlon)
 	end = str(destination.latlon)
@@ -758,12 +784,15 @@ if __name__ == "__main__":
 	home = "KHPN" 
 	dest = "KGON"
 
+	c = Airplane("N6228N", "C172SP", 1773.7, 41.476, 318, 400, 5, 0, 0)
+	print c
+
 	a = createRoute(home, dest, 1000, 110)
 	print a[2].courseSegs
-	num = "1"
-	b = changeRoute(a[1], int(num), "New Haven", home, dest, 3500, 110)
-	print b[1].courseSegs
-	print b[2].courseSegs
+	# num = "1"
+	# b = changeRoute(a[1], int(num), "New Haven", home, dest, 3500, 110)
+	# print b[1].courseSegs
+	# print b[2].courseSegs
 
 	# print "Fuel required: " + str(route.fuelRequired)
 	# print "Time required: " + str(route.time)
