@@ -10,29 +10,8 @@ import urllib, re, sys, os, math, copy
 import pygmaps 
 
 """
-	VFR-Flight-Planner
 
-	@author 	Andrew Milich 
-	@version 	0.2
-
-	This application is designed to simplify the extensive planning prior to VFR flghts. 
-	It finds cities and airports along the route to ensure a pilot remains on course, 
-	finds weather throughout the trip, and corrects for magnetic deviation in each 
-	segment. After creating an elevation map, the application will detect potential 
-	altitude hazards and suggest a new cruising altitude. A user can also perform simple 
-	weight, balance, performance, and weather calculations. 
-
-	Potential features: 
-		* Diversion airports 
-		* Fuel stops (unicom, etc.)
-		* Simple weight and balance 
-		* Add loading page for update route 
-		* [DONE] Elevation awareness and maps 
-		* [DONE] Climbs across waypoints 
-		* [DONE] Save routes as PDF 
-
-	Possible improvements: 
-		* Search for waypoints after TOC 
+Objects and functions necessary for route planning. 
 
 """
 
