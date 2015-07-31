@@ -3,10 +3,9 @@ from flask_wtf import Form
 from flask_mail import Mail, Message
 from wtforms import StringField
 from wtforms.validators import DataRequired
-from pdf import gen_pdf 
 from FlightFiles import *
 from flask.ext.cache import Cache 
-from forms import *
+from pdf import *
 import os
 
 """
@@ -48,11 +47,17 @@ app.config['MAIL_USERNAME'] = gmail_name
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_KEY')
 mail = Mail(app)
 
+"""
+Save weight and balance along with weather information as PDF. 
+"""
 @app.route('/savewb')
 def saveWeightBalance():
 	print 'wb'
 	return render_template('index.html')
 
+"""
+Converts flight plan page with map, elevation diagram, and table of segments into printable PDF. 
+"""
 @app.route('/saveplan', methods=['GET'])
 def savePlan(): 
 	try: 
@@ -67,7 +72,9 @@ def savePlan():
 		print str(e)
 		return "PDF generation failed."
 
-# for route changes
+"""
+After a user enters a new waypoint, this function updates the route, climb, and maps. 
+"""
 @app.route('/update', methods = ['POST'])
 def update():
 	newLoc = str(request.form['place'])
@@ -89,9 +96,12 @@ def update():
 		print str(e)
 		return '<a href="/">home</a>'
 
+"""
+Once the user submits aircraft data and basic route information, a route is generated with 
+relevant maps and displayed on the screen. 
+"""
 @app.route('/fplanner', methods = ['POST'])
 def search():
-	# render_template("flightplan.html")
 	airp1 = request.form['orig'].upper()
 	airp2 = request.form['dest'].upper()
 	altitude = request.form['alt']
@@ -124,8 +134,7 @@ def search():
 	myRoute = createRoute(airp1, airp2, altitude, speed)
 	map_content = str(myRoute[0])
 
-	forms = []
-	counter = 0
+	forms = [] # used for changing waypoints 
 	for x in range(len(myRoute[2].courseSegs)):
 		forms.append(placeform(place=myRoute[2].courseSegs[x].to_poi.name, num=x))
 	
@@ -145,12 +154,18 @@ def search():
 
 	return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs)
 
+"""
+Initialize homepage with entry form. 
+"""
 @app.route('/')
 def init():
 	form = searchform()
 	return render_template('index.html', form=form)
 
+"""
+Run app. 
+"""
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.debug = False 
+    app.debug = True 
     app.run(host='0.0.0.0', port=port)

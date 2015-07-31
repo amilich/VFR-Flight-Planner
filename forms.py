@@ -1,7 +1,9 @@
 from flask_wtf import Form
 from wtforms import StringField, TextAreaField, SubmitField, validators, HiddenField
 
-# for home search page
+"""
+Home search page form for route and aircraft information. 
+"""
 class searchform(Form):
     orig = StringField('Origin Airport:', [validators.DataRequired()], default="KHPN")
     dest = StringField('Destination Airport:', [validators.DataRequired()], default="KGON")
@@ -27,9 +29,9 @@ class searchform(Form):
     descent_speed = StringField('Descent Speed (kts):', [validators.DataRequired()], default="90")
     max_range = StringField('Maximum Range (nm):', [validators.DataRequired()], default="150")
 
-# for changing location
+"""
+Form to change waypoint location with hidden waypoint number and user identified new location. 
+"""
 class placeform(Form):
     place = StringField('Origin Airport:', [validators.DataRequired()])
     num = HiddenField("num")
-    #submit = SubmitField('Send Message')
-

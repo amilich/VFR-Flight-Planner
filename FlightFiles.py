@@ -4,15 +4,14 @@ from geopy.distance import vincenty
 from LatLon import LatLon, Latitude, Longitude
 from geomag import mag_heading
 from BeautifulSoup import BeautifulSoup
+from forms import *
 from downloadmap import *
 from Elevations import *
 import urllib, re, sys, os, math, copy
 import pygmaps 
 
 """
-
 Objects and functions necessary for route planning. 
-
 """
 
 # conversion constants

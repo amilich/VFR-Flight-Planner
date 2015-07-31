@@ -1,8 +1,10 @@
-# http://flask.pocoo.org/snippets/68/
-
 from xhtml2pdf import pisa
 from cStringIO import StringIO
 
+"""
+Generates a PDF from given content. 
+See http://flask.pocoo.org/snippets/68/. 
+"""
 def gen_pdf(content):
     pdf = StringIO()
     pisa.CreatePDF(StringIO(content.encode('utf-8')), pdf)

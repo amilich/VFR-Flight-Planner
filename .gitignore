@@ -1,24 +1,12 @@
-
+# compiled python files
 *.pyc
-
-*.pyc
-
-forms.pyc
-
-lib/python2.7/site.pyc
-
-pygmaps.pyc
 
 elevtest.py
-
-FlightFiles.pyc
 
 elevtest2.py
 
 templates/flightplan.html
 
 templates/test.html
-
-
 
 static/img/plane.png

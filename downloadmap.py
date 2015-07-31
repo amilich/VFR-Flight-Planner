@@ -1,10 +1,13 @@
 import pygmaps
 
+"""
+Given a pygmap, this function converts it into javascript. It is extremely similar 
+to the built in export function contained within pygmaps, however, instead of 
+writing to a file, this returns a string containing the encoded map. 
+"""
 def getHtml(myMap): 
 		string = "" 
 		string += ('<div>\n')
-		#string += ('<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />\n')
-		#string += ('<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>\n')
 		string += ('<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>\n')
 		string += ('<script type="text/javascript">\n')
 		string += ('\tfunction initialize() {\n')
@@ -41,9 +44,7 @@ def getHtml(myMap):
 		for path in myMap.paths:
 			if(len(path) > 2): 
 				strokeColor = "FF0000" # custom 
-			#print path
 			path = path[:-1]
-			#strokeColor = path[-1]
 			string += ('var PolylineCoordinates = [\n')
 			for coordinate in path:
 				string += ('new google.maps.LatLng(%s, %s),\n' % (coordinate[0],coordinate[1]))
