@@ -41,9 +41,12 @@ class Airplane:
 		self.bag1_arm = bag1_arm
 		self.bag2_arm = bag2_arm
 		self.calcCG()
-
 		# ** NOTE ** need to log the tail number in database (can be done in App.py)
 
+	"""
+	Print the airplane type and CG. More information could be included depending on 
+	the final layout of the weight and balance page. 
+	"""
 	def __repr__(self):
 		return "I am an airplane of type: {" + self.plane_type + "} and CG=" + str(self.cg) + "."
 
@@ -666,7 +669,19 @@ def getValidLandmarks(origin, validDistances, course, tolerance):
 			test += item.name + " "
 	return prioritizeLandmarks(finalMarks, origin, course)
 
-# prioritizes points of interests by heading difference, distance, and facility type (ex. town vs. airport)
+"""
+Prioritize the landmarks from a particular location. Prioritizes points of interests 
+by heading difference, distance, and facility type (ex. town vs. airport). 
+
+@type 	landmarks: list
+@param 	landmarks: list of landmarks 
+@type 	origin: Point_Of_Interest
+@param 	origin: origin location 
+@type 	course: tuple
+@param 	course: course heading and distance 
+@rtype 	list
+@return ordered list of Point_Of_Interest objects (high to low priority)
+"""
 def prioritizeLandmarks(landmarks, origin, course): #only used by above method
 	for landmark in landmarks: 
 		if landmark.name.isupper():
@@ -684,7 +699,18 @@ def prioritizeLandmarks(landmarks, origin, course): #only used by above method
 	sortedLandmarks = sorted(landmarks, key=lambda x: x.priority, reverse=True)
 	return sortedLandmarks
 
-# find a list of landmarks to comprise the route
+"""
+Find landmarks along duration of route. 
+
+@type 	origin: Point_Of_Interest
+@param 	origin: origin location 
+@type 	destination: Point_Of_Interest
+@param 	destination: destination location 
+@type 	course: tuple
+@param 	course: course heading and distance 
+@rtype 	list
+@return list of Point_Of_Interest objects 
+"""
 def calculateRouteLandmarks(origin, destination, course): 
 	allRelevantAirports = getDistancesInRange(origin, destination, course)
 
@@ -880,7 +906,7 @@ def getProperAlt(origin, destination, course):
 	elevations = getElevation(path)
 	# get the maximum altitude 
 	maxAlt = max(elevations)
-	# for hemispheric rule
+	# for hemispheric rule for cruising altitudes 
 	start_lat = start.split(", ")[0]
 	start_lon = start.split(", ")[1]
 	mag_hdg = mag_heading(float(course[1]), float(start_lat), float(start_lon)) # Get the magnetic heading 
@@ -1018,26 +1044,3 @@ def changeRoute(r, n, p, home, dest, altitude, airspeed): # route, leg # to chan
 	selectedChange.setting = "custom"
 	newLandmarks[n+1] = selectedChange # increment by one because you are using the TO poi (+1)
 	return createRoute(home, dest, altitude, airspeed, newLandmarks)
-
-if __name__ == "__main__":
-	# testing features 
-	print 'start'
-	home = "KHPN" 
-	dest = "KGON"
-	env = Environment(home)
-	print env
-	# c = Airplane("N6228N", "C172SP", 1773.7, 41.476, 318, 400, 5, 0, 0)
-	# print c
-
-	# a = createRoute(home, dest, 1000, 110)
-	# print a[2].courseSegs
-	# num = "1"
-	# b = changeRoute(a[1], int(num), "New Haven", home, dest, 3500, 110)
-	# print b[1].courseSegs
-	# print b[2].courseSegs
-
-	# print "Fuel required: " + str(route.fuelRequired)
-	# print "Time required: " + str(route.time)
-	# print "Route Distance: " + str(route.totalDist)
-	# for item in courseSegs: 
-	# print item.from_poi.lat, item.from_poi.lon

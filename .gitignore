@@ -10,3 +10,5 @@ templates/flightplan.html
 templates/test.html
 
 static/img/plane.png
+
+TestFlight.py

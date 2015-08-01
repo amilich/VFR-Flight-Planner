@@ -117,6 +117,7 @@ relevant maps and displayed on the screen.
 """
 @app.route('/fplanner', methods = ['POST'])
 def search():
+	# basic route information 
 	airp1 = request.form['orig'].upper()
 	airp2 = request.form['dest'].upper()
 	altitude = request.form['alt']
