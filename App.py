@@ -20,13 +20,18 @@ import os
 	finds weather throughout the trip, and corrects for magnetic deviation in each 
 	segment. After creating an elevation map, the application will detect potential 
 	altitude hazards and suggest a new cruising altitude. A user can also perform simple 
-	weight, balance, performance, and weather calculations. 
+	weight, balance, performance, and weather calculations.
+
+	Written Summer 2015.  
 
 	Potential features: 
 		* Diversion airports 
 		* Fuel stops (unicom, etc.)
 		* Simple weight and balance 
 		* Add loading page for update route 
+		* Custom airplane features dynamically transferred to weight/balance 
+		* Airplane performance statistics (at least C172SP NAV III)
+		* User friendly tutorial 
 		* [DONE] Elevation awareness and maps 
 		* [DONE] Climbs across waypoints 
 		* [DONE] Save routes as PDF 
