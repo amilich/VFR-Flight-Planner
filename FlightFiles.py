@@ -96,12 +96,6 @@ class Environment:
 		self.clouds = Environment.getClouds(self.metar)
 		self.wx = Environment.getWx(self.metar, self.clouds, self.visibility)
 		self.skyCond = Environment.getSkyCond(self.metar, self.clouds, self.metar, self.wx)
-		print self.skyCond
-		print self.clouds
-		print self.visibility
-		print self.altimeter 
-		print self.winddir, self.wind
-		print self.wx
 		return 
 
 	@classmethod 
