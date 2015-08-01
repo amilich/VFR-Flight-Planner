@@ -33,7 +33,6 @@ import os
 
 	Possible improvements: 
 		* Search for waypoints after TOC 
-
 """
 
 app = Flask(__name__)

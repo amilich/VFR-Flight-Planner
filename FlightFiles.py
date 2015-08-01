@@ -56,8 +56,11 @@ class Airplane:
 		self.cg = self.moment/self.weight
 		return 
 
+	"""
+	Returns rows of performance data formatted in HTML for use in the weight and balance PDF. 
+	"""
 	def calcPerformance(self): 
-		
+
 		return 
 
 	# calculates the maximum range for airplane ** NOTE ** must include 30 - 45 min reserve fuel 
@@ -86,7 +89,14 @@ def createEnvironment(icao):
 An environment can be used for weather, weight, balance, and performance calculations. 
 """
 class Environment: 
-	# set the environment parameters from weather 
+	"""
+	Set the environment parameters for given location. 
+
+	@type 	location: str 
+	@param 	location: airport code
+	@type 	metar: str 
+	@param 	metar: predetermined metar 
+	"""
 	def __init__(self, location, metar=""): 
 		self.location = location # A point of interest (ex. airport)
 		self.metar = metar if not metar=="" else getWeather(location) # set METAR 
@@ -109,13 +119,29 @@ class Environment:
 		# print self.temp, self.dp
 		return 
 
+	"""
+	Given METAR calculate the temperature and dewpoint. 
+
+	@type 	metar: string 
+	@param 	metar: METAR information 
+	@rType 	tuple 
+	@return temperature and dewpoint
+	"""
 	@classmethod
 	def getTempDP(cls, metar):
 		for item in metar.split(): 
 			if "/" in item: 
 				return (item.split("/")[0], item.split("/")[1])
-		return "0/0"
+		return (0, 0)
 
+	"""
+	Given METAR calculate the observation time. 
+
+	@type 	metar: string 
+	@param 	metar: METAR information 
+	@rType 	string 
+	@return the time of the METAR observation 
+	"""
 	@classmethod 
 	def getTime(cls, metar): 
 		for item in metar.split(): 
@@ -123,6 +149,18 @@ class Environment:
 				return item
 		return "000000Z"
 
+	"""
+	Given METAR return weather conditions/advisories. 
+
+	@type 	metar: string 
+	@param 	metar: METAR information 
+	@type 	clouds: string 
+	@param 	clouds: cloud conditions
+	@type 	visibility: int 
+	@param 	visibility: visibility in SM
+	@rType 	list  
+	@return list of weather advisories 
+	"""
 	@classmethod 
 	def getWx(cls, metar, clouds, visibility):
 		for item in metar.split(): 
@@ -138,8 +176,23 @@ class Environment:
 				cloudInd = x
 		if visInd + 1 == cloudInd: 
 			return ""
-		return metar.split()[visInd:cloudInd]
+		# the weather is between visibility and cloud conditions (always present)
+		return metar.split()[visInd:cloudInd] 
 
+	"""
+	Determine whether the weather is within VFR requirements. 
+
+	@type 	metar: string 
+	@param 	metar: METAR information 
+	@type 	clouds: string 
+	@param 	clouds: cloud conditions
+	@type 	visibility: int 
+	@param 	visibility: visibility in SM
+	@type 	wx: string 
+	@param 	wx: weather advisories (ex. TS = thunderstorms)
+	@rType 	string  
+	@return current weather conditions
+	"""
 	@classmethod
 	def getSkyCond(cls, metar, clouds, visibility, wx): 
 		if 'TS' in wx: 
@@ -153,12 +206,28 @@ class Environment:
 			return 'SVFR'
 		return 'IFR' # all other weather types are IFR or LIFR 
 
+	"""
+	Given METAR return the altimeter. 
+
+	@type 	metar: string 
+	@param 	metar: METAR information 
+	@rType 	float 
+	@return altimeter setting 
+	"""
 	@classmethod
 	def getAltimeter(cls, metar): 
 		for item in metar.split(): 
 			if 'A' in item[0] and item[1:].isdigit(): 
 				return float(item[1:3] + "." + item[3:5]) 
 
+	"""
+	Given METAR return the visibility. 
+
+	@type 	metar: string 
+	@param 	metar: METAR information 
+	@rType 	float 
+	@return visibility 
+	"""
 	@classmethod 
 	def getVisibility(cls, metar): 
 		for item in metar.split(): 
@@ -166,6 +235,14 @@ class Environment:
 				return int(item[:-2])
 		return 0
 
+	"""
+	Given METAR return the cloud type and ceiling. 
+
+	@type 	metar: string 
+	@param 	metar: METAR information 
+	@rType 	float 
+	@return cloud conditions
+	"""
 	@classmethod 
 	def getClouds(cls, metar):
 		for item in metar.split(): 
@@ -174,9 +251,17 @@ class Environment:
 				return item 
 		return "OVC000"
 
+	"""
+	Calculate the pressure altitude. 
+
+	@type 	elev: float 
+	@param 	elev: field elevation
+	@rType 	float 
+	@return the pressure altitude
+	"""
 	@classmethod 
 	def getPA(cls, elev, altimeter):
-		press_diff = (altimeter - 29.92)*1000
+		press_diff = (altimeter - 29.92)*1000 # simple pressure altitude formula 
 		return float(elev + press_diff)
 
 	""" 
@@ -195,6 +280,9 @@ class Environment:
 		ISA = 15 - math.floor(float(alt)/1000)*2
 		return float(PA + 120*(float(temp)-ISA))
 
+	"""
+	Returns METAR (with almost all necessary information).  
+	"""
 	def __repr__(self):
 		return self.metar 
 
