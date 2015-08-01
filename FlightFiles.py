@@ -328,27 +328,35 @@ class Segment:
 		# time
 		self.time = self.length/self.gs # distance/rate=time
 
-	# correct for magnetic deviation
+	"""
+	Correct for magnetic deviation. 
+	"""
 	def magCorrect(self): 
 		self.mag_hdg = mag_heading(float(self.true_hdg), float(self.from_poi.lat), float(self.from_poi.lon)) # Get the magnetic heading 
 
-	# calculates and sets wind correction angle
+	"""
+	Calculates and sets wind correction angle. 
+	"""
 	def setCorrectedCourse(self): 
 		wca = Segment.calcWindCorrectionAngle(self.true_hdg, self.tas, self.w, self.vw)
 		self.hdg = self.mag_hdg + wca
 		return
 
-	# calculates ground speed
+	"""
+	Calculates ground speed. 
+	"""
 	def setGS(self):
 		self.gs = Segment.calcGroundSpeed(self.true_hdg, self.tas, self.w, self.vw)
 
+	""" 
+	Gets the wind for the segment. 
+	"""
 	def getWind(self): 
 		if(self.isOrigin or self.alt == 0): 
 			self.w, self.vw = getWind(self.from_poi.name)
 		elif(self.isDest or self.alt == 0):
 			self.w, self.vw = getWind(self.to_poi.name)
 		else: 
-			# aloft = getWindsAloft(self.from_poi.lat, self.from_poi.lon, self.alt)
 			aloft = str(self.aloft)
 			#if("9900" in str(aloft)): 
 			#	aloft = "0000+00"
@@ -357,9 +365,20 @@ class Segment:
 			self.temp = aloft[4:]
 		return 
 
+	""" 
+	Gets segment data to display to user. 
+	"""
 	def getData(self):
 		return [self.from_poi.name, self.to_poi.name, str("{0:.2f}".format(self.length)), str(self.alt), str(self.tas), str(self.gs), str(self.hdg)]
 
+	"""
+	Converts segment to table entry. 
+
+	@type 	num: int 
+	@param 	num: the segment number (used for form) 
+	@rtype 	string 
+	@return string representation of segment 
+	"""
 	def convertToString(self, num): # for custom route planning
 		try: 
 			return "<td>" + self.from_poi.name + "</td><td>&rarr;</td><td>" + "<form action=\"/update\" method=\"post\"><input type='text' value='" + \
@@ -369,6 +388,9 @@ class Segment:
 		except Exception,e: 
 			print str(e) 
 
+	"""
+	Visual representation of segment. 
+	"""
 	def __repr__(self):
 		return self.from_poi.name + " -> " + self.to_poi.name + " (" + str("{0:.2f}".format(self.length*km_to_nm)) + " mi, " + str(self.time) + " hrs); " + str(self.alt) + " @ " + str(self.tas) + " kt. GS=" + str(self.gs) + "; CH=" + str(self.hdg) + "." 
 	
@@ -705,8 +727,14 @@ def getFieldElevation(icao):
 				alt = line.split(", ")[3]
 				return float(alt)
 
-# finds a rough midpoint/median of a set of numbers
-# used to center map locations
+"""
+Finds a rough midpoint/median of a set of numbers - used to center map locations. 
+
+@type 	num: int 
+@param 	num: the length of the list 
+@rtype 	int 
+@return an index for the center
+"""
 def getMid(num): 
 	if(num%2 == 0): 
 		return int(num/2)
@@ -769,7 +797,10 @@ class Route:
 				self.courseSegs.remove(seg)
 		self.calculateFuelTime()
 
-	# takes a route and puts a climb in it - TODO: do before creating route
+	"""
+	Takes a route and puts a climb in it 
+		* TODO: insert climb before creating route. 
+	"""
 	def insertClimb(self): 
 		if(self.course[0] < self.climb_dist): # someone 
 			self.errors.append("Climb distance longer than route. Ignoring climb parameters.")
@@ -799,6 +830,10 @@ class Route:
 		self.reset(self.course, self.origin, self.destination, self.routeType, self.night, newLandmarks, self.cruising_alt, self.cruise_speed, self.climb_speed, self.climb_dist, self.gph, self.descent_speed, climb_done = True, doWeather = True)
 		return 
 
+	"""
+	Calculates necessary amount of fuel for a flight. 
+		* TODO: this method should be in Airplane class
+	"""
 	def calculateFuelTime(self): # fuel includes taxi; time does not
 		# needs refinement 
 		self.fuelRequired = 0
@@ -923,8 +958,19 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[]):
 	mymap.addpath(path,"#4169E1")
 
 	return (getHtml(mymap), noTOC, route, elevation_map, messages)
+ 
+"""
+Creates a static map for PDF viewing. Alternatively could use a 
+URL encoder, but complications arose with duplicate parameters 
+and complicated paths. 
 
-# creates a static map for PDF viewing; should use url encoder
+@type 	segments: list 
+@param 	segments: list of route segments
+@type 	destination: Point_Of_Interest
+@param 	destination: destination location 
+@rtype 	string 
+@return static map image url 
+"""
 def makeStaticMap(segments,destination):
 	# clip art: http://images.all-free-download.com/images/graphiclarge/silhouette_plane_clip_art_15576.jpg
 	base_url = "https://maps.googleapis.com/maps/api/staticmap?&size=500x200&maptype=terrain" 
