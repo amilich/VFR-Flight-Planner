@@ -4,6 +4,7 @@ from flask_mail import Mail, Message
 from wtforms import StringField
 from wtforms.validators import DataRequired
 from FlightFiles import *
+from forms import *
 from flask.ext.cache import Cache 
 from pdf import *
 import os
@@ -52,7 +53,11 @@ Save weight and balance along with weather information as PDF.
 """
 @app.route('/savewb')
 def saveWeightBalance():
-	print 'wb'
+	try: 
+		return render_template("wbalance.html")
+	except Exception, e: 
+		print str(e)
+		return "PDF generation failed."
 	return render_template('index.html')
 
 """
@@ -124,14 +129,19 @@ def search():
 	bag2_arm = request.form['bag2_arm']
 	# create the airplane
 	airplane = Airplane(tail_num, craft_type, empty_weight, weight_arm, fuel_lbs, pax1_lbs, pax2_lbs, bag1_lbs, bag2_lbs, fuel_arm, pax1_arm, pax2_arm, bag1_arm, bag2_arm)
+	env_origin = Environment(airp1)
+	env_dest = Environment(airp2)
+	# these environments can be accessed when generating weather PDF and displaying messages
 	cache.set('plane', airplane, timeout=300)
+	cache.set('env_origin', env_origin, timeout=300)
+	cache.set('env_dest', env_dest, timeout=300)
 
 	session['ORIG'] = airp1
 	session['DEST'] = airp2
 	session['ALT'] = altitude
 	session['SPD'] = speed
 
-	myRoute = createRoute(airp1, airp2, altitude, speed)
+	myRoute = createRoute(airp1, airp2, altitude, speed, environments=[env_origin, env_dest])
 	map_content = str(myRoute[0])
 
 	forms = [] # used for changing waypoints 
@@ -140,6 +150,16 @@ def search():
 	
 	cache.set('myRoute', myRoute, timeout=300)
 	messages = myRoute[4]
+
+	if env_origin.skyCond == 'IFR': 
+		messages.append("Origin is in IFR conditions")
+	elif env_origin.skyCond == 'SVFR': 
+		messages.append("Origin is in SVFR conditions")
+
+	if env_dest.skyCond == 'IFR': 
+		messages.append("Destination is in IFR conditions")
+	elif env_dest.skyCond == 'SVFR': 
+		messages.append("Destination is in SVFR conditions")
 
 	showMsgs = False 
 	if(len(messages) is not 0): 
@@ -167,5 +187,5 @@ Run app.
 """
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.debug = True 
+    app.debug = False 
     app.run(host='0.0.0.0', port=port)

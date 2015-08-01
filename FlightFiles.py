@@ -4,7 +4,6 @@ from geopy.distance import vincenty
 from LatLon import LatLon, Latitude, Longitude
 from geomag import mag_heading
 from BeautifulSoup import BeautifulSoup
-from forms import *
 from downloadmap import *
 from Elevations import *
 import urllib, re, sys, os, math, copy
@@ -71,21 +70,91 @@ class Airplane:
 			self.moment = self.weight*self.arm
 
 """
+Creates environment for PDF of weather. 
+
+@type 	icao: str 
+@param 	icao: airport code
+@rtype 	Environment 
+@return environment with built in data
+"""
+def createEnvironment(icao):
+	metar = getWeather(icao)
+	return Environment(icao, metar)
+
+"""
 An environment can be used for weather, weight, balance, and performance calculations. 
 """
 class Environment: 
 	# set the environment parameters from weather 
-	def __init__(self, location, temp, pres, elevation, sky_cond, visibility): 
+	def __init__(self, location, metar=""): 
 		self.location = location # A point of interest (ex. airport)
-		self.temp = temp
-		self.pres = pres 
-		self.elevation = elevation
-		self.sky_cond = sky_cond 
-		self.visibility = visibility
+		self.metar = metar if not metar=="" else getWeather(location) # set METAR 
+		self.winddir, self.wind = getWind(self.location, self.metar)
+		self.time = self.metar.split(" ")[1]
+		self.altimeter = Environment.getAltimeter(self.metar)
+		self.visibility = Environment.getVisibility(self.metar)
+		self.clouds = Environment.getClouds(self.metar)
+		self.wx = Environment.getWx(self.metar, self.clouds, self.visibility)
+		self.skyCond = Environment.getSkyCond(self.metar, self.clouds, self.metar, self.wx)
+		print self.skyCond
+		print self.clouds
+		print self.visibility
+		print self.altimeter 
+		print self.winddir, self.wind
+		print self.wx
 		return 
 
-	# pressure alt
-	def calcPressureAltitude(self):
+	@classmethod 
+	def getWx(cls, metar, clouds, visibility):
+		for item in metar.split(): 
+			if '-' in item or '+' in item: 
+				return item 
+		visInd = -1
+		for x in range(len(metar.split())):
+			if 'SM' in metar.split()[x]: 
+				visInd = x
+		cloudInd = -1
+		for x in range(len(metar.split())): 
+			if clouds == metar.split()[x]:
+				cloudInd = x
+		return metar.split()[visInd:cloudInd]
+
+	@classmethod
+	def getSkyCond(cls, metar, clouds, visibility, wx): 
+		if 'TS' in wx: 
+			return 'IFR' # should not fly VFR in vicinity of TS
+		if 'CLR' or 'SKC' in clouds: 
+			clouds += '999' # makes the rest of determining the ceiling easier 
+		if float(clouds[3:])*100 > 3000 and visibility > 5: 
+			return 'VFR'
+		elif float(clouds[3:])*100 < 3000 and float(clouds[3:])*100 > 1000 and \
+		visibility > 3 and visibility < 5: 
+			return 'SVFR'
+		return 'IFR' # all other weather types are IFR or LIFR 
+
+	@classmethod
+	def getAltimeter(cls, metar): 
+		for item in metar.split(): 
+			if 'A' in item[0] and item[1:].isdigit(): 
+				return float(item[1:3] + "." + item[3:5]) 
+
+	@classmethod 
+	def getVisibility(cls, metar): 
+		for item in metar.split(): 
+			if 'SM'in item[-2:]: 
+				return int(item[:-2])
+		return 0
+
+	@classmethod 
+	def getClouds(cls, metar):
+		for item in metar.split(): 
+			if 'SKC' in item or 'CLR' in item or 'FEW' in item or \
+			   'SCT' in item or 'BNK' in item or 'OVC' in item: 
+				return item 
+		return "OVC000"
+
+	#  alt
+	def cpressurealcPressureAltitude(self):
 		press_diff = (self.pres - 29.92)*1000
 		return 
 
@@ -96,6 +165,9 @@ class Environment:
 	# VFR or IFR 
 	def calcFlightConditions(self):
 		return 
+
+	def __repr__(self):
+		return self.metar 
 
 """
 A point of interest can be an airport, city, or latitude/longitude location. It is used as origin and destination info for Segments. 
@@ -229,7 +301,14 @@ Finds the wind at a particular airport.
 @rtype 	tuple
 @return tuple of wind direction and strength 
 """
-def getWind(loc):
+def getWind(loc, metar=""):
+	if not metar=="": 
+		for item in metar.split():
+			if "KT" in item: 
+				winddir = item[0:3]
+				windstrength = item[3:5]
+				return (winddir, windstrength)
+
 	weather = getWeather(loc)
 	wind = ()
 	for item in weather.split():
@@ -689,7 +768,7 @@ Creates route, map data, an elevation map, and relevant messages.
 @rtype 	tuple 
 @return route segments, map code, elevation map, and messages
 """
-def createRoute(home, dest, altitude, airspeed, custom=[]): 
+def createRoute(home, dest, altitude, airspeed, custom=[], environments=[]): 
 	messages = []
 
 	ll = getLatLon(home)
@@ -780,14 +859,15 @@ def changeRoute(r, n, p, home, dest, altitude, airspeed): # route, leg # to chan
 if __name__ == "__main__":
 	# testing features 
 	print 'start'
-	home = "KHPN" 
-	dest = "KGON"
+	home = "KABY" 
+	dest = "KCSG"
+	env = Environment(home)
+	print env
+	# c = Airplane("N6228N", "C172SP", 1773.7, 41.476, 318, 400, 5, 0, 0)
+	# print c
 
-	c = Airplane("N6228N", "C172SP", 1773.7, 41.476, 318, 400, 5, 0, 0)
-	print c
-
-	a = createRoute(home, dest, 1000, 110)
-	print a[2].courseSegs
+	# a = createRoute(home, dest, 1000, 110)
+	# print a[2].courseSegs
 	# num = "1"
 	# b = changeRoute(a[1], int(num), "New Haven", home, dest, 3500, 110)
 	# print b[1].courseSegs
