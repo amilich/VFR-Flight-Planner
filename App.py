@@ -54,11 +54,17 @@ Save weight and balance along with weather information as PDF.
 @app.route('/savewb')
 def saveWeightBalance():
 	try: 
-		return render_template("wbalance.html")
+		environment = cache.get('env_origin')
+		airplane = cache.get('airplane')
+		# wbpdf = gen_pdf(render_template("wbalance.html", env = environment, wbalance = "", airplane=airplane))
+		# response = make_response(wbpdf)
+		# response.mimetype = 'application/pdf'
+		# response.headers["Content-Disposition"] = "attachment; filename=route.pdf"
+		# return response
+		return render_template("wbalance.html", env = environment, wbalance = "", airplane=airplane)
 	except Exception, e: 
 		print str(e)
 		return "PDF generation failed."
-	return render_template('index.html')
 
 """
 Converts flight plan page with map, elevation diagram, and table of segments into printable PDF. 
@@ -132,7 +138,7 @@ def search():
 	env_origin = Environment(airp1)
 	env_dest = Environment(airp2)
 	# these environments can be accessed when generating weather PDF and displaying messages
-	cache.set('plane', airplane, timeout=300)
+	cache.set('airplane', airplane, timeout=300)
 	cache.set('env_origin', env_origin, timeout=300)
 	cache.set('env_dest', env_dest, timeout=300)
 

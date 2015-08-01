@@ -56,11 +56,12 @@ class Airplane:
 		self.cg = self.moment/self.weight
 		return 
 
-	# calculates the maximum range for airplane ** NOTE ** must include 30 - 45 min reserve fuel 
-	def calcMaxRange(self):
+	def calcPerformance(self): 
+		
 		return 
 
-	def createWeightBalance(self):
+	# calculates the maximum range for airplane ** NOTE ** must include 30 - 45 min reserve fuel 
+	def calcMaxRange(self):
 		return 
 
 	class Weight: 
@@ -90,13 +91,37 @@ class Environment:
 		self.location = location # A point of interest (ex. airport)
 		self.metar = metar if not metar=="" else getWeather(location) # set METAR 
 		self.winddir, self.wind = getWind(self.location, self.metar)
-		self.time = self.metar.split(" ")[1]
+		self.time = Environment.getTime(self.metar)
 		self.altimeter = Environment.getAltimeter(self.metar)
 		self.visibility = Environment.getVisibility(self.metar)
 		self.clouds = Environment.getClouds(self.metar)
+		self.elevation = getFieldElevation(self.location)
 		self.wx = Environment.getWx(self.metar, self.clouds, self.visibility)
 		self.skyCond = Environment.getSkyCond(self.metar, self.clouds, self.metar, self.wx)
+		self.temp, self.dp = Environment.getTempDP(self.metar)
+		self.pa = Environment.getPA(self.elevation, self.altimeter)
+		self.da = Environment.getDA(self.pa, self.temp, self.elevation)
+		# print self.skyCond
+		# print self.clouds
+		# print self.visibility
+		# print self.altimeter 
+		# print self.winddir, self.wind
+		# print self.temp, self.dp
 		return 
+
+	@classmethod
+	def getTempDP(cls, metar):
+		for item in metar.split(): 
+			if "/" in item: 
+				return (item.split("/")[0], item.split("/")[1])
+		return "0/0"
+
+	@classmethod 
+	def getTime(cls, metar): 
+		for item in metar.split(): 
+			if 'Z' == item[-1:]:
+				return item
+		return "000000Z"
 
 	@classmethod 
 	def getWx(cls, metar, clouds, visibility):
@@ -111,6 +136,8 @@ class Environment:
 		for x in range(len(metar.split())): 
 			if clouds == metar.split()[x]:
 				cloudInd = x
+		if visInd + 1 == cloudInd: 
+			return ""
 		return metar.split()[visInd:cloudInd]
 
 	@classmethod
@@ -147,18 +174,26 @@ class Environment:
 				return item 
 		return "OVC000"
 
-	#  alt
-	def cpressurealcPressureAltitude(self):
-		press_diff = (self.pres - 29.92)*1000
-		return 
+	@classmethod 
+	def getPA(cls, elev, altimeter):
+		press_diff = (altimeter - 29.92)*1000
+		return float(elev + press_diff)
 
-	# density alt
-	def calcDensityAltitude(self):
-		return 
+	""" 
+	Calculate the density altitude. 
+	See http://www.flyingmag.com/technique/tip-week/calculating-density-altitude-pencil. 
 
-	# VFR or IFR 
-	def calcFlightConditions(self):
-		return 
+	@type 	PA: float 
+	@param 	PA: pressure altitude 
+	@type 	temp: float 
+	@param 	temp: air temperature (degrees C)
+	@type 	alt: float 
+	@param 	alt: altitude for calculation (usually field elevation)
+	"""
+	@classmethod 
+	def getDA(cls, PA, temp, alt):
+		ISA = 15 - math.floor(float(alt)/1000)*2
+		return float(PA + 120*(float(temp)-ISA))
 
 	def __repr__(self):
 		return self.metar 
@@ -557,7 +592,7 @@ def calculateRouteLandmarks(origin, destination, course):
 			currentLandmarks = getValidLandmarks(currentLandmark, allRelevantAirports, course, tolerance)
 			while len(currentLandmarks) == 0: 
 				# gradually increases tolerance
-				tolerance += 0.1
+				tolerance += 0.3 
 				currentLandmarks = getValidLandmarks(currentLandmark, allRelevantAirports, course, tolerance)
 			currentLandmark = currentLandmarks[0]
 			routeLandmarks.append(currentLandmark)
@@ -853,8 +888,8 @@ def changeRoute(r, n, p, home, dest, altitude, airspeed): # route, leg # to chan
 if __name__ == "__main__":
 	# testing features 
 	print 'start'
-	home = "KABY" 
-	dest = "KCSG"
+	home = "KHPN" 
+	dest = "KGON"
 	env = Environment(home)
 	print env
 	# c = Airplane("N6228N", "C172SP", 1773.7, 41.476, 318, 400, 5, 0, 0)

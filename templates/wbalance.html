@@ -18,20 +18,141 @@
 
   	<body>
     	<div class="container-fluid">
+    		<br>
+    		<center>
+    			<h4>
+    				VFR Flight
+    			</h4>
+    		</center>
     		<div class="row">
     			<div class="col-md-11" style="border: 1px solid; border-radius:5px; padding:10px; margin:3%;">
-    			a;lkdjf;lqwkejr;lqkjdf;laksdfpoiqwuerpoiqwuerpoiqwuerpoqiwuerpoqiweur
+    				<div class="row">
+  						<div class="col-md-3">
+  							METAR information for: <u>&nbsp; {{ env.location }} &nbsp;</u>
+  						</div>
+  						<div class="col-md-2">
+  							Time: <u>&nbsp; {{ env.time }} &nbsp;</u>
+  						</div>
+  						<div class="col-md-2">
+  							Altimeter: <u>&nbsp; {{ env.altimeter }} &nbsp;</u>
+  						</div>
+  						<div class="col-md-2">
+  							Clouds: <u>&nbsp; {{ env.clouds }} &nbsp;</u>
+  						</div>
+  						<div class="col-md-2">
+  							Wind: <u>&nbsp; {{ env.winddir }}, @ {{ env.wind }} kts &nbsp;</u>
+  						</div>
+  					</div>
+  					<div class="row" style="margin:8px">
+  					</div>
+  					<div class="row">
+  						<div class="col-md-2">
+  							Visibility: <u>&nbsp; {{ env.visibility }} SM &nbsp;</u>
+  						</div>
+  						{% if not env.wx == "" %} 
+  							<div class="col-md-2">
+  								Weather: 
+  								<u> {{ env.wx }} </u>
+  							</div>
+  						{% endif %} 
+  						<div class="col-md-2">
+  							Sky Conditions: <u>&nbsp; {{ env.skyCond }} &nbsp;</u>
+  						</div>
+  						<div class="col-md-2">
+
+  						</div>
+  						<div class="col-md-2">
+
+  						</div>
+  					</div>
     			</div>
     		</div>
     		<br>
 			<div class="row">
 			  	<div class="col-md-5" style="border: 1px solid; border-radius:5px; padding:10px; margin:4%">
-			  		.col-md-6
+			  		<table style="width:100%;">
+					  	<tr style="border-bottom: solid 1px black;">
+					    	<td>Pressure Altitude</td>
+					    	<td> {{ env.pa }} </td>
+					  	</tr>
+					  	<tr style="border-bottom: solid 1px black;">
+					    	<td>Density Altitude</td>
+					    	<td> {{ env.da }} </td>
+					  	</tr>
+					  	<!-- Performance data - needs to be dynamic -->
+					  	<tr style="border-bottom: solid 1px black;">
+					    	<td>Maximum Rate of Climb</td>
+					    	<td> 710 </td>
+					  	</tr>
+					  	<tr style="border-bottom: solid 1px black;">
+					    	<td> Takeoff/Obstacle Clearance Distance </td>
+					    	<td> 705/1205 </td>
+					  	</tr>
+					  	<tr style="border-bottom: solid 1px black;">
+					    	<td> Landing/Ground Roll Distance </td>
+					    	<td> 585/1350 </td>
+					  	</tr>
+					  	<tr>
+					    	<td> Headwind/Crrosswind Component </td>
+					    	<td> </td>
+					  	</tr>
+					</table>
 			  	</div>
-			  	<!-- <div class="col-md-1">
-			  	</div> -->
 			  	<div class="col-md-5" style="border: 1px solid; border-radius:5px; padding:10px; margin:4%">
-			  		.col-md-6
+			  		<table style="width:100%;">
+			  			<tr style="border-bottom: solid 1px black;">
+			  				<td></td>
+					    	<td>Weight</td>
+					    	<td>Arm</td>
+					    	<td>Moment</td>
+					  	</tr>
+					  	<tr style="border-bottom: solid 1px black;">
+					    	<td>Empty Weight</td>
+					    	<td> {{ env.pa }} </td>
+					    	<td> {{ env.pa }} </td>
+					    	<td> {{ env.pa }} </td>
+					  	</tr>
+					  	<tr style="border-bottom: solid 1px black;">
+					    	<td>Front Pax</td>
+					    	<td> {{ env.pa }} </td>
+					    	<td> {{ env.pa }} </td>
+					    	<td> {{ env.pa }} </td>
+					  	</tr>
+					  	<tr style="border-bottom: solid 1px black;">
+					    	<td>Rear Pax</td>
+					    	<td> {{ env.pa }} </td>
+					    	<td> {{ env.pa }} </td>
+					    	<td> {{ env.pa }} </td>
+					  	</tr>
+					  	<tr style="border-bottom: solid 1px black;">
+					    	<td>Baggage 1</td>
+					    	<td> {{ env.pa }} </td>
+					    	<td> {{ env.pa }} </td>
+					    	<td> {{ env.pa }} </td>
+					  	</tr>
+					  	<tr style="border-bottom: solid 1px black;">
+					    	<td>Baggage 2</td>
+					    	<td> {{ env.pa }} </td>
+					    	<td> {{ env.pa }} </td>
+					    	<td> {{ env.pa }} </td>
+					  	</tr>
+					  	<tr style="border-bottom: solid 1px black;">
+					    	<td>Fuel</td>
+					    	<td> {{ env.pa }} </td>
+					    	<td> {{ env.pa }} </td>
+					    	<td> {{ env.pa }} </td>
+					  	</tr>
+					  	<tr>
+					    	<td> <b>Total</b> </td>
+					    	<td> {{ env.pa }} </td>
+					    	<td> {{ env.pa }} </td>
+					    	<td> {{ env.pa }} </td>
+					  	</tr>
+					</table>
+					<br>
+					<td> <b>ZFW: </b> <u>&nbsp;{{ env.pa }}&nbsp;</u> </td> <br>
+					<td> <b>Total WT: </b> <u>&nbsp;{{ env.pa }}&nbsp;</u> </td> <br>
+					<td> <b>CG: </b> <u>&nbsp;{{ env.pa }}&nbsp;</u> </td> 
 			  	</div>
 			</div>
 		</div>
