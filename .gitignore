@@ -12,3 +12,5 @@ templates/test.html
 static/img/plane.png
 
 TestFlight.py
+
+templates/route_test.html

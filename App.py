@@ -183,7 +183,7 @@ def search():
 	# msg.attach("route.pdf", "application/pdf", route_pdf)
 	mail.send(msg)
 
-	return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs)
+	return render_template('route_test.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs)
 
 """
 Initialize homepage with entry form. 

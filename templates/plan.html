@@ -60,6 +60,12 @@
                     <div class="container">
                         <style>
                             th, td {
+                                padding: 7px
+                            }
+                            input{ 
+                                height:100%; 
+                                display:inline-block;
+                                position:relative;
                             }
                         </style>
 
@@ -81,25 +87,25 @@
                             {% if "TOC" in item.to_poi.name: %}
                                 <tr>
                                 {% for thing in item.getData() %}
-                                        <td style="padding: 7px;"> {{ thing }}</td>
+                                        <td>{{ thing }}</td>
                                 {% endfor %}
                                 </tr>
                             {% else %} 
                                 <tr>
-                                    <td style="padding: 7px;"> 
+                                    <td> 
                                         {{ item.getData()[0] }}
                                     </td>
                                     {% set f = forms[item.num].place.process_data(item.getData()[1]) %}
                                     {% set f = forms[item.num].num.process_data(item.num) %}
-                                    <td stype="padding:0px;"> <!-- form here -->
+                                    <td stype="padding:0;"> <!-- form here -->
                                         <form action="/update" method="post" role="form">
                                             {{ forms[item.num].hidden_tag() }}
-                                            {{ forms[item.num].place(style="height:100%; width:100%; display:inline-block; position:relative;") }}
+                                            {{ forms[item.num].place() }}
                                         </form>
                                     </td>
 
                                     {% for thing in item.getData()[2:] %}
-                                        <td style="padding: 7px;"> {{ thing }}</td>
+                                        <td>{{ thing }}</td>
                                     {% endfor %}
                                 </tr>
                             {% 
@@ -110,7 +116,7 @@
                         %}
                             <tr>
                         {% for thing in theRoute[-1].getData() %} 
-                                <td style="padding: 7px;"> {{ thing }}</td>
+                                <td>{{ thing }}</td>
                         {% endfor %}
                             </tr>
                         </table>
