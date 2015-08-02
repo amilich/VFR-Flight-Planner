@@ -5,7 +5,10 @@ Given a pygmap, this function converts it into javascript. It is extremely simil
 to the built in export function contained within pygmaps, however, instead of 
 writing to a file, this returns a string containing the encoded map. 
 """
-def getHtml(myMap): 
+def getHtml(myMap, landmarks): 
+		if len(landmarks) == 0:
+			print 'exited'
+			return ""
 		string = "" 
 		string += ('<div>\n')
 		string += ('<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>\n')
@@ -20,6 +23,7 @@ def getHtml(myMap):
 		string += ('\t\tvar bounds = new google.maps.LatLngBounds();\n')
 		string += ('\t\tvar map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);\n')
 		string += ('\n')
+		index = 0
 		for point in  myMap.points:
 			lat = point[0]
 			lon = point[1]
@@ -33,6 +37,17 @@ def getHtml(myMap):
 			string += ('\t\t});\n')
 			string += ('\t\tbounds.extend(marker.position);\n')
 			string += ('\t\tmarker.setMap(map);\n')
+			string += ('\t\tvar iw%s = new google.maps.InfoWindow({\n' % (index))
+			string += ('\t\tcontent: "%s"\n' % (landmarks[index].name))
+			string += ('\t});\n')
+			string += ('\tgoogle.maps.event.addListener(marker, "click", function (e) { iw%s.open(map, this); });\n' % (index))
+			index += 1
+
+			# var iw1 = new google.maps.InfoWindow({
+   #     content: "Home For Sale"
+   #   });
+   #   google.maps.event.addListener(marker1, "click", function (e) { iw1.open(map, this); });
+
 			string += ('\n')
 		string += ('\t\tmap.fitBounds(bounds);\n')
 		clickable = False

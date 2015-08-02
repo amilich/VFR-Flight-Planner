@@ -48,7 +48,7 @@
         <ul class="nav nav-tabs">
             <li class="active"><a href="#tab_a" data-toggle="tab">Route Map</a></li>
             <li><a href="#tab_b" data-toggle="tab">Elevation Map</a></li>
-            <li><a href="#tab_c" data-toggle="tab">Waypoint List</a></li>
+            <li><a href="#tab_c" data-toggle="tab">Waypoint List and Route Changes</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="tab_a">
@@ -57,6 +57,11 @@
             <div class="tab-pane" id="tab_b">
                 <br>
                 <img src="{{ elevation }}" alt="Elevation Map">
+                <br>
+                <br>
+                <div class="container">
+                    <b>Please note:</b> this map includes elevation data taken at specified intervals during the route and does not include towers or other obstructions. The pilot must be prepared at all times to change altitude in response to elevation changes. 
+                </div>
             </div>
             <div class="tab-pane" id="tab_c">
                 <br>
@@ -72,6 +77,9 @@
                         }
                     </style>
 
+                    To change a waypoint, type in a new airport or location name in the input box in the 'to' column of a leg. 
+                    <br>
+                    <br>
 
                     <table border='1' style="width:50%;" cellpadding="10">
                         <tr>
