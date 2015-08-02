@@ -47,9 +47,9 @@
         </h3>
         <br>
         </div>
-        <div class="container">
+        <div class="container" style="margin-left:0px">
             <div class="row">
-                <div class="col-xs-6">
+                <div class="col-xs-6" style="margin-left:0px; padding-left:0px">
                     {{ map }}
                 </div>
                 <div class="col-xs-6">
@@ -58,7 +58,13 @@
                     <img src="{{ elevation }}" alt="Elevation Map">
                     <br><br><br>
                     <div class="container">
-                        <table border='1' style=\"width:50%\">
+                        <style>
+                            th, td {
+                            }
+                        </style>
+
+
+                        <table border='1' style="width:50%;" cellpadding="10">
                             <tr>
                                 <td> Leg (from) </td>
                                 <td> Leg (to) </td>
@@ -75,25 +81,25 @@
                             {% if "TOC" in item.to_poi.name: %}
                                 <tr>
                                 {% for thing in item.getData() %}
-                                        <td>{{ thing }}</td>
+                                        <td style="padding: 7px;"> {{ thing }}</td>
                                 {% endfor %}
                                 </tr>
                             {% else %} 
                                 <tr>
-                                    <td> 
+                                    <td style="padding: 7px;"> 
                                         {{ item.getData()[0] }}
                                     </td>
                                     {% set f = forms[item.num].place.process_data(item.getData()[1]) %}
                                     {% set f = forms[item.num].num.process_data(item.num) %}
-                                    <td> <!-- form here -->
+                                    <td stype="padding:0px;"> <!-- form here -->
                                         <form action="/update" method="post" role="form">
                                             {{ forms[item.num].hidden_tag() }}
-                                            {{ forms[item.num].place() }}
+                                            {{ forms[item.num].place(style="height:100%; width:100%; display:inline-block; position:relative;") }}
                                         </form>
                                     </td>
 
                                     {% for thing in item.getData()[2:] %}
-                                        <td>{{ thing }}</td>
+                                        <td style="padding: 7px;"> {{ thing }}</td>
                                     {% endfor %}
                                 </tr>
                             {% 
@@ -104,7 +110,7 @@
                         %}
                             <tr>
                         {% for thing in theRoute[-1].getData() %} 
-                                <td>{{ thing }}</td>
+                                <td style="padding: 7px;"> {{ thing }}</td>
                         {% endfor %}
                             </tr>
                         </table>
