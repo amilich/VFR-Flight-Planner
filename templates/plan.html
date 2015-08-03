@@ -45,6 +45,7 @@
             <li class="active"><a href="#tab_a" data-toggle="tab">Route Map</a></li>
             <li><a href="#elevation" data-toggle="tab">Elevation Map</a></li>
             <li><a href="#waypoints" data-toggle="tab">Waypoint List and Route Changes</a></li>
+            <li><a href="#freqs" data-toggle="tab">Trip Frequencies</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="tab_a">
@@ -132,6 +133,27 @@
                         </tr>
                     </table>
                 </div>
+            </div>
+            <div class="tab-pane" id="freqs">
+                <br>
+                <table border='1' style="width:50%;" cellpadding="10">
+                        <tr>
+                            <td>Airport Identification</td>
+                            <td>Type</td>
+                            <td>Identification</td>
+                            <td>Frequency</td>
+                        </tr>
+                    {% for thing in freqs %}
+                        <tr>   
+                            {% for freq in thing %}
+                                <td> {{ freq }} </td>
+                            {% endfor %} 
+                        </tr>
+                    {% endfor %}
+                </table>
+                <br>
+                <br>
+                <br>
             </div>
         </div>
         </div>

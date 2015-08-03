@@ -114,7 +114,8 @@ def update():
 			forms.append(placeform(place=myRoute[2].courseSegs[x].to_poi.name, num=x))
 
 		cache.set('myRoute', myRoute, timeout=300)
-		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3])
+		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, \
+			page_title = "Your Route", elevation=myRoute[3], freqs=myRoute[5])
 	except Exception, e: 
 		print str(e)
 		return render_template('fail.html', error="waypoint")
@@ -194,7 +195,8 @@ def search():
 		# msg.attach("route.pdf", "application/pdf", route_pdf)
 		mail.send(msg)
 	
-		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs)
+		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms,\
+			page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs, freqs=myRoute[5])
 	except Exception, e: 
 		print str(e)
 		return render_template('fail.html', error="creation")

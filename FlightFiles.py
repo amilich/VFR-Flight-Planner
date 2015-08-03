@@ -989,7 +989,7 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[]):
 
 	mymap.addpath(path,"#4169E1")
 
-	return (getHtml(mymap, route.landmarks), noTOC, route, elevation_map, messages)
+	return (getHtml(mymap, route.landmarks), noTOC, route, elevation_map, messages, getFrequencies(route.courseSegs))
  
 """
 Creates a static map for PDF viewing. Alternatively could use a 
@@ -1009,15 +1009,52 @@ def makeStaticMap(segments,destination):
 	num = 1 # number each label on map
 	if len(segments) < 10: 
 		for item in segments: 
-			base_url += "&markers=color:blue%%7Clabel:%s%%7C%s,%s" % (num, item.from_poi.lat, item.from_poi.lon)
+			base_url += "&markers=color:blue%%7Clabel:%s%%7C%s,%s" % \
+						(num, item.from_poi.lat, item.from_poi.lon)
 			num += 1
-		base_url += "&markers=color:blue%%7Clabel:%s%%7C%s,%s" % (num, destination.lat, destination.lon)
+		base_url += "&markers=color:blue%%7Clabel:%s%%7C%s,%s" % \
+					(num, destination.lat, destination.lon)
 	# add red path
 	base_url += "&path=color:red%7Cweight:5%7C"
 	for item in segments: 
 		base_url +=  str(item.from_poi.lat) + "," + str(item.from_poi.lon) + "%7C"
 	base_url += str(destination.lat) + "," + str(destination.lon)
 	return base_url
+
+"""
+Collects useful VFR frequencies for a given airport. 
+Ignores approach, clearance delivery, and departure 
+frequencies. 
+
+@type 	segments: list 
+@param 	segments: list of segments in route 
+@rtype	list
+@return list of frequencies
+"""
+def getFrequencies(segments):
+	freqs = [] 
+	airports = [] 
+	for item in segments: 
+		if len(item.from_poi.name) == 4: 
+			airports.append(item.from_poi.name) 
+	airports.append(segments[len(segments)-1].to_poi.name)
+
+	with open("data/us-frequencies.csv", "r+") as f: 
+		lines = f.readlines() 
+		for item in airports: 
+			for line in lines: 
+				if item == line.split(",")[2]:
+					if line.split(",")[3] in "ATIS CTAF TWR GND UNIC FSS EFAS CNTR": 
+						freqs.append(line.replace("\n", "").split(",")[2:6])
+
+	currentAirport = ""
+	# makes it easier to see in table format if airport code only shown for 1st airport
+	for item in freqs: 
+		if item[0] == currentAirport: 
+			item[0] = "" 
+		else: 
+			currentAirport = item[0]
+	return freqs 
 
 # gets potential points of interest from a file 
 def getData(filename, p, prevLoc, r, allowSpaces = False):
