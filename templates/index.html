@@ -4,12 +4,14 @@
     <link href="/static/css/style.css" rel="stylesheet">
     <link href="/static/css/custom.css" rel="stylesheet">
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link href="/static/dist/css/select2.min.css" rel="stylesheet" />
     <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
     <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script src="/static/js/scripts.js"></script>
+    <script src="/static/dist/js/select2.min.js"></script>
 
     <head>
         <meta charset="utf-8">
@@ -33,6 +35,17 @@
                 };
                 check.onclick();
             };
+        </script>
+
+        <!-- selec2 text boxes -->
+        <script type="text/javascript">
+            $('select').select2();
+        </script>
+
+        <script>
+            $(document).ready(function() {
+            $(".js-example-basic-single").select2();
+            });
         </script>
     </head>
     <body>
@@ -81,9 +94,14 @@
                         {{ form.hidden_tag() }}
                         <div class="form-group">
                             <label class="control-label col-sm-2" for="name">{{ form.orig.label }}</label>
-                            <div class="">
+                            <!-- <div class="">
                                 {{ form.orig (style="width:40%; border-radius: 5px; padding:3px;") }}
-                            </div>
+                            </div> -->
+                            <select id="airp1" class="js-example-basic-single" style="width:100px;">
+                                {{ options }}
+                            </select>
+                            <br>
+
                             <br>
                             <label class="control-label col-sm-2" for="name">{{ form.dest.label }}</label>
                             <div class="">

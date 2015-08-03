@@ -199,7 +199,8 @@ Initialize homepage with entry form.
 @app.route('/')
 def init():
 	form = searchform()
-	return render_template('index.html', form=form)
+	options = getAirportOptions()
+	return render_template('index.html', form=form, options=Markup(options))
 
 """
 Run app. 
