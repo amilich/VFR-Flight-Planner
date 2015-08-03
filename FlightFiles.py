@@ -725,7 +725,7 @@ def calculateRouteLandmarks(origin, destination, course):
 	currentLandmark = origin 
 	routeLandmarks.append(origin)
 	while True or counter < 100: # in case the route is impossible
-		if(currentDist*km_to_nm < 28): 
+		if(currentDist < 25): 
 			routeLandmarks.append(destination)
 			break # your final landmark will be the end airport 
 		else: 
