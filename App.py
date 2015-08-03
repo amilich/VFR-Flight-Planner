@@ -27,7 +27,9 @@ import os
 	Potential features: 
 		* Diversion airports 
 		* Fuel stops (unicom, etc.)
+			* Frequencies as well 
 		* Simple weight and balance 
+			* C172 and generalized 
 		* Add loading page for update route 
 		* Custom airplane features dynamically transferred to weight/balance 
 		* Airplane performance statistics (at least C172SP NAV III)
@@ -183,7 +185,8 @@ def search():
 		showMsgs = False 
 		if(len(messages) is not 0): 
 			showMsgs = True
-	
+		
+		# mail me a copy of the route for recordkeeping 
 		msg = Message("Route planned from " + airp1 + " to " + airp2, sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com']) 
 		# can attach pdf of route
 		# msg.body = str(myRoute[2].courseSegs)[1:-1]

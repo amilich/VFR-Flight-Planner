@@ -70,6 +70,10 @@ class Airplane:
 	def calcMaxRange(self):
 		return 
 
+	"""
+	Generalized weight class with weight (lbs) and an arm (in) for CG calculations in any 
+	airplane type. 
+	"""
 	class Weight: 
 		def __init__(self, weight, arm): 
 			self.weight = weight 
@@ -477,10 +481,11 @@ Pulls from all winds aloft sources on aviationweather.gov.
 def getWindsAloft(lat, lon, alt): 
 	loc = Point_Of_Interest("windLoc", lat, lon)
 
-	# base url for winds aloft: 'https://aviationweather.gov/products/nws/boston'
+	# base url for winds aloft: 'https://aviationweather.gov/products/nws/__location__'
 	urls = ['https://aviationweather.gov/products/nws/boston', 'https://aviationweather.gov/products/nws/chicago', 'https://aviationweather.gov/products/nws/saltlakecity', 'https://aviationweather.gov/products/nws/sanfrancisco', 'https://aviationweather.gov/products/nws/miami', 'https://aviationweather.gov/products/nws/ftworth']
 	found = []
 
+	# all winds aloft information 
 	for url in urls: 
 		page = urllib.urlopen(url)
 		page = page.read()
