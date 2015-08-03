@@ -61,32 +61,17 @@ def testform():
 	return render_template('route_test.html', options=Markup(options), form=form)
 
 """
-Save weight and balance along with weather information as PDF. 
-"""
-@app.route('/savewb')
-def saveWeightBalance():
-	try: 
-		environment = cache.get('env_origin')
-		airplane = cache.get('airplane')
-		# wbpdf = gen_pdf(render_template("wbalance.html", env = environment, wbalance = "", airplane=airplane))
-		# response = make_response(wbpdf)
-		# response.mimetype = 'application/pdf'
-		# response.headers["Content-Disposition"] = "attachment; filename=route.pdf"
-		# return response
-		return render_template("wbalance.html", env = environment, wbalance = "", airplane=airplane)
-	except Exception, e: 
-		print str(e)
-		return render_template('fail.html', error="pdf")
-
-"""
 Converts flight plan page with map, elevation diagram, and table of segments into printable PDF. 
 """
 @app.route('/saveplan', methods=['GET'])
 def savePlan(): 
 	try: 
 		myRoute = cache.get('myRoute')
+		environment = cache.get('env_origin')
+		environment2 = cache.get('env_dest')
 		map_content = str(makeStaticMap(myRoute[2].courseSegs, myRoute[2].destination)).replace("\n", "")
-		route_pdf = gen_pdf(render_template('pdfroute.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, elevation=myRoute[3]))
+		route_pdf = gen_pdf(render_template('pdfroute.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, \
+			elevation=myRoute[3], freqs=myRoute[5], env=environment, env2=environment2))
 		response = make_response(route_pdf)
 		response.mimetype = 'application/pdf'
 		response.headers["Content-Disposition"] = "attachment; filename=route.pdf"

@@ -376,7 +376,7 @@ class Segment:
 	Gets segment data to display to user. 
 	"""
 	def getData(self):
-		return [self.from_poi.name, self.to_poi.name, str("{0:.2f}".format(self.length)), str(self.alt), str(self.tas), str(self.gs), str(self.hdg)]
+		return [self.from_poi.name, self.to_poi.name, str("{0:.2f}".format(self.length)), str(self.alt), str(self.tas), "{0:.2f}".format(float(self.gs)), "{0:.2f}".format(float(self.hdg))]
 
 	"""
 	Converts segment to table entry. 
@@ -800,7 +800,7 @@ def createSegments(origin, destination, course, alt, tas, climb_speed = 75, desc
 A route contains a list of segments and airplane parameters replated to a particular flight. 
 """
 class Route: 
-	def __init__(self, course, origin, destination, routeType="direct", night = False, custom=[], cruising_alt=3500, cruise_speed=110, climb_speed=75, climb_dist=7, gph=10, descent_speed=90, doWeather=True): 
+	def __init__(self, course, origin, destination, routeType="direct", night = False, custom=[], cruising_alt=3500, cruise_speed=110, climb_speed=75, climb_dist=5, gph=10, descent_speed=90, doWeather=True): 
 		self.reset(course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, climb_speed, climb_dist, gph, descent_speed, doWeather=doWeather)
 
 	def reset(self, course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, climb_speed, climb_dist, gph, descent_speed, climb_done=False, doWeather=False): 
@@ -968,7 +968,7 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[]):
 		final_alt = cruising_alt
 		messages.append("Changed cruising altitude")
 	rType = "direct" if len(custom) == 0 else "custom"
-	route = Route(course, origin, destination, routeType=rType, custom=custom, cruising_alt=final_alt, cruise_speed=airspeed, climb_speed=75, climb_dist=7, doWeather=False)
+	route = Route(course, origin, destination, routeType=rType, custom=custom, cruising_alt=final_alt, cruise_speed=airspeed, climb_speed=75, climb_dist=5, doWeather=False)
 
 	noTOC = copy.copy(route)
 	route.insertClimb()
