@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+	<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="/static/css/custom.css" rel="stylesheet">
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+  	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Update Failsed</title>
+		<meta name="description" content="Source code generated using layoutit.com">
+  	</head>
+
+  	<body>
+    	<div class="container-fluid">
+    		<br>
+    		<center>
+    			{% if error == "waypoint" %}
+    				<h4>
+    					Route update failed. 
+    				</h4>
+    				<br>
+    				<br>
+    				Your new waypoint was not found or was too far away to be included. 
+    				<br>
+    				<br>
+    			{% elif error == "creation" %}
+    				<h4>
+    					Route creation failed. 
+    				</h4>
+    				<br>
+    				<br>
+    				Something went wrong. Please try again.  
+    				<br>
+    				<br>
+    			{% elif error == "creation" %}
+    				<h4>
+    					PDF creation failed. 
+    				</h4>
+    				<br>
+    				<br>
+    				Something went wrong. Please try again.  
+    				<br>
+    				<br>
+    			{% else %}
+    				Something went wrong. Please try again. 
+    			{% endif %}
+    			<br><br>
+    			<input type="button" style="border-radius:5px" class="btn btn-primary" value="Back" onclick="window.history.back()" /> 
+    		</center>
+		</div>
+    	<script src="/static/js/bootstrap.min.js"></script>
+  	</body>
+</html>

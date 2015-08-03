@@ -1,11 +1,13 @@
 from flask_wtf import Form
-from wtforms import StringField, TextAreaField, SubmitField, validators, HiddenField
+from wtforms import StringField, TextAreaField, SubmitField, validators, HiddenField, SelectField
 
 """
 Home search page form for route and aircraft information. 
 """
 class searchform(Form):
-    orig = StringField('Origin Airport:', [validators.DataRequired()], default="KHPN")
+    # orig = StringField('Origin Airport:', [validators.DataRequired()], default="KHPN")
+    orig = SelectField('category', choices=[(1,'one'),(2,'two')])
+
     dest = StringField('Destination Airport:', [validators.DataRequired()], default="KGON")
     speed = StringField('Cruising Speed (KTS):', [validators.DataRequired()], default="110")
     alt = StringField('Altitude (feet):', [validators.DataRequired()], default="3500")

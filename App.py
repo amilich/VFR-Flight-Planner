@@ -52,6 +52,11 @@ app.config['MAIL_USERNAME'] = gmail_name
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_KEY')
 mail = Mail(app)
 
+@app.route('/test')
+def testform():
+	options = getAirportOptions()
+	return render_template('route_test.html', options=Markup(options))
+
 """
 Save weight and balance along with weather information as PDF. 
 """
@@ -68,7 +73,7 @@ def saveWeightBalance():
 		return render_template("wbalance.html", env = environment, wbalance = "", airplane=airplane)
 	except Exception, e: 
 		print str(e)
-		return "PDF generation failed."
+		return render_template('fail.html', error="pdf")
 
 """
 Converts flight plan page with map, elevation diagram, and table of segments into printable PDF. 
@@ -85,7 +90,7 @@ def savePlan():
 		return response
 	except Exception, e: 
 		print str(e)
-		return "PDF generation failed."
+		return render_template('fail.html', error="pdf")
 
 """
 After a user enters a new waypoint, this function updates the route, climb, and maps. 
@@ -109,7 +114,7 @@ def update():
 		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3])
 	except Exception, e: 
 		print str(e)
-		return '<a href="/">home</a>'
+		return render_template('fail.html', error="waypoint")
 
 """
 Once the user submits aircraft data and basic route information, a route is generated with 
@@ -117,73 +122,76 @@ relevant maps and displayed on the screen.
 """
 @app.route('/fplanner', methods = ['POST'])
 def search():
-	# basic route information 
-	airp1 = request.form['orig'].upper()
-	airp2 = request.form['dest'].upper()
-	altitude = request.form['alt']
-	speed = request.form['speed']
-
-	# need to get airplane parameters, store them in session
-	tail_num = request.form['tail_num']
-	craft_type = request.form['plane_type']
-	empty_weight = request.form['empty_weight']
-	weight_arm = request.form['weight_arm']
-	fuel_lbs = request.form['fuel_lbs'] 
-	fuel_arm = request.form['fuel_arm'] 
-	pax1_lbs = request.form['pax1_lbs']
-	pax1_arm = request.form['pax1_arm']
-	pax2_lbs = request.form['pax2_lbs']
-	pax2_arm = request.form['pax2_arm']
-	bag1_lbs = request.form['bag1_lbs']
-	bag1_arm = request.form['bag1_arm']
-	bag2_lbs = request.form['bag2_lbs']
-	bag2_arm = request.form['bag2_arm']
-	# create the airplane
-	airplane = Airplane(tail_num, craft_type, empty_weight, weight_arm, fuel_lbs, pax1_lbs, pax2_lbs, bag1_lbs, bag2_lbs, fuel_arm, pax1_arm, pax2_arm, bag1_arm, bag2_arm)
-	env_origin = Environment(airp1)
-	env_dest = Environment(airp2)
-	# these environments can be accessed when generating weather PDF and displaying messages
-	cache.set('airplane', airplane, timeout=300)
-	cache.set('env_origin', env_origin, timeout=300)
-	cache.set('env_dest', env_dest, timeout=300)
-
-	session['ORIG'] = airp1
-	session['DEST'] = airp2
-	session['ALT'] = altitude
-	session['SPD'] = speed
-
-	myRoute = createRoute(airp1, airp2, altitude, speed, environments=[env_origin, env_dest])
-	map_content = str(myRoute[0])
-
-	forms = [] # used for changing waypoints 
-	for x in range(len(myRoute[2].courseSegs)):
-		forms.append(placeform(place=myRoute[2].courseSegs[x].to_poi.name, num=x))
+	try: 
+		# basic route information 
+		airp1 = request.form['orig'].upper()
+		airp2 = request.form['dest'].upper()
+		altitude = request.form['alt']
+		speed = request.form['speed']
 	
-	cache.set('myRoute', myRoute, timeout=300)
-	messages = myRoute[4]
-
-	if env_origin.skyCond == 'IFR': 
-		messages.append("Origin is in IFR conditions")
-	elif env_origin.skyCond == 'SVFR': 
-		messages.append("Origin is in SVFR conditions")
-
-	if env_dest.skyCond == 'IFR': 
-		messages.append("Destination is in IFR conditions")
-	elif env_dest.skyCond == 'SVFR': 
-		messages.append("Destination is in SVFR conditions")
-
-	showMsgs = False 
-	if(len(messages) is not 0): 
-		showMsgs = True
-
-	msg = Message("Route planned from " + airp1 + " to " + airp2, sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com']) 
-	# can attach pdf of route
-	# msg.body = str(myRoute[2].courseSegs)[1:-1]
-	# route_pdf = gen_pdf(render_template('plan.html', map="", theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = False))
-	# msg.attach("route.pdf", "application/pdf", route_pdf)
-	mail.send(msg)
-
-	return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs)
+		# need to get airplane parameters, store them in session
+		tail_num = request.form['tail_num']
+		craft_type = request.form['plane_type']
+		empty_weight = request.form['empty_weight']
+		weight_arm = request.form['weight_arm']
+		fuel_lbs = request.form['fuel_lbs'] 
+		fuel_arm = request.form['fuel_arm'] 
+		pax1_lbs = request.form['pax1_lbs']
+		pax1_arm = request.form['pax1_arm']
+		pax2_lbs = request.form['pax2_lbs']
+		pax2_arm = request.form['pax2_arm']
+		bag1_lbs = request.form['bag1_lbs']
+		bag1_arm = request.form['bag1_arm']
+		bag2_lbs = request.form['bag2_lbs']
+		bag2_arm = request.form['bag2_arm']
+		# create the airplane
+		airplane = Airplane(tail_num, craft_type, empty_weight, weight_arm, fuel_lbs, pax1_lbs, pax2_lbs, bag1_lbs, bag2_lbs, fuel_arm, pax1_arm, pax2_arm, bag1_arm, bag2_arm)
+		env_origin = Environment(airp1)
+		env_dest = Environment(airp2)
+		# these environments can be accessed when generating weather PDF and displaying messages
+		cache.set('airplane', airplane, timeout=300)
+		cache.set('env_origin', env_origin, timeout=300)
+		cache.set('env_dest', env_dest, timeout=300)
+	
+		session['ORIG'] = airp1
+		session['DEST'] = airp2
+		session['ALT'] = altitude
+		session['SPD'] = speed
+	
+		myRoute = createRoute(airp1, airp2, altitude, speed, environments=[env_origin, env_dest])
+		map_content = str(myRoute[0])
+	
+		forms = [] # used for changing waypoints 
+		for x in range(len(myRoute[2].courseSegs)):
+			forms.append(placeform(place=myRoute[2].courseSegs[x].to_poi.name, num=x))
+		
+		cache.set('myRoute', myRoute, timeout=300)
+		messages = myRoute[4]
+	
+		if env_origin.skyCond == 'IFR': 
+			messages.append("Origin is in IFR conditions")
+		elif env_origin.skyCond == 'SVFR': 
+			messages.append("Origin is in SVFR conditions")
+	
+		if env_dest.skyCond == 'IFR': 
+			messages.append("Destination is in IFR conditions")
+		elif env_dest.skyCond == 'SVFR': 
+			messages.append("Destination is in SVFR conditions")
+	
+		showMsgs = False 
+		if(len(messages) is not 0): 
+			showMsgs = True
+	
+		msg = Message("Route planned from " + airp1 + " to " + airp2, sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com']) 
+		# can attach pdf of route
+		# msg.body = str(myRoute[2].courseSegs)[1:-1]
+		# route_pdf = gen_pdf(render_template('plan.html', map="", theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = False))
+		# msg.attach("route.pdf", "application/pdf", route_pdf)
+		mail.send(msg)
+	
+		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs)
+	except: 
+		return render_template('fail.html', error="creation")
 
 """
 Initialize homepage with entry form. 
@@ -191,7 +199,8 @@ Initialize homepage with entry form.
 @app.route('/')
 def init():
 	form = searchform()
-	return render_template('index.html', form=form)
+	options = getAirportOptions()
+	return render_template('index.html', form=form, options=Markup(options))
 
 """
 Run app. 
