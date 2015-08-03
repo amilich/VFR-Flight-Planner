@@ -5,8 +5,8 @@ from wtforms import StringField, TextAreaField, SubmitField, validators, HiddenF
 Home search page form for route and aircraft information. 
 """
 class searchform(Form):
-    # orig = StringField('Origin Airport:', [validators.DataRequired()], default="KHPN")
-    orig = SelectField('category', choices=[(1,'one'),(2,'two')])
+    orig = StringField('Origin Airport:', [validators.DataRequired()], default="KHPN")
+    # orig = SelectField('category', choices=[(1,'one'),(2,'two')])
 
     dest = StringField('Destination Airport:', [validators.DataRequired()], default="KGON")
     speed = StringField('Cruising Speed (KTS):', [validators.DataRequired()], default="110")
