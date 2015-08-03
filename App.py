@@ -98,7 +98,7 @@ After a user enters a new waypoint, this function updates the route, climb, and 
 """
 @app.route('/update', methods = ['POST'])
 def update():
-	newLoc = str(request.form['place'])
+	newLoc = str(request.form['place']).upper()
 	num = str(request.form['num'])
 	try: 
 		myRoute = cache.get('myRoute')
@@ -192,7 +192,8 @@ def search():
 		mail.send(msg)
 	
 		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs)
-	except: 
+	except Exception, e: 
+		print str(e)
 		return render_template('fail.html', error="creation")
 
 """

@@ -38,7 +38,7 @@ def getHtml(myMap, landmarks):
 			string += ('\t\tbounds.extend(marker.position);\n')
 			string += ('\t\tmarker.setMap(map);\n')
 			string += ('\t\tvar iw%s = new google.maps.InfoWindow({\n' % (index))
-			string += ('\t\tcontent: "%s"\n' % (landmarks[index].name))
+			string += ('\t\tcontent: "<a href=%s data-toggle=%s>%s</a>"\n' % ('#waypoints', 'tab', landmarks[index].name))
 			string += ('\t});\n')
 			string += ('\tgoogle.maps.event.addListener(marker, "click", function (e) { iw%s.open(map, this); });\n' % (index))
 			index += 1
