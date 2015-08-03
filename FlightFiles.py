@@ -788,9 +788,8 @@ def createSegments(origin, destination, course, alt, tas, climb_speed = 75, desc
 
 	for x in range(len(landmarks)-1): # - 2 bc final in last thing?
 		if x == 0: 
-			nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], getFieldElevation(origin.name), climb_speed, True, False, x, aloft=wAloft) # starting alt is field elevation 
-		#elif x == len(landmarks)-2 and len(landmarks) is not 3: # we do not want field elevation here
-		#	nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], getFieldElevation(destination.name), descent_speed, False, True, x) # ending is field too
+			nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], getFieldElevation(origin.name), climb_speed, True, False, x, aloft=wAloft) 
+			# starting alt is field elevation 
 		else: 
 			nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], alt, tas, num=x, aloft=wAloft) # ending is field elevation
 		segments.append(nextLeg)
@@ -800,10 +799,13 @@ def createSegments(origin, destination, course, alt, tas, climb_speed = 75, desc
 A route contains a list of segments and airplane parameters replated to a particular flight. 
 """
 class Route: 
-	def __init__(self, course, origin, destination, routeType="direct", night = False, custom=[], cruising_alt=3500, cruise_speed=110, climb_speed=75, climb_dist=5, gph=10, descent_speed=90, doWeather=True): 
-		self.reset(course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, climb_speed, climb_dist, gph, descent_speed, doWeather=doWeather)
+	def __init__(self, course, origin, destination, routeType="direct", night = False, custom=[], \
+		cruising_alt=3500, cruise_speed=110, climb_speed=75, climb_dist=5, gph=10, descent_speed=90, doWeather=True): 
+		self.reset(course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, \
+			climb_speed, climb_dist, gph, descent_speed, doWeather=doWeather)
 
-	def reset(self, course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, climb_speed, climb_dist, gph, descent_speed, climb_done=False, doWeather=False): 
+	def reset(self, course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, \
+		climb_speed, climb_dist, gph, descent_speed, climb_done=False, doWeather=False): 
 		self.origin = origin 
 		self.destination = destination
 		self.climb_speed = climb_speed
@@ -820,10 +822,12 @@ class Route:
 		self.course = course 
 		self.landmarks = custom
 		if(routeType.lower() is not "direct" or climb_done): 
-			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, self.climb_speed, self.descent_speed, custom=custom, isCustom=True, doWeather=doWeather)
+			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, \
+				self.climb_speed, self.descent_speed, custom=custom, isCustom=True, doWeather=doWeather)
 			# using custom route or route with climb
 		else: 
-			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, self.climb_speed, self.descent_speed, custom=custom, doWeather=doWeather)
+			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, \
+				self.climb_speed, self.descent_speed, custom=custom, doWeather=doWeather)
 		for seg in self.courseSegs: 
 			if seg.from_poi.name == seg.to_poi.name: 
 				self.courseSegs.remove(seg)
@@ -859,7 +863,8 @@ class Route:
 		for x in range(len(self.courseSegs)): 
 			if x not in remove: 
 				newLandmarks.append(self.courseSegs[x].to_poi)
-		self.reset(self.course, self.origin, self.destination, self.routeType, self.night, newLandmarks, self.cruising_alt, self.cruise_speed, self.climb_speed, self.climb_dist, self.gph, self.descent_speed, climb_done = True, doWeather = True)
+		self.reset(self.course, self.origin, self.destination, self.routeType, self.night, newLandmarks, self.cruising_alt, \
+			self.cruise_speed, self.climb_speed, self.climb_dist, self.gph, self.descent_speed, climb_done = True, doWeather = True)
 		return 
 
 	"""
@@ -952,7 +957,7 @@ Creates route, map data, an elevation map, and relevant messages.
 @rtype 	tuple 
 @return route segments, map code, elevation map, and messages
 """
-def createRoute(home, dest, altitude, airspeed, custom=[], environments=[]): 
+def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], climb_dist=7, climb_speed=75): 
 	messages = []
 
 	ll = getLatLon(home)
@@ -968,7 +973,8 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[]):
 		final_alt = cruising_alt
 		messages.append("Changed cruising altitude")
 	rType = "direct" if len(custom) == 0 else "custom"
-	route = Route(course, origin, destination, routeType=rType, custom=custom, cruising_alt=final_alt, cruise_speed=airspeed, climb_speed=75, climb_dist=5, doWeather=False)
+	route = Route(course, origin, destination, routeType=rType, custom=custom, cruising_alt=final_alt, cruise_speed=airspeed, \
+		climb_speed=climb_speed, climb_dist=climb_dist, doWeather=False)
 
 	noTOC = copy.copy(route)
 	route.insertClimb()
@@ -1072,7 +1078,7 @@ def getData(filename, p, prevLoc, r, allowSpaces = False):
 	return potChanges
 
 # changes a particular landmark along a route and returns a new route
-def changeRoute(r, n, p, home, dest, altitude, airspeed): # route, leg # to change, where to change it to 
+def changeRoute(r, n, p, home, dest, altitude, airspeed, climb_dist, climb_speed): # route, leg # to change, where to change it to 
 	prevLoc = r.courseSegs[n].from_poi
 	potChanges = []
 	potChanges += (getData("data/cities.txt", p, prevLoc, r, True))
@@ -1086,4 +1092,5 @@ def changeRoute(r, n, p, home, dest, altitude, airspeed): # route, leg # to chan
 	newLandmarks = list(prevLandmarks)
 	selectedChange.setting = "custom"
 	newLandmarks[n+1] = selectedChange # increment by one because you are using the TO poi (+1)
-	return createRoute(home, dest, altitude, airspeed, newLandmarks)
+	return createRoute(home, dest, altitude, airspeed, newLandmarks, climb_dist = climb_dist, climb_speed=climb_speed)
+

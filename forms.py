@@ -16,8 +16,10 @@ class searchform(Form):
 
     orig = SelectField('Origin Airport: ', choices=options, default="KHPN")
     dest = SelectField('Destination Airport: ', choices=options, default="KGON")
-    speed = StringField('Cruising Speed (KTS):', [validators.DataRequired()], default="110")
+    speed = StringField('Cruising Speed (kts):', [validators.DataRequired()], default="110")
     alt = StringField('Altitude (feet):', [validators.DataRequired()], default="3500")
+    climb = StringField('Climb Distance (nm):', [validators.DataRequired()], default="5")
+    climb_speed = StringField('Climb Speed (kts):', [validators.DataRequired()], default="75")
 
     # airplane info
     # plane_type = StringField('Aircraft Make/Model:', [validators.DataRequired()], default="C172SP")

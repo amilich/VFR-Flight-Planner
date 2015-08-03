@@ -27,7 +27,7 @@ import os
 	Potential features: 
 		* Diversion airports 
 		* Fuel stops (unicom, etc.)
-			* Frequencies as well 
+			* [DONE] Frequencies as well 
 		* Simple weight and balance 
 			* C172 and generalized 
 		* Add loading page for update route 
@@ -89,7 +89,8 @@ def update():
 	num = str(request.form['num'])
 	try: 
 		myRoute = cache.get('myRoute')
-		myRoute = changeRoute(myRoute[1], int(num)-1, str(newLoc), session['ORIG'], session['DEST'], session['ALT'], session['SPD'])
+		myRoute = changeRoute(myRoute[1], int(num)-1, str(newLoc), session['ORIG'], \
+			session['DEST'], session['ALT'], session['SPD'], session['CLMB'], session['CLMB_SPD'])
 		map_content = str(myRoute[0])
 		cache.set('myRoute', myRoute, timeout=300)
 
@@ -117,25 +118,8 @@ def search():
 		airp2 = request.form['dest'].upper()
 		altitude = request.form['alt']
 		speed = request.form['speed']
-
-	
-		# need to get airplane parameters, store them in session
-		# tail_num = request.form['tail_num']
-		# craft_type = request.form['plane_type']
-		# empty_weight = request.form['empty_weight']
-		# weight_arm = request.form['weight_arm']
-		# fuel_lbs = request.form['fuel_lbs'] 
-		# fuel_arm = request.form['fuel_arm'] 
-		# pax1_lbs = request.form['pax1_lbs']
-		# pax1_arm = request.form['pax1_arm']
-		# pax2_lbs = request.form['pax2_lbs']
-		# pax2_arm = request.form['pax2_arm']
-		# bag1_lbs = request.form['bag1_lbs']
-		# bag1_arm = request.form['bag1_arm']
-		# bag2_lbs = request.form['bag2_lbs']
-		# bag2_arm = request.form['bag2_arm']
-		# # create the airplane
-		# airplane = Airplane(tail_num, craft_type, empty_weight, weight_arm, fuel_lbs, pax1_lbs, pax2_lbs, bag1_lbs, bag2_lbs, fuel_arm, pax1_arm, pax2_arm, bag1_arm, bag2_arm)
+		climb_dist = float(request.form['climb'])
+		climb_speed = float(request.form['climb_speed'])
 		env_origin = Environment(airp1)
 		env_dest = Environment(airp2)
 		# these environments can be accessed when generating weather PDF and displaying messages
@@ -147,8 +131,11 @@ def search():
 		session['DEST'] = airp2
 		session['ALT'] = altitude
 		session['SPD'] = speed
+		session['CLMB'] = climb_dist
+		session['CLMB_SPD'] = climb_speed
 	
-		myRoute = createRoute(airp1, airp2, altitude, speed, environments=[env_origin, env_dest])
+		myRoute = createRoute(airp1, airp2, altitude, speed, environments=[env_origin, env_dest], \
+			climb_dist=climb_dist, climb_speed=climb_speed)
 		map_content = str(myRoute[0])
 	
 		forms = [] # used for changing waypoints 
@@ -168,16 +155,10 @@ def search():
 		elif env_dest.skyCond == 'SVFR': 
 			messages.append("Destination is in SVFR conditions")
 	
-		showMsgs = False 
-		if(len(messages) is not 0): 
-			showMsgs = True
+		showMsgs = False if(len(messages) is not 0) else True
 		
 		# mail me a copy of the route for recordkeeping 
 		msg = Message("Route planned from " + airp1 + " to " + airp2, sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com']) 
-		# can attach pdf of route
-		# msg.body = str(myRoute[2].courseSegs)[1:-1]
-		# route_pdf = gen_pdf(render_template('plan.html', map="", theRoute = myRoute[2].courseSegs, forms=forms, page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = False))
-		# msg.attach("route.pdf", "application/pdf", route_pdf)
 		mail.send(msg)
 	
 		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms,\
