@@ -41,14 +41,14 @@
         <div class="container">
         <ul class="nav nav-tabs">
             <li class="active"><a href="#tab_a" data-toggle="tab">Route Map</a></li>
-            <li><a href="#tab_b" data-toggle="tab">Elevation Map</a></li>
-            <li><a href="#tab_c" data-toggle="tab">Waypoint List and Route Changes</a></li>
+            <li><a href="#elevation" data-toggle="tab">Elevation Map</a></li>
+            <li><a href="#waypoints" data-toggle="tab">Waypoint List and Route Changes</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="tab_a">
                 {{ map }}
             </div>
-            <div class="tab-pane" id="tab_b">
+            <div class="tab-pane" id="elevation">
                 <br>
                 <img src="{{ elevation }}" alt="Elevation Map">
                 <br>
@@ -57,7 +57,7 @@
                     <b>Please note:</b> this map includes elevation data taken at specified intervals during the route and does not include towers or other obstructions. The pilot must be prepared at all times to change altitude in response to elevation changes. 
                 </div>
             </div>
-            <div class="tab-pane" id="tab_c">
+            <div class="tab-pane" id="waypoints">
                 <br>
                 <div class="container">
                     <style>

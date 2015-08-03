@@ -130,7 +130,6 @@ def search():
 		altitude = request.form['alt']
 		speed = request.form['speed']
 
-		print airp1, airp2, altitude, speed
 	
 		# need to get airplane parameters, store them in session
 		# tail_num = request.form['tail_num']
