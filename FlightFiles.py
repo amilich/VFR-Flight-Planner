@@ -77,18 +77,6 @@ class Airplane:
 			self.moment = self.weight*self.arm
 
 """
-Creates options for combo select field. 
-"""
-def getAirportOptions():
-	options = "" 
-	with open("data/us_airports.txt") as f: 
-		lines = f.readlines() 
-		for line in lines: 
-			airpt = line.split(", ")[0]
-			options += '<option value="%s">%s</option>\n' % (airpt,airpt)
-	return options 
-
-"""
 Creates environment for PDF of weather. 
 
 @type 	icao: str 

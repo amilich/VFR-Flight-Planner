@@ -55,7 +55,8 @@ mail = Mail(app)
 @app.route('/test')
 def testform():
 	options = getAirportOptions()
-	return render_template('route_test.html', options=Markup(options))
+	form = searchform()
+	return render_template('route_test.html', options=Markup(options), form=form)
 
 """
 Save weight and balance along with weather information as PDF. 
@@ -128,28 +129,30 @@ def search():
 		airp2 = request.form['dest'].upper()
 		altitude = request.form['alt']
 		speed = request.form['speed']
+
+		print airp1, airp2, altitude, speed
 	
 		# need to get airplane parameters, store them in session
-		tail_num = request.form['tail_num']
-		craft_type = request.form['plane_type']
-		empty_weight = request.form['empty_weight']
-		weight_arm = request.form['weight_arm']
-		fuel_lbs = request.form['fuel_lbs'] 
-		fuel_arm = request.form['fuel_arm'] 
-		pax1_lbs = request.form['pax1_lbs']
-		pax1_arm = request.form['pax1_arm']
-		pax2_lbs = request.form['pax2_lbs']
-		pax2_arm = request.form['pax2_arm']
-		bag1_lbs = request.form['bag1_lbs']
-		bag1_arm = request.form['bag1_arm']
-		bag2_lbs = request.form['bag2_lbs']
-		bag2_arm = request.form['bag2_arm']
-		# create the airplane
-		airplane = Airplane(tail_num, craft_type, empty_weight, weight_arm, fuel_lbs, pax1_lbs, pax2_lbs, bag1_lbs, bag2_lbs, fuel_arm, pax1_arm, pax2_arm, bag1_arm, bag2_arm)
+		# tail_num = request.form['tail_num']
+		# craft_type = request.form['plane_type']
+		# empty_weight = request.form['empty_weight']
+		# weight_arm = request.form['weight_arm']
+		# fuel_lbs = request.form['fuel_lbs'] 
+		# fuel_arm = request.form['fuel_arm'] 
+		# pax1_lbs = request.form['pax1_lbs']
+		# pax1_arm = request.form['pax1_arm']
+		# pax2_lbs = request.form['pax2_lbs']
+		# pax2_arm = request.form['pax2_arm']
+		# bag1_lbs = request.form['bag1_lbs']
+		# bag1_arm = request.form['bag1_arm']
+		# bag2_lbs = request.form['bag2_lbs']
+		# bag2_arm = request.form['bag2_arm']
+		# # create the airplane
+		# airplane = Airplane(tail_num, craft_type, empty_weight, weight_arm, fuel_lbs, pax1_lbs, pax2_lbs, bag1_lbs, bag2_lbs, fuel_arm, pax1_arm, pax2_arm, bag1_arm, bag2_arm)
 		env_origin = Environment(airp1)
 		env_dest = Environment(airp2)
 		# these environments can be accessed when generating weather PDF and displaying messages
-		cache.set('airplane', airplane, timeout=300)
+		# cache.set('airplane', airplane, timeout=300)
 		cache.set('env_origin', env_origin, timeout=300)
 		cache.set('env_dest', env_dest, timeout=300)
 	
@@ -199,8 +202,7 @@ Initialize homepage with entry form.
 @app.route('/')
 def init():
 	form = searchform()
-	options = getAirportOptions()
-	return render_template('index.html', form=form, options=Markup(options))
+	return render_template('index.html', form=form)
 
 """
 Run app. 
