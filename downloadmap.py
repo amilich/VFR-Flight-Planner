@@ -38,17 +38,13 @@ def getHtml(myMap, landmarks):
 			string += ('\t\tbounds.extend(marker.position);\n')
 			string += ('\t\tmarker.setMap(map);\n')
 			string += ('\t\tvar iw%s = new google.maps.InfoWindow({\n' % (index))
-			string += ('\t\tcontent: "<a href=%s data-toggle=%s>%s</a>"\n' % ('#waypoints', 'tab', landmarks[index].name))
+			# the marker labels 
+			string += ('\t\tcontent: "<a href=%s data-toggle=%s>%s</a>"\n' % ('#waypoints', 'tab', landmarks[index].name)) 
 			string += ('\t});\n')
 			string += ('\tgoogle.maps.event.addListener(marker, "click", function (e) { iw%s.open(map, this); });\n' % (index))
+			string += ('\n')
 			index += 1
 
-			# var iw1 = new google.maps.InfoWindow({
-   #     content: "Home For Sale"
-   #   });
-   #   google.maps.event.addListener(marker1, "click", function (e) { iw1.open(map, this); });
-
-			string += ('\n')
 		string += ('\t\tmap.fitBounds(bounds);\n')
 		clickable = False
 		geodesic = True
