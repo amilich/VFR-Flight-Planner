@@ -6,6 +6,8 @@ Home search page form for route and aircraft information.
 """
 class searchform(Form):
     options = []
+    # gather all the ICAO codes - more efficient to do it here because the same
+    # options variable is used for 'orig' and 'dest'
     with open("data/us_airports.txt") as f: 
         lines = f.readlines() 
         for line in lines: 
