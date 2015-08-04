@@ -112,11 +112,12 @@ class Environment:
 		else: 
 			self.weather = "NONE"
 			return 
+		print self.metar
 		self.winddir, self.wind = getWind(self.location, self.metar)
 		self.time = Environment.getTime(self.metar)
 		self.altimeter = Environment.getAltimeter(self.metar)
 		self.visibility = Environment.getVisibility(self.metar)
-		self.clouds = Environment.getClouds(self.metar)
+		self.clouds = Environment.getClouds(self.metar) # CB clouds are only type shown
 		self.elevation = getFieldElevation(self.location)
 		self.wx = Environment.getWx(self.metar, self.clouds, self.visibility)
 		self.skyCond = Environment.getSkyCond(self.metar, self.clouds, self.metar, self.wx)
@@ -211,9 +212,9 @@ class Environment:
 			return 'IFR' # should not fly VFR in vicinity of TS
 		if 'CLR' or 'SKC' in clouds: 
 			clouds += '999' # makes the rest of determining the ceiling easier 
-		if float(clouds[3:])*100 > 3000 and visibility > 5: 
+		if float(clouds[3:].replace("CB", ""))*100 > 3000 and visibility > 5: 
 			return 'VFR'
-		elif float(clouds[3:])*100 < 3000 and float(clouds[3:])*100 > 1000 and \
+		elif float(clouds[3:].replace("CB", ""))*100 < 3000 and float(clouds[3:].replace("CB", ""))*100 > 1000 and \
 		visibility > 3 and visibility < 5: 
 			return 'SVFR'
 		return 'IFR' # all other weather types are IFR or LIFR 
