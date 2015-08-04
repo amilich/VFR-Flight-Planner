@@ -112,7 +112,6 @@ class Environment:
 		else: 
 			self.weather = "NONE"
 			return 
-		print self.metar
 		self.winddir, self.wind = getWind(self.location, self.metar)
 		self.time = Environment.getTime(self.metar)
 		self.altimeter = Environment.getAltimeter(self.metar)
