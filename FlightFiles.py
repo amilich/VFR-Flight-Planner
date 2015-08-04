@@ -1097,7 +1097,7 @@ def getZip(poi):
 				zipcode = item 
 		return zipcode
 	except: 
-		print 'fail'
+		print 'WX Fail' # for weather radar 
 		return ""
 
 # gets potential points of interest from a file 
