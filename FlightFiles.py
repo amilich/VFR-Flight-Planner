@@ -557,6 +557,23 @@ def getDistHeading(poi1, poi2):
 		return (float("inf"), 0) #should be out of range, but need better fix
 
 """
+Finds the distance between two airports (not POIs). 
+
+@type 	icao1: string
+@param 	icao1: origin airport
+@type 	icao2: string
+@param 	icao2: destination airport 
+@rtype 	float 
+@return distance 
+"""
+def getDist(icao1, icao2):
+	ll1 = getLatLon(icao1)
+	ll2 = getLatLon(icao2)
+	latlon1 = LatLon(ll1[0], ll1[1])
+	latlon2 = LatLon(ll2[0], ll2[1])
+	return latlon1.distance(latlon2)*km_to_nm
+
+"""
 Finds latitude and longitude of airport from file.
 
 @type 	icao: str 
@@ -995,7 +1012,7 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], clim
 
 	mymap.addpath(path,"#4169E1")
 
-	return (getHtml(mymap, route.landmarks), noTOC, route, elevation_map, messages, getFrequencies(route.courseSegs))
+	return (getHtml(mymap, route.landmarks), noTOC, route, elevation_map, messages, getFrequencies(route.courseSegs), getZip(origin))
  
 """
 Creates a static map for PDF viewing. Alternatively could use a 
@@ -1061,6 +1078,27 @@ def getFrequencies(segments):
 		else: 
 			currentAirport = item[0]
 	return freqs 
+
+"""
+Get zipcode for an airport. 
+
+@type 	loc: Point_Of_Interest
+@param 	loc: airport 
+@rtype 	string 
+@return the zipcode 
+"""
+def getZip(poi):
+	try: 
+		geolocator = Nominatim()
+		location = geolocator.reverse((poi.lat, poi.lon))
+		zipcode = "" 
+		for item in str(location.address).split(", "): 
+			if item.isdigit(): 
+				zipcode = item 
+		return zipcode
+	except: 
+		print 'fail'
+		return ""
 
 # gets potential points of interest from a file 
 def getData(filename, p, prevLoc, r, allowSpaces = False):

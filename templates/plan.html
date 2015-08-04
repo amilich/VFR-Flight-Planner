@@ -43,7 +43,7 @@
         <div class="container">
         <ul class="nav nav-tabs">
             <li class="active"><a href="#tab_a" data-toggle="tab">Route Map</a></li>
-            <li><a href="#elevation" data-toggle="tab">Elevation Map</a></li>
+            <li><a href="#elevation" data-toggle="tab">Elevation Map and Weather</a></li>
             <li><a href="#waypoints" data-toggle="tab">Waypoint List and Route Changes</a></li>
             <li><a href="#freqs" data-toggle="tab">Trip Frequencies</a></li>
         </ul>
@@ -61,8 +61,18 @@
                 <br>
                 <br>
                 <div class="container">
-                    <b>Please note:</b> this map includes elevation data taken at specified intervals during the route and does not include towers or other obstructions. The pilot must be prepared at all times to change altitude in response to elevation changes. 
+                    <small>
+                        <b>Please note:</b> this map includes elevation data taken at specified intervals during the route and does not include towers or other obstructions. The pilot must be prepared at all times to change altitude in response to elevation changes. 
+                    </small>
                 </div>
+                {% if zipcode == "" %}
+                {% else %}
+                    <br>
+                    <br>
+                    <a href="http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode={{zipcode}}&amp;width=500&amp;height=200" target="main">
+                        <img border="0" dynsrc="http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode={{zipcode}}&amp;width=500&amp;height=250" start="fileopen" src="http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode={{zipcode}}&amp;width=500&amp;height=200">
+                    </a>
+                {% endif %}
             </div>
             <div class="tab-pane" id="waypoints">
                 <br>

@@ -46,11 +46,20 @@
     				Something went wrong. Please try again.  
     				<br>
     				<br>
+                {% elif error == "distance" %}
+                    <h4>
+                        Route creation failed. 
+                    </h4>
+                    <br>
+                    <br>
+                    Those airports are a bit too far - try a shorter route to start (under 350 nm). 
+                    <br>
+                    <br>
     			{% else %}
     				Something went wrong. Please try again. 
     			{% endif %}
     			<br><br>
-    			<input type="button" style="border-radius:5px" class="btn btn-primary" value="Back" onclick="window.history.back()" /> 
+    			<input type="button" style="border-radius:5px" class="btn btn-primary" value="Back" onclick="window.history.back()"/> 
     		</center>
 		</div>
     	<script src="/static/js/bootstrap.min.js"></script>

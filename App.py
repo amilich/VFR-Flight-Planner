@@ -7,13 +7,13 @@ from FlightFiles import *
 from forms import *
 from flask.ext.cache import Cache 
 from pdf import *
-import os
+import os, time
 
 """
 	VFR-Flight-Planner
 
 	@author 	Andrew Milich 
-	@version 	0.2
+	@version 	0.3
 
 	This application is designed to simplify the extensive planning prior to VFR flghts. 
 	It finds cities and airports along the route to ensure a pilot remains on course, 
@@ -27,7 +27,7 @@ import os
 	Potential features: 
 		* Diversion airports 
 		* Fuel stops (unicom, etc.)
-			* [DONE] Frequencies as well 
+			* [DONE] Frequencies 
 		* Simple weight and balance 
 			* C172 and generalized 
 		* Add loading page for update route 
@@ -37,6 +37,7 @@ import os
 		* [DONE] Elevation awareness and maps 
 		* [DONE] Climbs across waypoints 
 		* [DONE] Save routes as PDF 
+			* [DONE] Save weather, frequencies as well 
 
 	Possible improvements: 
 		* Search for waypoints after TOC 
@@ -101,7 +102,7 @@ def update():
 
 		cache.set('myRoute', myRoute, timeout=300)
 		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, \
-			page_title = "Your Route", elevation=myRoute[3], freqs=myRoute[5])
+			page_title = "Your Route", elevation=myRoute[3], freqs=myRoute[5], zipcode=myRoute[6])
 	except Exception, e: 
 		print str(e)
 		return render_template('fail.html', error="waypoint")
@@ -113,9 +114,12 @@ relevant maps and displayed on the screen.
 @app.route('/fplanner', methods = ['POST'])
 def search():
 	try: 
+		startTime = time.time()
 		# basic route information 
 		airp1 = request.form['orig'].upper()
 		airp2 = request.form['dest'].upper()
+		if getDist(airp1, airp2) > 400: 
+			return render_template('fail.html', error="distance")
 		altitude = request.form['alt']
 		speed = request.form['speed']
 		climb_dist = float(request.form['climb'])
@@ -160,9 +164,13 @@ def search():
 		# mail me a copy of the route for recordkeeping 
 		msg = Message("Route planned from " + airp1 + " to " + airp2, sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com']) 
 		mail.send(msg)
-	
+
+		# need to know this 
+		elapsedTime = time.time() - startTime
+		print 'function [{}] finished in {} ms'.format('route', int(elapsedTime * 1000))
+
 		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms,\
-			page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs, freqs=myRoute[5])
+			page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs, freqs=myRoute[5], zipcode=myRoute[6])
 	except Exception, e: 
 		print str(e)
 		return render_template('fail.html', error="creation")
