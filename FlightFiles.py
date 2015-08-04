@@ -803,8 +803,9 @@ def createSegments(origin, destination, course, alt, tas, climb_speed = 75, desc
 	else: 
 		wAloft = "0000+00"
 
-	for x in range(len(landmarks)-1): # - 2 bc final in last thing?
+	for x in range(len(landmarks)-1): 
 		if x == 0: 
+			# we want to use the METAR for the origin airport here 
 			nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], getFieldElevation(origin.name), climb_speed, True, False, x, aloft=wAloft) 
 			# starting alt is field elevation 
 		else: 
