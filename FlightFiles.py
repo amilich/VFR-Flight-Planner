@@ -458,7 +458,6 @@ def getWind(loc, metar=""):
 				winddir = item[0:3]
 				windstrength = item[3:5]
 				return (winddir, windstrength)
-	print 'get'
 	weather = getWeather(loc)
 	if weather == "": 
 		return (0, 0)
@@ -470,7 +469,6 @@ def getWind(loc, metar=""):
 			if ("VRB" in winddir): # cannot set particular direction or speed for variable wind
 				return (0, 0)
 			wind = (winddir, windstrength)
-	print wind 
 	return wind
 
 """

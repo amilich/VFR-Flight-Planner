@@ -164,7 +164,9 @@ def search():
 			elif env_dest.skyCond == 'SVFR': 
 				messages.append("Destination is in SVFR conditions")
 	
-		showMsgs = False if(len(messages) is not 0) else True
+		showMsgs = True if(len(messages) is not 0) else False
+		print showMsgs
+		print messages
 		
 		# mail me a copy of the route for recordkeeping 
 		msg = Message("Route planned from " + airp1 + " to " + airp2, sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com']) 
