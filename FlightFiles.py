@@ -734,6 +734,7 @@ Find landmarks along duration of route.
 @return list of Point_Of_Interest objects 
 """
 def calculateRouteLandmarks(origin, destination, course): 
+	print 'start 1'
 	allRelevantAirports = getDistancesInRange(origin, destination, course)
 
 	currentDist = course[0] # will be worked down to 0 (roughly)
@@ -757,6 +758,7 @@ def calculateRouteLandmarks(origin, destination, course):
 			currentDist = currentLandmark.latlon.distance(destination.latlon)*km_to_nm
 		counter += 1
 		course = getDistHeading(currentLandmark, destination)
+	print 'end 1'
 	return routeLandmarks 
 
 """
