@@ -114,7 +114,7 @@ relevant maps and displayed on the screen.
 """
 @app.route('/fplanner', methods = ['POST'])
 def search():
-	try: 
+	try:
 		startTime = time.time()
 		# basic route information 
 		airp1 = request.form['orig'].upper()
@@ -153,15 +153,16 @@ def search():
 		cache.set('myRoute', myRoute, timeout=300)
 		messages = myRoute[4]
 	
-		if env_origin.skyCond == 'IFR': 
-			messages.append("Origin is in IFR conditions")
-		elif env_origin.skyCond == 'SVFR': 
-			messages.append("Origin is in SVFR conditions")
-	
-		if env_dest.skyCond == 'IFR': 
-			messages.append("Destination is in IFR conditions")
-		elif env_dest.skyCond == 'SVFR': 
-			messages.append("Destination is in SVFR conditions")
+		if not (env_origin.weather == "NONE"): 
+			if env_origin.skyCond == 'IFR': 
+				messages.append("Origin is in IFR conditions")
+			elif env_origin.skyCond == 'SVFR': 
+				messages.append("Origin is in SVFR conditions")
+		
+			if env_dest.skyCond == 'IFR': 
+				messages.append("Destination is in IFR conditions")
+			elif env_dest.skyCond == 'SVFR': 
+				messages.append("Destination is in SVFR conditions")
 	
 		showMsgs = False if(len(messages) is not 0) else True
 		
