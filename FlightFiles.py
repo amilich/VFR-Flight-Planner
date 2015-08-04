@@ -585,7 +585,9 @@ def getDist(icao1, icao2):
 	ll2 = getLatLon(icao2)
 	latlon1 = LatLon(ll1[0], ll1[1])
 	latlon2 = LatLon(ll2[0], ll2[1])
-	return latlon1.distance(latlon2)*km_to_nm
+	d = latlon1.distance(latlon2)*km_to_nm
+	print "route d: " + str(d)
+	return d
 
 """
 Finds latitude and longitude of airport from file.
@@ -683,7 +685,12 @@ def isValidLandmark(base, poi, course, tolerance):
 	l2 = poi.latlon
 	tempDist = l1.distance(l2)*km_to_nm
 	heading = l1.heading_initial(l2)
-	if(tempDist < 10*(1/tolerance) or tempDist > 25*tolerance): # check tolerance math
+
+	base = 10
+	if course[0] > 250: 
+		base = 40
+
+	if(tempDist < base*(1/tolerance) or tempDist > (base*2.5)*tolerance): # check tolerance math
 		return False 
 	if(abs(getHeadingDiff(heading, course[1])) < 20*tolerance):
 		return True
