@@ -107,7 +107,7 @@ class Environment:
 	def __init__(self, location, metar=""): 
 		self.location = location # A point of interest (ex. airport)
 		self.metar = metar if not metar=="" else getWeather(location) # set METAR 
-		if not metar == "": 
+		if not self.metar == "": 
 			self.weather = "METAR"
 		else: 
 			self.weather = "NONE"
