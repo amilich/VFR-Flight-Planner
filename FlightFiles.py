@@ -105,23 +105,24 @@ class Environment:
 	@param 	metar: predetermined metar 
 	"""
 	def __init__(self, location, metar=""): 
+		self.location = location # A point of interest (ex. airport)
+		self.metar = metar if not metar=="" else getWeather(location) # set METAR 
 		if not metar == "": 
-			self.location = location # A point of interest (ex. airport)
-			self.metar = metar if not metar=="" else getWeather(location) # set METAR 
-			self.winddir, self.wind = getWind(self.location, self.metar)
-			self.time = Environment.getTime(self.metar)
-			self.altimeter = Environment.getAltimeter(self.metar)
-			self.visibility = Environment.getVisibility(self.metar)
-			self.clouds = Environment.getClouds(self.metar)
-			self.elevation = getFieldElevation(self.location)
-			self.wx = Environment.getWx(self.metar, self.clouds, self.visibility)
-			self.skyCond = Environment.getSkyCond(self.metar, self.clouds, self.metar, self.wx)
-			self.temp, self.dp = Environment.getTempDP(self.metar)
-			self.pa = Environment.getPA(self.elevation, self.altimeter)
-			self.da = Environment.getDA(self.pa, self.temp, self.elevation)
 			self.weather = "METAR"
 		else: 
 			self.weather = "NONE"
+			return 
+		self.winddir, self.wind = getWind(self.location, self.metar)
+		self.time = Environment.getTime(self.metar)
+		self.altimeter = Environment.getAltimeter(self.metar)
+		self.visibility = Environment.getVisibility(self.metar)
+		self.clouds = Environment.getClouds(self.metar)
+		self.elevation = getFieldElevation(self.location)
+		self.wx = Environment.getWx(self.metar, self.clouds, self.visibility)
+		self.skyCond = Environment.getSkyCond(self.metar, self.clouds, self.metar, self.wx)
+		self.temp, self.dp = Environment.getTempDP(self.metar)
+		self.pa = Environment.getPA(self.elevation, self.altimeter)
+		self.da = Environment.getDA(self.pa, self.temp, self.elevation)
 		# print self.skyCond
 		# print self.clouds
 		# print self.visibility
