@@ -65,13 +65,11 @@
     <body>
         <script src="//fast.eager.io/LkRamv2Dag.js"></script> <!-- page loading -->
         <br>
-        <center> 
-            <font color="#4B8AB9" size="50">
-                <big>
-                    VFR FLIGHT PLANNER
-                </big>
-            </font>
-        </center>
+        <div class="container">
+            <h1>
+                VFR FLIGHT PLANNER
+            </h1>
+        </div>
 
         <div id="loading">
             <br>
@@ -107,6 +105,13 @@
                     <div class="container">
                         {{ form.hidden_tag() }}
                         <div class="form-group">
+                            <label class="control-label col-sm-2" for="name">{{ form.region.label }}</label>
+                            <div class="">
+                                {{ form.region (style="width:40%; border-radius: 5px; padding:3px;", class="js-example-basic-single") }}
+                            </div> 
+                            <small> See <a href="http://www.transportation.gov/sites/dot.dev/files/pictures/OSDBU%20Regional%20Field%20Office%20Map%20-%20June%202012.jpg">this</a> for regions.</small>
+                            <br>
+                            <br>
                             <label class="control-label col-sm-2" for="name">{{ form.orig.label }}</label>
                             <div class="">
                                 {{ form.orig (style="width:40%; border-radius: 5px; padding:3px;", class="js-example-basic-single") }}
@@ -147,12 +152,10 @@
                     <br>
                     <br>
                 </div>
-                <center>
-                    <div class="container">
-                        <input type="submit" class="btn btn-primary" style="border-radius:5px" value="Calculate Route" onclick="loading();">
-                    </div>
-                    <br>
-                </center>
+                <div class="container">
+                    <input type="submit" class="btn btn-primary" style="border-radius:5px" value="Calculate Route" onclick="loading();">
+                </div>
+                <br>
                 <!-- 
                     Airplane specific data can go here. 
                         Optional dynamic form generalized weights and arms. 

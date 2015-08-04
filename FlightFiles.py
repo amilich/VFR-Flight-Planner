@@ -478,12 +478,26 @@ Pulls from all winds aloft sources on aviationweather.gov.
 @rtype 	str 
 @return winds aloft (direction and velocity)
 """
-def getWindsAloft(lat, lon, alt): 
+def getWindsAloft(lat, lon, alt, region): 
 	loc = Point_Of_Interest("windLoc", lat, lon)
 
 	# base url for winds aloft: 'https://aviationweather.gov/products/nws/__location__'
-	urls = ['https://aviationweather.gov/products/nws/boston', 'https://aviationweather.gov/products/nws/chicago', 'https://aviationweather.gov/products/nws/saltlakecity', 'https://aviationweather.gov/products/nws/sanfrancisco', 'https://aviationweather.gov/products/nws/miami', 'https://aviationweather.gov/products/nws/ftworth']
+	# all urls: ['https://aviationweather.gov/products/nws/boston', 'https://aviationweather.gov/products/nws/chicago', 
+	# 'https://aviationweather.gov/products/nws/saltlakecity', 'https://aviationweather.gov/products/nws/sanfrancisco', 
+	# 'https://aviationweather.gov/products/nws/miami', 'https://aviationweather.gov/products/nws/ftworth']
 	found = []
+	if "NORTHEAST" in region: 
+		urls = ['https://aviationweather.gov/products/nws/boston']
+	elif "SOUTHEAST" in region: 
+		urls = ['https://aviationweather.gov/products/nws/miami']
+	elif "GULF" in region: 
+		urls = ['https://aviationweather.gov/products/nws/ftworth']
+	elif "WEST" in region: 
+		urls = ['https://aviationweather.gov/products/nws/sanfrancisco']
+	elif "WESTCENT" in region:
+		urls = ['https://aviationweather.gov/products/nws/saltlakecity']
+	elif "LAKES" in region: 
+		urls = ['https://aviationweather.gov/products/nws/chicago']
 
 	# all winds aloft information 
 	for url in urls: 
@@ -735,8 +749,8 @@ Find landmarks along duration of route.
 """
 def calculateRouteLandmarks(origin, destination, course): 
 	print 'start 1'
-	allRelevantAirports = getDistancesInRange(origin, destination, course)
-
+	allRelevantAirports = getDistancesInRange(origin, destination, course) # work on SHORTENING this
+	print 'done w dist'
 	currentDist = course[0] # will be worked down to 0 (roughly)
 	counter = 0
 	routeLandmarks = []
@@ -758,7 +772,6 @@ def calculateRouteLandmarks(origin, destination, course):
 			currentDist = currentLandmark.latlon.distance(destination.latlon)*km_to_nm
 		counter += 1
 		course = getDistHeading(currentLandmark, destination)
-	print 'end 1'
 	return routeLandmarks 
 
 """
@@ -791,7 +804,7 @@ def getMid(num):
 	return int((num-1)/2)
 
 # creates segments for a particular route
-def createSegments(origin, destination, course, alt, tas, climb_speed = 75, descent_speed = 90, custom = [], isCustom=False, doWeather=True): 
+def createSegments(origin, destination, course, alt, tas, climb_speed = 75, descent_speed = 90, custom = [], isCustom=False, doWeather=True, region="NORTHEAST"): 
 	if len(custom) == 0:
 		landmarks = calculateRouteLandmarks(origin, destination, course)
 	else: 
@@ -801,10 +814,9 @@ def createSegments(origin, destination, course, alt, tas, climb_speed = 75, desc
 	num = getMid(len(landmarks))
 
 	if(doWeather):
-		wAloft = getWindsAloft(landmarks[num].lat, landmarks[num].lon, alt)
+		wAloft = getWindsAloft(landmarks[num].lat, landmarks[num].lon, alt, region)
 	else: 
 		wAloft = "0000+00"
-
 	for x in range(len(landmarks)-1): 
 		if x == 0: 
 			# we want to use the METAR for the origin airport here 
@@ -820,12 +832,12 @@ A route contains a list of segments and airplane parameters replated to a partic
 """
 class Route: 
 	def __init__(self, course, origin, destination, routeType="direct", night = False, custom=[], \
-		cruising_alt=3500, cruise_speed=110, climb_speed=75, climb_dist=5, gph=10, descent_speed=90, doWeather=True): 
+		cruising_alt=3500, cruise_speed=110, climb_speed=75, climb_dist=5, gph=10, descent_speed=90, doWeather=True, region="NORTHEAST"): 
 		self.reset(course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, \
-			climb_speed, climb_dist, gph, descent_speed, doWeather=doWeather)
+			climb_speed, climb_dist, gph, descent_speed, doWeather=doWeather, region=region)
 
 	def reset(self, course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, \
-		climb_speed, climb_dist, gph, descent_speed, climb_done=False, doWeather=False): 
+		climb_speed, climb_dist, gph, descent_speed, climb_done=False, doWeather=False, region="NORTHEAST"): 
 		self.origin = origin 
 		self.destination = destination
 		self.climb_speed = climb_speed
@@ -838,16 +850,17 @@ class Route:
 		self.cruising_alt = cruising_alt
 		self.cruise_speed = cruise_speed
 		self.descent_speed = descent_speed
+		self.region = region
 		# perform route calculations
 		self.course = course 
 		self.landmarks = custom
 		if(routeType.lower() is not "direct" or climb_done): 
 			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, \
-				self.climb_speed, self.descent_speed, custom=custom, isCustom=True, doWeather=doWeather)
+				self.climb_speed, self.descent_speed, custom=custom, isCustom=True, doWeather=doWeather, region=self.region)
 			# using custom route or route with climb
 		else: 
 			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, \
-				self.climb_speed, self.descent_speed, custom=custom, doWeather=doWeather)
+				self.climb_speed, self.descent_speed, custom=custom, doWeather=doWeather, region=self.region)
 		for seg in self.courseSegs: 
 			if seg.from_poi.name == seg.to_poi.name: 
 				self.courseSegs.remove(seg)
@@ -884,7 +897,7 @@ class Route:
 			if x not in remove: 
 				newLandmarks.append(self.courseSegs[x].to_poi)
 		self.reset(self.course, self.origin, self.destination, self.routeType, self.night, newLandmarks, self.cruising_alt, \
-			self.cruise_speed, self.climb_speed, self.climb_dist, self.gph, self.descent_speed, climb_done = True, doWeather = True)
+			self.cruise_speed, self.climb_speed, self.climb_dist, self.gph, self.descent_speed, climb_done = True, doWeather = True, region=self.region)
 		return 
 
 	"""
@@ -977,7 +990,7 @@ Creates route, map data, an elevation map, and relevant messages.
 @rtype 	tuple 
 @return route segments, map code, elevation map, and messages
 """
-def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], climb_dist=7, climb_speed=75): 
+def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], climb_dist=7, climb_speed=75, region="NORTHEAST"): 
 	messages = []
 
 	ll = getLatLon(home)
@@ -994,7 +1007,7 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], clim
 		messages.append("Changed cruising altitude")
 	rType = "direct" if len(custom) == 0 else "custom"
 	route = Route(course, origin, destination, routeType=rType, custom=custom, cruising_alt=final_alt, cruise_speed=airspeed, \
-		climb_speed=climb_speed, climb_dist=climb_dist, doWeather=False)
+		climb_speed=climb_speed, climb_dist=climb_dist, doWeather=False, region=region)
 
 	noTOC = copy.copy(route)
 	route.insertClimb()
@@ -1119,7 +1132,7 @@ def getData(filename, p, prevLoc, r, allowSpaces = False):
 	return potChanges
 
 # changes a particular landmark along a route and returns a new route
-def changeRoute(r, n, p, home, dest, altitude, airspeed, climb_dist, climb_speed): # route, leg # to change, where to change it to 
+def changeRoute(r, n, p, home, dest, altitude, airspeed, climb_dist, climb_speed, region): # route, leg # to change, where to change it to 
 	prevLoc = r.courseSegs[n].from_poi
 	potChanges = []
 	potChanges += (getData("data/cities.txt", p, prevLoc, r, True))
@@ -1133,5 +1146,5 @@ def changeRoute(r, n, p, home, dest, altitude, airspeed, climb_dist, climb_speed
 	newLandmarks = list(prevLandmarks)
 	selectedChange.setting = "custom"
 	newLandmarks[n+1] = selectedChange # increment by one because you are using the TO poi (+1)
-	return createRoute(home, dest, altitude, airspeed, newLandmarks, climb_dist = climb_dist, climb_speed=climb_speed)
+	return createRoute(home, dest, altitude, airspeed, newLandmarks, climb_dist = climb_dist, climb_speed=climb_speed, region=region)
 

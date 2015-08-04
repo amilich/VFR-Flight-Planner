@@ -14,6 +14,8 @@ class searchform(Form):
             airpt = line.split(", ")[0]
             options.append((airpt, airpt))
 
+    region = SelectField('Region: ', choices=[('Northeast', 'Northeast'), ('Southeast', 'Southeast'), ('Gulf', 'Gulf'), \
+        ('West', 'North/South West'), ('WestCent', 'West Central'), ('Lakes', 'Great Lakes')], default="Northeast")
     orig = SelectField('Origin Airport: ', choices=options, default="KHPN")
     dest = SelectField('Destination Airport: ', choices=options, default="KGON")
     speed = StringField('Cruising Speed (kts):', [validators.DataRequired()], default="110")

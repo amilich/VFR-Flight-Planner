@@ -91,7 +91,8 @@ def update():
 	try: 
 		myRoute = cache.get('myRoute')
 		myRoute = changeRoute(myRoute[1], int(num)-1, str(newLoc), session['ORIG'], \
-			session['DEST'], session['ALT'], session['SPD'], session['CLMB'], session['CLMB_SPD'])
+			session['DEST'], session['ALT'], session['SPD'], session['CLMB'], \
+			session['CLMB_SPD'], session['REGION'])
 		map_content = str(myRoute[0])
 		cache.set('myRoute', myRoute, timeout=300)
 
@@ -118,6 +119,7 @@ def search():
 		# basic route information 
 		airp1 = request.form['orig'].upper()
 		airp2 = request.form['dest'].upper()
+		region = request.form['region'].upper()
 		if getDist(airp1, airp2) > 400: 
 			return render_template('fail.html', error="distance")
 		altitude = request.form['alt']
@@ -135,11 +137,12 @@ def search():
 		session['DEST'] = airp2
 		session['ALT'] = altitude
 		session['SPD'] = speed
+		session['REGION'] = region
 		session['CLMB'] = climb_dist
 		session['CLMB_SPD'] = climb_speed
 	
 		myRoute = createRoute(airp1, airp2, altitude, speed, environments=[env_origin, env_dest], \
-			climb_dist=climb_dist, climb_speed=climb_speed)
+			climb_dist=climb_dist, climb_speed=climb_speed, region=region)
 		print 'done with route'
 		map_content = str(myRoute[0])
 	
@@ -189,5 +192,5 @@ Run app.
 """
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.debug = False 
+    app.debug = True 
     app.run(host='0.0.0.0', port=port)
