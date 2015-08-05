@@ -143,6 +143,7 @@ def search():
 		airp1 = request.form['orig'].upper() 
 		airp2 = request.form['dest'].upper()
 		region = request.form['region'].upper()
+		# there will always be an answer to the above 3 - they are select fields 
 		if getDist(airp1, airp2) > 400: 
 			return render_template('fail.html', error="distance")
 		altitude = request.form['alt']
