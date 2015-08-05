@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="/static/css/custom.css" rel="stylesheet">
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <head lang="en">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{ author }}</title>
+        <meta charset="UTF-8">
+        <title>Contact</title>
+    </head>
+    <body>
+        <center>
+            <div class="">
+                <div class="container">
+                    <h2>Contact Us</h2>
+                    <!-- Form style: http://www.w3schools.com/bootstrap/bootstrap_forms.asp -->
+                    <form action="/contact" method="post" class="form-horizontal" role="form">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="name">{{ form.name.label }}</label>
+                            <div class="col-sm-10">
+                                {{ form.name (class_="form-control") }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="email">{{ form.email.label }}</label>
+                            <div class="col-sm-10">
+                                {{ form.email (class_="form-control") }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="message">{{ form.message.label }}</label>
+                            <div class="col-sm-10">
+                                {{ form.message (class_="form-control") }}
+                            </div>
+                        </div>
+
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                               <input type="submit" class="btn btn-primary" style="border-radius:5px" value="Send Message">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </center>
+    </body>
+    <footer>
+        <div class="navbar navbar-inverse navbar-fixed-bottom">
+            <div class="container">
+                <div class="navbar-collapse collapse" id="footer-body">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/">Home</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+</html>

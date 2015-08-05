@@ -55,6 +55,29 @@ app.config['MAIL_USERNAME'] = gmail_name
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_KEY')
 mail = Mail(app)
 
+"""
+Email feedback from contact form. 
+"""
+@app.route('/contact', methods=('GET', 'POST'))
+def contact():
+    form = ContactForm()
+
+    if request.method == 'POST':
+        if form.validate() == False:
+        	form = searchform()
+        	return render_template('index.html', form=form)
+        else:
+            msg = Message("Message from your visitor " + form.name.data, sender=form.email.data, recipients=['codesearch5@gmail.com'])
+            msg.body = """
+            From: %s <%s>,
+            %s
+            """ % (form.name.data, form.email.data, form.message.data)
+            mail.send(msg)
+            form = searchform()
+            return render_template('index.html', form=form)
+    elif request.method == 'GET':
+        return render_template('contact.html', form=form)
+
 @app.route('/test')
 def testform():
 	options = getAirportOptions()
@@ -117,15 +140,27 @@ def search():
 	try:
 		startTime = time.time()
 		# basic route information 
-		airp1 = request.form['orig'].upper()
+		airp1 = request.form['orig'].upper() 
 		airp2 = request.form['dest'].upper()
 		region = request.form['region'].upper()
 		if getDist(airp1, airp2) > 400: 
 			return render_template('fail.html', error="distance")
 		altitude = request.form['alt']
+		if altitude == "": 
+			altitude = "3500"
 		speed = request.form['speed']
-		climb_dist = float(request.form['climb'])
-		climb_speed = float(request.form['climb_speed'])
+		if speed == "": 
+			speed = "110"
+		climb_dist = request.form['climb']
+		if climb_dist == "": 
+			climb_dist = 5
+		else: 
+			climb_dist = float(climb_dist)
+		climb_speed = request.form['climb_speed']
+		if climb_speed == "": 
+			climb_speed = 75
+		else: 
+			climb_speed = float(climb_speed)
 		env_origin = Environment(airp1)
 		env_dest = Environment(airp2)
 		# these environments can be accessed when generating weather PDF and displaying messages

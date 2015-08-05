@@ -49,3 +49,12 @@ Form to change waypoint location with hidden waypoint number and user identified
 class placeform(Form):
     place = StringField('Origin Airport:', [validators.DataRequired()])
     num = HiddenField("num")
+
+"""
+Email feedback. 
+"""
+class ContactForm(Form):
+    name = StringField('Your Name:', [validators.DataRequired()])
+    email = StringField('Your e-mail address:', [validators.DataRequired(), validators.Email('your@email.com')])
+    message = TextAreaField('Your message:', [validators.DataRequired()])
+    #submit = SubmitField('Send Message')
