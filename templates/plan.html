@@ -46,6 +46,7 @@
             <li><a href="#elevation" data-toggle="tab">Elevation Map and Weather</a></li>
             <li><a href="#waypoints" data-toggle="tab">Waypoint List and Route Changes</a></li>
             <li><a href="#freqs" data-toggle="tab">Trip Frequencies</a></li>
+            <li><a href="#what" data-toggle="tab">What does your route include?</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="tab_a">
@@ -104,7 +105,7 @@
                             <td> Altitude (feet)</td>
                             <td> True Airspeed </td>
                             <td> Groundspeed (kts) </td>
-                            <td> Magnetic Heading (&deg;)</td>
+                            <td> Magnetic Heading (&deg;) <br><br><font size="1">(including Wind Correction Angle)</font></td>
                         </tr>
                     <!--<br>-->
                     {% 
@@ -169,6 +170,18 @@
                 <br>
                 <br>
                 <br>
+            </div>
+            <div class="tab-pane" id="what">
+                <br>
+                <b>Your route has been generated from a list of cities, towns, and airports. In addition: </b>
+                <br>
+                <br>
+                <li>Your true heading for each segment has been converted to a magnetic heading with a wind correction angle based on winds aloft and METAR information</li>
+                <li>Weather radar is displayed for your departure area</li>
+                <li>Specific METAR information is included in the PDF download</li>
+                <li>Frequencies for origin, destination, and waypoint airports are displayed</li>
+                <li>An elevation map has been generated and compared with your selected cruising altitude</li>
+                <li>To change a waypoint, go to the 'Waypoint List' tab and type in a new town or airport</li>
             </div>
         </div>
         </div>
