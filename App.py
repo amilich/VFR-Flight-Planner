@@ -95,7 +95,7 @@ def savePlan():
 		environment2 = cache.get('env_dest')
 		map_content = str(makeStaticMap(myRoute[2].courseSegs, myRoute[2].destination)).replace("\n", "")
 		route_pdf = gen_pdf(render_template('pdfroute.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, \
-			elevation=myRoute[3], freqs=myRoute[5], env=environment, env2=environment2))
+			elevation=myRoute[3], freqs=myRoute[5], env=environment, env2=environment2, airplane=cache.get('airplane')))
 		response = make_response(route_pdf)
 		response.mimetype = 'application/pdf'
 		response.headers["Content-Disposition"] = "attachment; filename=route.pdf"
@@ -117,16 +117,17 @@ def update():
 			session['DEST'], session['ALT'], session['SPD'], session['CLMB'], \
 			session['CLMB_SPD'], session['REGION'])
 		map_content = str(myRoute[0])
-		cache.set('myRoute', myRoute, timeout=300)
+		cache.set('myRoute', myRoute, timeout=500)
 
 		forms = []
 		counter = 0
 		for x in range(len(myRoute[2].courseSegs)):
 			forms.append(placeform(place=myRoute[2].courseSegs[x].to_poi.name, num=x))
 
-		cache.set('myRoute', myRoute, timeout=300)
+		cache.set('myRoute', myRoute, timeout=500)
 		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, \
-			page_title = "Your Route", elevation=myRoute[3], freqs=myRoute[5], zipcode=myRoute[6])
+			page_title = "Your Route", elevation=myRoute[3], freqs=myRoute[5], zipcode=myRoute[6], \
+			airplane=cache.get('airplane'))
 	except Exception, e: 
 		print str(e)
 		return render_template('fail.html', error="waypoint")
@@ -145,14 +146,15 @@ def search():
 			a = request.form['a%s' % (x)] 
 			if a == "" or w == "": 
 				break
-			weights.append(Airplane.Weight(float(w), float(a)))
+			weights.append(Weight(float(w), float(a)))
 	except: 
 		pass # this is natural - there is a finite number of weight/arm boxes 
 
 	plane_type = request.form['plane_type']
-	print weights
 	airplane = Airplane(plane_type, weights)
 	print airplane
+	print weights 
+	cache.set('airplane', airplane, timeout=500)
 
 	try:
 		startTime = time.time()
@@ -182,9 +184,9 @@ def search():
 		env_origin = Environment(airp1)
 		env_dest = Environment(airp2)
 		# these environments can be accessed when generating weather PDF and displaying messages
-		# cache.set('airplane', airplane, timeout=300)
-		cache.set('env_origin', env_origin, timeout=300)
-		cache.set('env_dest', env_dest, timeout=300)
+		# cache.set('airplane', airplane, timeout=500)
+		cache.set('env_origin', env_origin, timeout=500)
+		cache.set('env_dest', env_dest, timeout=500)
 	
 		session['ORIG'] = airp1
 		session['DEST'] = airp2
@@ -203,7 +205,7 @@ def search():
 		for x in range(len(myRoute[2].courseSegs)):
 			forms.append(placeform(place=myRoute[2].courseSegs[x].to_poi.name, num=x))
 		
-		cache.set('myRoute', myRoute, timeout=300)
+		cache.set('myRoute', myRoute, timeout=500)
 		messages = myRoute[4]
 	
 		if not (env_origin.weather == "NONE"): 
@@ -231,7 +233,8 @@ def search():
 		print 'function [{}] finished in {} ms'.format('route', int(elapsedTime * 1000))
 
 		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms,\
-			page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs, freqs=myRoute[5], zipcode=myRoute[6])
+			page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs, freqs=myRoute[5], \
+			zipcode=myRoute[6], airplane=airplane)
 	except Exception, e: 
 		print str(e)
 		return render_template('fail.html', error="creation")

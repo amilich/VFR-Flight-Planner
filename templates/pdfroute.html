@@ -71,6 +71,42 @@
         </div>
         <p style="page-break-after:always;"></p>
         <br>
+        {% if not (airplane.weights|length) == 0%}
+        <div class="container" id="airplane">
+            <br>
+            <h1 style="font-weight:normal;">
+                <center>
+                    <font size="6">
+                        Weight and Balance 
+                    </font>
+                </center>
+                <table border='1' style="width:50%;" cellpadding="10">
+                   <tr>
+                       <td></td>
+                       <td>Weight (lbs)</td>
+                       <td>Arm (in)</td>
+                       <td>Moment (lb·ft)</td>
+                   </tr>
+                   {% for item in airplane.weights %}
+                       <tr>
+                           <td> {{ item.num }} </td>
+                           <td> {{ item.weight }} </td>
+                           <td> {{ item.arm }} </td>
+                           <td> {{ item.moment }} </td>
+                       </tr>
+                   {% endfor %}
+                   <tr>
+                       <td>Total: </td>
+                       <td>{{ airplane.totalweight }} </td>
+                       <td>{{ airplane.cg }}</td>
+                       <td>{{ airplane.totalmoment }} </td>
+                   </tr>
+                </table>
+            </h1>
+        </div>
+        {% endif %}
+        <p style="page-break-after:always;"></p>
+        <br>
         <font size="5">
         <div class="container">
         	<div class="row">

@@ -28,6 +28,8 @@ class Airplane:
 	def __init__(self, plane_type, weights): 
 		self.plane_type = plane_type
 		self.weights = weights
+		for x in range(len(self.weights)): 
+			self.weights[x].num = "Moment %i" % (x+1)
 		self.calcCG()
 		# ** NOTE ** need to log the tail number in database (can be done in App.py)
 
@@ -47,32 +49,36 @@ class Airplane:
 		for item in self.weights: 
 			weight += item.weight 
 			moment += item.moment 
-		self.cg = float(moment/weight)
+		if weight == 0: 
+			self.cg = 0
+			return
+		self.cg = float("{0:.2f}".format(float(moment/weight)))
+		self.totalweight = weight 
+		self.totalmoment = moment
 		return 
 
 	"""
 	Returns rows of performance data formatted in HTML for use in the weight and balance PDF. 
 	"""
 	def calcPerformance(self): 
-
 		return 
 
 	# calculates the maximum range for airplane ** NOTE ** must include 30 - 45 min reserve fuel 
 	def calcMaxRange(self):
 		return 
 
-	"""
-	Generalized weight class with weight (lbs) and an arm (in) for CG calculations in any 
-	airplane type. 
-	"""
-	class Weight: 
-		def __init__(self, weight, arm): 
-			self.weight = weight 
-			self.arm = arm 
-			self.moment = self.weight*self.arm
+"""
+Generalized weight class with weight (lbs) and an arm (in) for CG calculations in any 
+airplane type. 
+"""
+class Weight: 
+	def __init__(self, weight, arm, num=0): 
+		self.weight = weight 
+		self.arm = arm 
+		self.moment = self.weight*self.arm
 
-		def __repr__(self): 
-			return "Weight: w=%s, a=%s, m=%s" % (self.weight, self.arm, self.moment)
+	def __repr__(self): 
+		return "Weight: w=%s, a=%s, m=%s" % (self.weight, self.arm, self.moment)
 
 """
 Creates environment for PDF of weather. 
@@ -880,6 +886,13 @@ class Route:
 	def insertClimb(self): 
 		if(self.course[0] < self.climb_dist): # someone 
 			self.errors.append("Climb distance longer than route. Ignoring climb parameters.")
+			print "Climb distance longer than route. Ignoring climb parameters" 
+			# still adding landmarks 
+			newLandmarks = [] 
+			newLandmarks.append(self.origin)
+			for x in range(len(self.courseSegs)): 
+				newLandmarks.append(self.courseSegs[x].to_poi)
+			self.landmarks = newLandmarks
 			return 
 		currentAlt = 0
 		currentDist = 0
@@ -1034,7 +1047,6 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], clim
 		mymap.addpoint(float(item.to_poi.lat), float(item.to_poi.lon))
 
 	mymap.addpath(path,"#4169E1")
-
 	return (getHtml(mymap, route.landmarks), noTOC, route, elevation_map, messages, getFrequencies(route.courseSegs), getZip(origin))
  
 """
