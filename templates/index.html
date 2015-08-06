@@ -29,6 +29,23 @@
             ga('create', 'UA-35360592-2', 'auto');
             ga('send', 'pageview');
         </script>
+        <script>
+            // http://www.randomsnippets.com/2008/02/21/how-to-dynamically-add-form-elements-via-javascript/
+            var counter = 1;
+            var max = 10;
+            function addInput(divName){
+                 if (counter == max)  {
+                    alert("You have reached a maximum of " + counter + " inputs");
+                 }
+                 else {
+                    // each element's id corresponds to a new weight and arm
+                    var newdiv = document.createElement('div');
+                    newdiv.innerHTML = "<br>Moment " + (counter+1) + ": &nbsp;<input type='text' style='width:15%; border-radius: 5px; padding:3px;' name='w" + (counter+1) + "' id='w" + (counter+1) + "' placeholder='Weight (lbs)'>&nbsp;<input type='text' style='width:15%; border-radius: 5px; padding:3px;' name='a" + (counter+1) + "' id='a" + (counter+1) + "' placeholder='Arm (in)'>";
+                    document.getElementById(divName).appendChild(newdiv);
+                    counter++;
+                 }
+            }
+        </script>
         <!-- http://www.dynamicdrive.com/forums/showthread.php?60374-Dynamically-hide-show-portion-of-HTML-when-checkbox-is-selected -->
         <script type="text/javascript">
             var checkDisplay = function(check, form) { //check ID, form ID
@@ -160,6 +177,28 @@
                     Airplane specific data can go here. 
                         Optional dynamic form generalized weights and arms. 
                 -->
+                <hr>
+                <div class="container">
+                    <h4>
+                        Airplane Weight and Balance 
+                    </h4>
+                    <br>
+                    <font size = "2">
+                        Airplane Type: 
+                    </font>
+                    <br>
+                    <input type='text' id="plane_type" style='width:15%; border-radius: 5px; padding:3px;' name='plane_type' value="C172SP NAV III">
+                    <br>
+                    <br>
+                    <div id="dynamicInput">
+                        Moment 1:&nbsp;
+                        <input type='text' id="w1" style='width:15%; border-radius: 5px; padding:3px;' name='w1' placeholder="Weight (lbs)">
+                        <input type='text' id="a1" style='width:15%; border-radius: 5px; padding:3px;' name='a1' placeholder="Arm (in)">
+                    </div>
+                    <br>
+                    <input type="button" class="btn btn-sm btn-primary" value="Add another text input" onClick="addInput('dynamicInput');">
+                </div>
+                <br>
                 <div class="container">
                     <small>
                         If you have any comments or questions, please <a href="/contact">contact me</a>. 
@@ -182,4 +221,7 @@
             }
         </script>
     </footer>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/static/js/bootstrap.min.js"></script>
+    <!-- http://stackoverflow.com/questions/20840018/bootstrap-3-carousel-transition-speed -->   
 </html>
