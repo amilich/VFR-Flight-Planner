@@ -153,7 +153,6 @@ def search():
 	plane_type = request.form['plane_type']
 	airplane = Airplane(plane_type, weights)
 	print airplane
-	print weights 
 	cache.set('airplane', airplane, timeout=500)
 
 	try:
