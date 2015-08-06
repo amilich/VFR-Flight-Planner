@@ -4,6 +4,13 @@ import pygmaps
 Given a pygmap, this function converts it into javascript. It is extremely similar 
 to the built in export function contained within pygmaps, however, instead of 
 writing to a file, this returns a string containing the encoded map. 
+
+@type 	myMap: pygmap 
+@param 	myMap: map with path and waypoints 
+@type 	landmarks: list
+@param 	landmarks: list of route landmarks 
+@rtype 	string 
+@return string with javascript google map
 """
 def getHtml(myMap, landmarks): 
 		if len(landmarks) == 0:
@@ -59,17 +66,14 @@ def getHtml(myMap, landmarks):
 				string += ('new google.maps.LatLng(%s, %s),\n' % (coordinate[0],coordinate[1]))
 			string += str('];\n')
 			string += str('\n')
-
 			string += ('var Path = new google.maps.Polyline({\n')
-			#string += ('clickable: %s,\n' % (str(clickable).lower()))
-			#string += ('geodesic: %s,\n' % (str(geodesic).lower()))
 			string += ('path: PolylineCoordinates, \n')
 			string += ('strokeColor: "' + str(strokeColor) + '",\n')
 			string += ('strokeOpacity: ' + str(0.8) + ' ,\n')
 			string += ('strokeWeight: ' + str(4) + ' \n')
 			string += ('});\n')
 			string += ('\n')
-			string += ('Path.setOptions({strokeColor: "' + str(strokeColor) + '"});\n')
+			string += ('Path.setOptions({strokeColor: "' + str(strokeColor) + '"});\n') # set path color
 			string += ('Path.setMap(map);\n')
 			string += ('\n\n')
 

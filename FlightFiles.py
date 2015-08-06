@@ -72,11 +72,22 @@ Generalized weight class with weight (lbs) and an arm (in) for CG calculations i
 airplane type. 
 """
 class Weight: 
+	"""
+	Initializes weight with moment, arm, and optional identifier. 
+
+	@type 	weight: float 
+	@param 	weight: weight (in lbs)
+	@type 	arm: float 
+	@param 	arm: moment arm (in)
+	"""
 	def __init__(self, weight, arm, num=0): 
 		self.weight = weight 
 		self.arm = arm 
 		self.moment = self.weight*self.arm
 
+	"""
+	Shows weight, arm, and moment information. 
+	"""
 	def __repr__(self): 
 		return "Weight: w=%s, a=%s, m=%s" % (self.weight, self.arm, self.moment)
 
@@ -123,12 +134,6 @@ class Environment:
 		self.temp, self.dp = Environment.getTempDP(self.metar)
 		self.pa = Environment.getPA(self.elevation, self.altimeter)
 		self.da = Environment.getDA(self.pa, self.temp, self.elevation)
-		# print self.skyCond
-		# print self.clouds
-		# print self.visibility
-		# print self.altimeter 
-		# print self.winddir, self.wind
-		# print self.temp, self.dp
 		return 
 
 	"""
