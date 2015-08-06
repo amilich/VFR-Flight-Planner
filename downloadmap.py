@@ -48,13 +48,11 @@ def getHtml(myMap, landmarks):
 		string += ('\t\tmap.fitBounds(bounds);\n')
 		clickable = False
 		geodesic = True
-		strokeColor = "#000000"
+		strokeColor = "#E800FF"
 		strokeOpacity = 1.0
 		strokeWeight = 2
 
 		for path in myMap.paths:
-			if(len(path) > 2): 
-				strokeColor = "FF0000" # custom 
 			path = path[:-1]
 			string += ('var PolylineCoordinates = [\n')
 			for coordinate in path:
@@ -63,14 +61,15 @@ def getHtml(myMap, landmarks):
 			string += str('\n')
 
 			string += ('var Path = new google.maps.Polyline({\n')
-			string += ('clickable: %s,\n' % (str(clickable).lower()))
-			string += ('geodesic: %s,\n' % (str(geodesic).lower()))
+			#string += ('clickable: %s,\n' % (str(clickable).lower()))
+			#string += ('geodesic: %s,\n' % (str(geodesic).lower()))
 			string += ('path: PolylineCoordinates, \n')
-			string += ('strokeColor: "' + str(strokeColor) + ' ",\n')
-			string += ('strokeOpacity: ' + str(strokeOpacity) + ' ,\n')
-			string += ('strokeWeight: ' + str(strokeWeight) + ' \n')
+			string += ('strokeColor: "' + str(strokeColor) + '",\n')
+			string += ('strokeOpacity: ' + str(0.8) + ' ,\n')
+			string += ('strokeWeight: ' + str(4) + ' \n')
 			string += ('});\n')
 			string += ('\n')
+			string += ('Path.setOptions({strokeColor: "' + str(strokeColor) + '"});\n')
 			string += ('Path.setMap(map);\n')
 			string += ('\n\n')
 
