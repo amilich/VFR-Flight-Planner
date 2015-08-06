@@ -137,6 +137,23 @@ relevant maps and displayed on the screen.
 """
 @app.route('/fplanner', methods = ['POST'])
 def search():
+	# this will get the weight and balance parameters
+	weights = []
+	try: 
+		for x in range(1, 10): 
+			w = request.form['w%s' % (x)] 
+			a = request.form['a%s' % (x)] 
+			if a == "" or w == "": 
+				break
+			weights.append(Airplane.Weight(float(w), float(a)))
+	except: 
+		pass # this is natural - there is a finite number of weight/arm boxes 
+
+	plane_type = request.form['plane_type']
+	print weights
+	airplane = Airplane(plane_type, weights)
+	print airplane
+
 	try:
 		startTime = time.time()
 		# basic route information 
@@ -201,12 +218,13 @@ def search():
 				messages.append("Destination is in SVFR conditions")
 	
 		showMsgs = True if(len(messages) is not 0) else False
-		print showMsgs
-		print messages
 		
 		# mail me a copy of the route for recordkeeping 
-		msg = Message("Route planned from " + airp1 + " to " + airp2, sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com']) 
-		mail.send(msg)
+		try: 
+			msg = Message("Route planned from " + airp1 + " to " + airp2, sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com']) 
+			mail.send(msg)
+		except: 
+			pass
 
 		# need to know this 
 		elapsedTime = time.time() - startTime
@@ -231,5 +249,5 @@ Run app.
 """
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.debug = False
+    app.debug = True
     app.run(host='0.0.0.0', port=port)

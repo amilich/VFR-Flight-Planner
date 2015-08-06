@@ -25,21 +25,9 @@ An airplane is used to store relevant information for weight and balance calcula
 """
 class Airplane: 
 	# ** NOTE ** for now, all data is for C172 
-	def __init__(self, tail_number, plane_type, empty_weight, empty_arm, fuel, pax1, pax2, bag1, bag2, fuel_arm=48, pax1_arm=37, pax2_arm=73, bag1_arm=95, bag2_arm=123):
-		self.tail = tail_number
+	def __init__(self, plane_type, weights): 
 		self.plane_type = plane_type
-		self.empty_weight = empty_weight 
-		self.empty_arm = empty_arm
-		self.fuel = fuel 
-		self.pax1 = pax1 
-		self.pax2 = pax2 
-		self.bag1 = bag1 
-		self.bag2 = bag2 
-		self.fuel_arm = fuel_arm 
-		self.pax1_arm = pax1_arm
-		self.pax2_arm = pax2_arm
-		self.bag1_arm = bag1_arm
-		self.bag2_arm = bag2_arm
+		self.weights = weights
 		self.calcCG()
 		# ** NOTE ** need to log the tail number in database (can be done in App.py)
 
@@ -54,9 +42,12 @@ class Airplane:
 	Calculates the center of gravity of an airpoane given each weight parameter 
 	"""
 	def calcCG(self):
-		self.weight = float(self.empty_weight) + float(self.fuel) + float(self.pax1) + float(self.pax2) + float(self.bag1) + float(self.bag2)
-		self.moment = float(self.empty_weight)*float(self.empty_arm) + float(self.fuel)*float(self.fuel_arm) + float(self.pax1)*float(self.pax1_arm) + float(self.pax2)*float(self.pax2_arm) + float(self.bag1)*float(self.bag1_arm) + float(self.bag2)*float(self.bag2_arm)
-		self.cg = self.moment/self.weight
+		weight = 0
+		moment = 0
+		for item in self.weights: 
+			weight += item.weight 
+			moment += item.moment 
+		self.cg = float(moment/weight)
 		return 
 
 	"""
@@ -79,6 +70,9 @@ class Airplane:
 			self.weight = weight 
 			self.arm = arm 
 			self.moment = self.weight*self.arm
+
+		def __repr__(self): 
+			return "Weight: w=%s, a=%s, m=%s" % (self.weight, self.arm, self.moment)
 
 """
 Creates environment for PDF of weather. 

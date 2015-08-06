@@ -32,16 +32,17 @@
         <script>
             // http://www.randomsnippets.com/2008/02/21/how-to-dynamically-add-form-elements-via-javascript/
             var counter = 1;
-            var limit = 10;
+            var max = 10;
             function addInput(divName){
-                 if (counter == limit)  {
-                      alert("You have reached the limit of adding " + counter + " inputs");
+                 if (counter == max)  {
+                    alert("You have reached a maximum of " + counter + " inputs");
                  }
                  else {
-                      var newdiv = document.createElement('div');
-                      newdiv.innerHTML = "<br>Moment " + (counter+1) + " &nbsp;<input type='text' style='width:15%; border-radius: 5px; padding:3px;' name='myInputs[]'>&nbsp;<input type='text' style='width:15%; border-radius: 5px; padding:3px;' name='myInputs[]'>";
-                      document.getElementById(divName).appendChild(newdiv);
-                      counter++;
+                    // each element's id corresponds to a new weight and arm
+                    var newdiv = document.createElement('div');
+                    newdiv.innerHTML = "<br>Moment " + (counter+1) + ": &nbsp;<input type='text' style='width:15%; border-radius: 5px; padding:3px;' name='w" + (counter+1) + "' id='w" + (counter+1) + "' placeholder='Weight (lbs)'>&nbsp;<input type='text' style='width:15%; border-radius: 5px; padding:3px;' name='a" + (counter+1) + "' id='a" + (counter+1) + "' placeholder='Arm (in)'>";
+                    document.getElementById(divName).appendChild(newdiv);
+                    counter++;
                  }
             }
         </script>
@@ -176,12 +177,23 @@
                     Airplane specific data can go here. 
                         Optional dynamic form generalized weights and arms. 
                 -->
+                <hr>
                 <div class="container">
-                    <b>Airplane Weights and Arms</b>
-                    <br><br>
+                    <h4>
+                        Airplane Weight and Balance 
+                    </h4>
+                    <br>
+                    <font size = "2">
+                        Airplane Type: 
+                    </font>
+                    <br>
+                    <input type='text' id="plane_type" style='width:15%; border-radius: 5px; padding:3px;' name='plane_type' value="C172SP NAV III">
+                    <br>
+                    <br>
                     <div id="dynamicInput">
-                        Moment 1 &nbsp;<input type='text' style='width:15%; border-radius: 5px; padding:3px;' name='myInputs[]'>
-                                <input type='text' style='width:15%; border-radius: 5px; padding:3px;' name='myInputs[]'>
+                        Moment 1:&nbsp;
+                        <input type='text' id="w1" style='width:15%; border-radius: 5px; padding:3px;' name='w1' placeholder="Weight (lbs)">
+                        <input type='text' id="a1" style='width:15%; border-radius: 5px; padding:3px;' name='a1' placeholder="Arm (in)">
                     </div>
                     <br>
                     <input type="button" class="btn btn-sm btn-primary" value="Add another text input" onClick="addInput('dynamicInput');">
@@ -209,4 +221,7 @@
             }
         </script>
     </footer>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/static/js/bootstrap.min.js"></script>
+    <!-- http://stackoverflow.com/questions/20840018/bootstrap-3-carousel-transition-speed -->   
 </html>
