@@ -3,7 +3,7 @@ from wtforms import StringField, TextAreaField, SubmitField, validators, HiddenF
 
 """
 Home search page form for route and aircraft information. 
-"""
+""" 
 class searchform(Form):
     options = []
     # gather all the ICAO codes - more efficient to do it here because the same

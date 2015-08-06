@@ -29,6 +29,22 @@
             ga('create', 'UA-35360592-2', 'auto');
             ga('send', 'pageview');
         </script>
+        <script>
+            // http://www.randomsnippets.com/2008/02/21/how-to-dynamically-add-form-elements-via-javascript/
+            var counter = 1;
+            var limit = 10;
+            function addInput(divName){
+                 if (counter == limit)  {
+                      alert("You have reached the limit of adding " + counter + " inputs");
+                 }
+                 else {
+                      var newdiv = document.createElement('div');
+                      newdiv.innerHTML = "<br>Moment " + (counter+1) + " &nbsp;<input type='text' style='width:15%; border-radius: 5px; padding:3px;' name='myInputs[]'>&nbsp;<input type='text' style='width:15%; border-radius: 5px; padding:3px;' name='myInputs[]'>";
+                      document.getElementById(divName).appendChild(newdiv);
+                      counter++;
+                 }
+            }
+        </script>
         <!-- http://www.dynamicdrive.com/forums/showthread.php?60374-Dynamically-hide-show-portion-of-HTML-when-checkbox-is-selected -->
         <script type="text/javascript">
             var checkDisplay = function(check, form) { //check ID, form ID
@@ -160,6 +176,17 @@
                     Airplane specific data can go here. 
                         Optional dynamic form generalized weights and arms. 
                 -->
+                <div class="container">
+                    <b>Airplane Weights and Arms</b>
+                    <br><br>
+                    <div id="dynamicInput">
+                        Moment 1 &nbsp;<input type='text' style='width:15%; border-radius: 5px; padding:3px;' name='myInputs[]'>
+                                <input type='text' style='width:15%; border-radius: 5px; padding:3px;' name='myInputs[]'>
+                    </div>
+                    <br>
+                    <input type="button" class="btn btn-sm btn-primary" value="Add another text input" onClick="addInput('dynamicInput');">
+                </div>
+                <br>
                 <div class="container">
                     <small>
                         If you have any comments or questions, please <a href="/contact">contact me</a>. 
