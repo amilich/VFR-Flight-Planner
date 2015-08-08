@@ -32,6 +32,7 @@ class Airplane:
 			self.weights[x].num = "Moment %i" % (x+1)
 		self.calcCG()
 		# ** NOTE ** need to log the tail number in database (can be done in App.py)
+		return 
 
 	"""
 	Print the airplane type and CG. More information could be included depending on 
@@ -84,6 +85,7 @@ class Weight:
 		self.weight = weight 
 		self.arm = arm 
 		self.moment = self.weight*self.arm
+		return 
 
 	"""
 	Shows weight, arm, and moment information. 
@@ -236,6 +238,7 @@ class Environment:
 		for item in metar.split(): 
 			if 'A' in item[0] and item[1:].isdigit(): 
 				return float(item[1:3] + "." + item[3:5]) 
+		return 29.92
 
 	"""
 	Given METAR return the visibility. 
@@ -316,6 +319,8 @@ class Point_Of_Interest:
 		self.latlon = LatLon(Latitude(lat), Longitude(lon))
 		self.data = data
 		self.setting = setting
+		return 
+
 	def __repr__(self): 
 		return str(self.name) + ": " +  str(self.dist)
 
@@ -344,6 +349,7 @@ class Segment:
 		self.setGS()
 		# time
 		self.time = self.length/self.gs # distance/rate=time
+		return 
 
 	"""
 	Correct for magnetic deviation. 
@@ -881,6 +887,7 @@ class Route:
 		cruising_alt=3500, cruise_speed=110, climb_speed=75, climb_dist=5, gph=10, descent_speed=90, doWeather=True, region="NORTHEAST"): 
 		self.reset(course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, \
 			climb_speed, climb_dist, gph, descent_speed, doWeather=doWeather, region=region)
+		return 
 
 	def reset(self, course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, \
 		climb_speed, climb_dist, gph, descent_speed, climb_done=False, doWeather=False, region="NORTHEAST"): 
@@ -911,6 +918,7 @@ class Route:
 			if seg.from_poi.name == seg.to_poi.name: 
 				self.courseSegs.remove(seg)
 		self.calculateFuelTime()
+		return 
 
 	"""
 	Takes a route and puts a climb in it 
