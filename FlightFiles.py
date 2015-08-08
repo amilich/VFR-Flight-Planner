@@ -821,8 +821,36 @@ def getMid(num):
 		return int(num/2)
 	return int((num-1)/2)
 
-# creates segments for a particular route
-def createSegments(origin, destination, course, alt, tas, climb_speed = 75, descent_speed = 90, custom = [], isCustom=False, doWeather=True, region="NORTHEAST"): 
+"""
+Creates segments for a particular route. 
+
+@type 	origin: Point_Of_Interest
+@param 	origin: origin airport
+@type 	destination: Point_Of_Interest
+@param 	destination: destination airport 
+@type 	course: tuple 
+@param 	course: course heading and distance 
+@type 	alt: int 
+@param 	alt: altitude 
+@type 	tas: int 
+@param 	tas: route desired cruise speed 
+@type 	climb_speed: int 
+@param 	climb_speed: climb speed in knots  
+@type 	descent_speed: int 
+@param 	descent_speed: descending speed in knots 
+@type 	custom: list 
+@param 	custom: custom list of coordinates 
+@type 	isCustom: boolean 
+@param 	isCustom: whether route is customized 
+@type 	doWeather: boolean 
+@param 	doWeather: whether to input live weather 
+@type 	region: string 
+@param 	region: general region for winds aloft data 
+@rtype 	int 
+@return an index for the center
+"""
+def createSegments(origin, destination, course, alt, tas, climb_speed = 75, \
+	descent_speed = 90, custom = [], isCustom=False, doWeather=True, region="NORTHEAST"): 
 	if len(custom) == 0:
 		landmarks = calculateRouteLandmarks(origin, destination, course)
 	else: 
