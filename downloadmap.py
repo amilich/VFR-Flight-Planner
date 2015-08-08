@@ -59,6 +59,7 @@ def getHtml(myMap, landmarks):
 		strokeOpacity = 1.0
 		strokeWeight = 2
 
+		# add paths 
 		for path in myMap.paths:
 			path = path[:-1]
 			string += ('var PolylineCoordinates = [\n')
@@ -77,6 +78,7 @@ def getHtml(myMap, landmarks):
 			string += ('Path.setMap(map);\n')
 			string += ('\n\n')
 
+		# show the map
 		string += ('\t}\n')
 		string += ('</script>\n')
 		string += ('</div>\n')

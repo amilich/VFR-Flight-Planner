@@ -7,7 +7,6 @@ CHART_BASE_URL = 'http://chart.googleapis.com/chart'
 
 """
 See Google Maps API examples for Python. 
-
 Constructs an elevation chart along a latitude and longitude path. 
 """
 def getChart(chartData, chartDataScaling="-500,5000", chartType="lc",chartLabel="Elevation in Meters",chartSize="500x160", chartColor="orange", **chart_args):
@@ -42,5 +41,5 @@ def getElevation(path,samples="75",sensor="false", **elvtn_args):
 
     for resultset in response['results']:
       elevationArray.append(resultset['elevation'])
-
+    # array of elevation data points 
     return elevationArray

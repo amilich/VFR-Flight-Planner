@@ -28,7 +28,7 @@ import os, time
 		* Diversion airports 
 		* Fuel stops (unicom, etc.)
 			* [DONE] Frequencies 
-		* Simple weight and balance 
+		* [DONE] Simple weight and balance (using dynamic form)
 			* C172 and generalized 
 		* Add loading page for update route 
 		* Custom airplane features dynamically transferred to weight/balance 
