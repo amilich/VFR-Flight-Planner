@@ -1140,7 +1140,22 @@ def getZip(poi):
 		print 'WX Fail' # for weather radar 
 		return ""
 
-# gets potential points of interest from a file 
+"""
+Gets potential points of interest from a file. 
+
+@type 	filename: string 
+@param 	filename: file to get data 
+@type 	p: string 
+@param 	p: the place you're looking for
+@type 	prevLoc: Point_Of_Interest
+@param 	prevLoc: base location
+@type 	r: route
+@param 	r: entire route 
+@type 	allowSpaces: boolean 
+@param 	allowSpaces: the place you're looking for
+@rtype 	list 
+@return Point_Of_Interest list
+"""
 def getData(filename, p, prevLoc, r, allowSpaces = False):
 	potChanges = []
 	with open(filename) as f:
