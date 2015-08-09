@@ -445,6 +445,8 @@ Retreives the METAR information from a particular airport.
 @return full METAR information 
 """
 def getWeather(loc):
+	if loc == "": 
+		return ""
 	try: 
 		url = 'http://www.aviationweather.gov/adds/metars/?station_ids=%s&std_trans=standard&chk_metars=on&hoursStr=most+recent+only&submitmet=Submit' % (loc)
 		page = urllib.urlopen(url)
@@ -502,6 +504,7 @@ def getWindsAloft(lat, lon, alt, region):
 	# all urls: ['https://aviationweather.gov/products/nws/boston', 'https://aviationweather.gov/products/nws/chicago', 
 	# 'https://aviationweather.gov/products/nws/saltlakecity', 'https://aviationweather.gov/products/nws/sanfrancisco', 
 	# 'https://aviationweather.gov/products/nws/miami', 'https://aviationweather.gov/products/nws/ftworth']
+
 	found = []
 	if "NORTHEAST" in region: 
 		urls = ['https://aviationweather.gov/products/nws/boston']
@@ -515,6 +518,8 @@ def getWindsAloft(lat, lon, alt, region):
 		urls = ['https://aviationweather.gov/products/nws/saltlakecity']
 	elif "LAKES" in region: 
 		urls = ['https://aviationweather.gov/products/nws/chicago']
+	else: 
+		return "0000"
 
 	# all winds aloft information 
 	for url in urls: 
@@ -567,7 +572,6 @@ def getWindsAloft(lat, lon, alt, region):
 	elif alt >= 36500 and alt < 40000: #34000 
 		return dataLine[9]
 	else: 
-		print 'ret 0'
 		return "0000"
 
 """
