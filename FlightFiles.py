@@ -25,6 +25,14 @@ An airplane is used to store relevant information for weight and balance calcula
 """
 class Airplane: 
 	# ** NOTE ** for now, all data is for C172 
+	"""
+	Initialize the plane with type and list of weights. 
+
+	@type 	plane_type: string 
+	@param 	plane_type: string of plane type (ex. "C172SP NAV III")
+	@type 	weights: list 
+	@param 	weights: list of weights with moments and arms
+	"""
 	def __init__(self, plane_type, weights): 
 		self.plane_type = plane_type
 		self.weights = weights
@@ -64,7 +72,10 @@ class Airplane:
 	def calcPerformance(self): 
 		return 
 
-	# calculates the maximum range for airplane ** NOTE ** must include 30 - 45 min reserve fuel 
+	"""
+	Calculates the maximum range for airplane 
+		** NOTE ** must include 30 - 45 min reserve fuel. 
+	"""
 	def calcMaxRange(self):
 		return 
 
@@ -696,7 +707,9 @@ Determines if a location can be used as a subsequent landmark from a base point 
 @param 	base: base location to check if landmark is valid 
 @type 	poi: Point_Of_Interest
 @param 	poi: landmark to check
-@type 	course: distance and heading of entire course 
+@type 	course: tuple
+@param 	course: distance and heading of entire course 
+@type 	tolerance: float 
 @param 	tolerance: tolerance (slowly increased) for finding landmarks 
 @rtype 	boolean 
 @return whether landmark is valid
@@ -717,7 +730,20 @@ def isValidLandmark(base, poi, course, tolerance):
 		return True
 	return False 
 
-# finds the prioritized landmarks from an origin location
+"""
+Finds the prioritized landmarks from an origin location. 
+
+@type 	origin: Point_Of_Interest
+@param 	origin: base location 
+@type 	validDistances: list
+@param 	validDistances: all landmarks/airports in range 
+@type 	course: tuple
+@param 	course: distance and heading of entire course 
+@type 	tolerance: float 
+@param 	tolerance: tolerance for finding landmarks 
+@rtype 	list 
+@return prioritized list of landmarks 
+"""
 def getValidLandmarks(origin, validDistances, course, tolerance): 
 	landmarks = []
 	for airport in validDistances: 
@@ -1107,7 +1133,6 @@ and complicated paths.
 @return static map image url 
 """
 def makeStaticMap(segments,destination):
-	# clip art: http://images.all-free-download.com/images/graphiclarge/silhouette_plane_clip_art_15576.jpg
 	base_url = "https://maps.googleapis.com/maps/api/staticmap?&size=500x200&maptype=terrain" 
 	num = 1 # number each label on map
 	if len(segments) < 10: 
