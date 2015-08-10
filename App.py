@@ -13,7 +13,7 @@ import os, time
 	VFR-Flight-Planner
 
 	@author 	Andrew Milich 
-	@version 	0.3
+	@version 	0.4 
 
 	This application is designed to simplify the extensive planning prior to VFR flghts. 
 	It finds cities and airports along the route to ensure a pilot remains on course, 
