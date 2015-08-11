@@ -382,16 +382,12 @@ class Segment:
 	"""
 	def magCorrect(self): 
 		self.mag_hdg = mag_heading(float(self.true_hdg), float(self.from_poi.lat), float(self.from_poi.lon)) # Get the magnetic heading 
-		print self.mag_hdg
-		print self.true_hdg
 		self.mag_var = float("{0:.2f}".format(getHeadingDiff(self.true_hdg, self.mag_hdg)))
 
 	"""
 	Calculates and sets wind correction angle. 
 	"""
 	def setCorrectedCourse(self): 
-		print 'wca'
-		print self.true_hdg, self.tas, self.w, self.vw
 		wca = Segment.calcWindCorrectionAngle(self.true_hdg, self.tas, self.w, self.vw)
 		self.wca = float("{0:.2f}".format(wca))
 		self.hdg = float("{0:.2f}".format(self.mag_hdg + wca))
@@ -407,7 +403,6 @@ class Segment:
 	Gets the wind for the segment. 
 	"""
 	def getWindS(self): 
-		print 'getting wind'
 		if(self.isOrigin or self.alt == 0): 
 			self.w, self.vw = getWind(self.from_poi.name)
 		else: 
@@ -418,7 +413,6 @@ class Segment:
 			self.vw = float(aloft[2:4])
 			if(len(aloft) > 4): 
 				self.temp = float(aloft[4:])
-			print self.w,self.vw
 		return 
 
 	""" 
