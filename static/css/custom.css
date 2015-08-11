@@ -1,3 +1,8 @@
+.nolines {
+  border: 1px solid black;
+  font-size: 10px;
+}
+
 div#loading {
     width: 35px;
     height: 35px;

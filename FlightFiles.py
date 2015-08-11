@@ -366,11 +366,15 @@ class Segment:
 		# initialize complex data
 		self.length = from_poi.latlon.distance(to_poi.latlon)*km_to_nm # important! convert to miles
 		self.magCorrect()
-		self.getWind()
+		self.getWindS()
 		self.setCorrectedCourse()
 		self.setGS()
 		# time
 		self.time = self.length/self.gs # distance/rate=time
+
+		self.seg_hdg = float("{0:.2f}".format(from_poi.latlon.heading_initial(to_poi.latlon)))
+		if(self.seg_hdg < 0): 
+			self.seg_hdg += 360
 		return 
 
 	"""
@@ -378,13 +382,19 @@ class Segment:
 	"""
 	def magCorrect(self): 
 		self.mag_hdg = mag_heading(float(self.true_hdg), float(self.from_poi.lat), float(self.from_poi.lon)) # Get the magnetic heading 
+		print self.mag_hdg
+		print self.true_hdg
+		self.mag_var = float("{0:.2f}".format(getHeadingDiff(self.true_hdg, self.mag_hdg)))
 
 	"""
 	Calculates and sets wind correction angle. 
 	"""
 	def setCorrectedCourse(self): 
+		print 'wca'
+		print self.true_hdg, self.tas, self.w, self.vw
 		wca = Segment.calcWindCorrectionAngle(self.true_hdg, self.tas, self.w, self.vw)
-		self.hdg = self.mag_hdg + wca
+		self.wca = float("{0:.2f}".format(wca))
+		self.hdg = float("{0:.2f}".format(self.mag_hdg + wca))
 		return
 
 	"""
@@ -396,25 +406,26 @@ class Segment:
 	""" 
 	Gets the wind for the segment. 
 	"""
-	def getWind(self): 
+	def getWindS(self): 
+		print 'getting wind'
 		if(self.isOrigin or self.alt == 0): 
 			self.w, self.vw = getWind(self.from_poi.name)
-		elif(self.isDest or self.alt == 0):
-			self.w, self.vw = getWind(self.to_poi.name)
 		else: 
 			aloft = str(self.aloft)
 			#if("9900" in str(aloft)): 
 			#	aloft = "0000+00"
-			self.w = 10*aloft[:2] # only 2 digits
-			self.vw = aloft[2:4]
-			self.temp = aloft[4:]
+			self.w = 10*float(aloft[:2]) # only 2 digits
+			self.vw = float(aloft[2:4])
+			if(len(aloft) > 4): 
+				self.temp = float(aloft[4:])
+			print self.w,self.vw
 		return 
 
 	""" 
 	Gets segment data to display to user. 
 	"""
 	def getData(self):
-		return [self.from_poi.name, self.to_poi.name, str("{0:.2f}".format(self.length)), str(self.alt), str(self.tas), "{0:.2f}".format(float(self.gs)), "{0:.2f}".format(float(self.hdg))]
+		return [self.from_poi.name, self.to_poi.name, str("{0:.2f}".format(self.length)), str(self.alt), str(self.tas), "{0:.2f}".format(float(self.gs))]
 
 	"""
 	Converts segment to table entry. 
@@ -608,7 +619,11 @@ Finds the distance and heading between two locations.
 """
 def getDistHeading(poi1, poi2): 
 	try: 
-		return (poi1.latlon.distance(poi2.latlon)*km_to_nm, poi1.latlon.heading_initial(poi2.latlon))
+		d = poi1.latlon.distance(poi2.latlon)*km_to_nm
+		h = poi1.latlon.heading_initial(poi2.latlon)
+		if h < 0: 
+			h += 360 # sometimes gives negative headings which screws things up
+		return (d, h)
 	except: 
 		'error'
 		return (float("inf"), 0) #should be out of range, but need better fix
@@ -1099,7 +1114,7 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], clim
 	origin = Point_Of_Interest(home, ll[0], ll[1], 0)
 	destination =  Point_Of_Interest(dest, getLatLon(dest)[0], getLatLon(dest)[1], -1)
 	course = getDistHeading(origin, destination)
-
+	
 	elevation_data = getProperAlt(origin, destination, course)
 	cruising_alt = elevation_data[0]
 	elevation_map = elevation_data[1]
