@@ -207,9 +207,9 @@ class Environment:
 		if visInd + 1 == cloudInd: 
 			return ""
 		# the weather is between visibility and cloud conditions (always present)
-		wx = metar.split()[visInd:cloudInd] 
+		wx = metar.split()[visInd+1:cloudInd] 
 		if len(wx) > 1: 
-			print 'length of wx > 1: %s' % (wx)
+			print 'length of wx > 1: %s; metar=%s' % (wx, metar)
 			return ""
 		return wx 
 
@@ -822,9 +822,7 @@ Find landmarks along duration of route.
 @return list of Point_Of_Interest objects 
 """
 def calculateRouteLandmarks(origin, destination, course): 
-	print 'start 1'
 	allRelevantAirports = getDistancesInRange(origin, destination, course) # work on SHORTENING this
-	print 'done w dist'
 	currentDist = course[0] # will be worked down to 0 (roughly)
 	counter = 0
 	routeLandmarks = []
@@ -1222,7 +1220,7 @@ def getZip(poi):
 				zipcode = item 
 		return zipcode
 	except: 
-		print 'WX Fail' # for weather radar 
+		print 'WX Fail %s' % (poi.name) # for weather radar 
 		return ""
 
 """
