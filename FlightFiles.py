@@ -202,12 +202,16 @@ class Environment:
 				visInd = x
 		cloudInd = -1
 		for x in range(len(metar.split())): 
-			if clouds == metar.split()[x]:
+			if clouds[0] == metar.split()[x]:
 				cloudInd = x
 		if visInd + 1 == cloudInd: 
 			return ""
 		# the weather is between visibility and cloud conditions (always present)
-		return metar.split()[visInd:cloudInd] 
+		wx = metar.split()[visInd:cloudInd] 
+		if len(wx) > 1: 
+			print 'length of wx > 1: %s' % (wx)
+			return ""
+		return wx 
 
 	"""
 	Determine whether the weather is within VFR requirements. 
@@ -227,11 +231,11 @@ class Environment:
 	def getSkyCond(cls, metar, clouds, visibility, wx): 
 		if 'TS' in wx: 
 			return 'IFR' # should not fly VFR in vicinity of TS
-		if 'CLR' or 'SKC' in clouds: 
-			clouds += '999' # makes the rest of determining the ceiling easier 
-		if float(clouds[3:].replace("CB", ""))*100 > 3000 and visibility > 5: 
+		#if 'CLR' or 'SKC' in clouds[0]: ???
+		#	clouds += '999' # makes the rest of determining the ceiling easier  
+		if float(clouds[0][3:].replace("CB", ""))*100 > 3000 and visibility > 5: 
 			return 'VFR'
-		elif float(clouds[3:].replace("CB", ""))*100 < 3000 and float(clouds[3:].replace("CB", ""))*100 > 1000 and \
+		elif float(clouds[0][3:].replace("CB", ""))*100 < 3000 and float(clouds[0][3:].replace("CB", ""))*100 > 1000 and \
 		visibility > 3 and visibility < 5: 
 			return 'SVFR'
 		return 'IFR' # all other weather types are IFR or LIFR 
@@ -276,11 +280,18 @@ class Environment:
 	"""
 	@classmethod 
 	def getClouds(cls, metar):
-		for item in metar.split(): 
+		clouds = []
+		if "RMK" in metar: 
+			usable = metar.split("RMK")[0]
+		else: 
+			usable = metar 
+		for item in usable.split(): 
 			if 'SKC' in item or 'CLR' in item or 'FEW' in item or \
-			   'SCT' in item or 'BNK' in item or 'OVC' in item: 
-				return item 
-		return "OVC000"
+			   'SCT' in item or 'BKN' in item or 'OVC' in item: 
+				clouds.append(item)
+		if len(clouds) > 0: 
+			return clouds 
+		return "DATA ERROR"
 
 	"""
 	Calculate the pressure altitude. 
@@ -1237,6 +1248,7 @@ def getData(filename, p, prevLoc, r, allowSpaces = False):
 
 # changes a particular landmark along a route and returns a new route
 def changeRoute(r, n, p, home, dest, altitude, airspeed, climb_dist, climb_speed, region): # route, leg # to change, where to change it to 
+	print 'changing route from %s to %s at segment %i to: %s' % (home, dest, n, p)
 	prevLoc = r.courseSegs[n].from_poi
 	potChanges = []
 	potChanges += (getData("data/cities.txt", p, prevLoc, r, True))

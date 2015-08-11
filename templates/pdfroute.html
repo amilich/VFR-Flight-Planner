@@ -143,6 +143,9 @@
   			       			<div class="col-md-2">
   			       				Sky Conditions: <u>&nbsp; {{ env.skyCond }} &nbsp;</u>
   			       			</div>
+                    <div class="col-md-2">
+                      Temp/Dewpoint (&deg;C): <u>&nbsp; {{ env.temp }},&nbsp; {{ env.dp}} &nbsp;</u>
+                    </div>
   			       			<div class="col-md-2">
   			       				Pressure Altitude: <u>&nbsp; {{ env.pa }} &nbsp;</u>
   			       			</div>
@@ -178,15 +181,17 @@
   			       			<div class="col-md-2">
   			       				Visibility: <u>&nbsp; {{ env2.visibility }} SM &nbsp;</u>
   			       			</div>
-  			       			{% if not env.wx == "" %} 
+  			       			{% if not env2.wx == "" %} 
   			       				<div class="col-md-2">
-  			       					Weather: 
-  			       					<u> {{ env.wx }} </u>
+  			       					Weather: <u> &nbsp; {{ env2.wx }} &nbsp; </u>
   			       				</div>
   			       			{% endif %} 
   			       			<div class="col-md-2">
   			       				Sky Conditions: <u>&nbsp; {{ env2.skyCond }} &nbsp;</u>
   			       			</div>
+                    <div class="col-md-2">
+                      Temp/Dewpoint (&deg;C): <u>&nbsp; {{ env2.temp }},&nbsp; {{ env2.dp}} &nbsp;</u>
+                    </div>
   			       			<div class="col-md-2">
   			       				Pressure Altitude: <u>&nbsp; {{ env2.pa }} &nbsp;</u>
   			       			</div>
