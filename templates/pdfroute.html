@@ -26,333 +26,200 @@
 		
 		<br><br><br>
 		<div class="container">
-			<font size="5">
-				<table border='1' style="width:50%;" cellpadding="5">
+			<font size="4">
+				<table border='1' style="width:30%;" cellpadding="3">
 					<tr>
-							<td> Leg (from) </td>
-							<td> Leg (to) </td>
-							<td> Length (nm) </td>
-							<td> Altitude (feet)</td>
-							<td> True Airspeed </td>
-							<td> Groundspeed (kts) </td>
-							<td> Magnetic Heading (&deg;)</td>
-					</tr>
+                        <th> Leg (from) </th>
+                        <th> Leg (to) </th>
+                        <th> Length (nm) </th>
+                        <th> Altitude (feet)</th>
+                        <th> True Airspeed (kts) </th>
+                        <th> Groundspeed (kts) </th>
+                        <th> 
+                            <table style="border-collapse: collapse; border-style: hidden;" cellpadding="3">
+                                <tr>
+                                    <td style="border: 0px solid black;font-size: 10px;"> True Course (&deg;)</td>
+                                    <td style="border: 0px solid black;font-size: 10px;"> WCA</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 0px solid black;font-size: 10px;"> <b>Corrected Heading</b></td>
+                                    <td style="border: 0px solid black;font-size: 10px;"> Mag. Var.</td>
+                                </tr>
+                            </table>
+                        </th>
+                    </tr>
 					{% for item in theRoute %}
 						<tr>
-								{% for thing in item.getData() %}
-											<td>{{ thing }}</td>
-								{% endfor %}
-							</tr>
+							{% for thing in item.getData() %}
+										<td>{{ thing }}</td>
+							{% endfor %}
+							<td>
+                                <table style="border-collapse: collapse; border-style: hidden;" cellpadding="3">
+                                    <tr>
+                                        <td style="border: 0px solid black;font-size: 10px;">{{ item.seg_hdg }}</td>
+                                        <td style="border: 0px solid black;font-size: 10px;">{{ item.wca }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 0px solid black;font-size: 10px;"><b> {{ item.hdg }} </b></td>
+                                        <td style="border: 0px solid black;font-size: 10px;"> {{ item. mag_var}}</td>
+                                    </tr>
+                                </table>
+                            </td>
+						</tr>
 					{% endfor %} 
 				</table>
 			</font>
 		</div>
 		<p style="page-break-after:always;"></p>
-		<!-- frequencies -->
-		<div class="container">
-<<<<<<< HEAD
-						<br>
-						<h1 style="font-weight:normal;">
-						<table border='1' style="width:50%;" cellpadding="5">
-										<tr>
-												<td>Airport Identification</td>
-												<td>Type</td>
-												<td>Identification</td>
-												<td>Frequency</td>
-										</tr>
-								{% for thing in freqs %}
-										<tr>   
-												{% for freq in thing %}
-														<td> {{ freq }} </td>
-												{% endfor %} 
-										</tr>
-								{% endfor %}
-						</table>
-						</h3>
-				</div>
-				{% if not (airplane.weights|length) == 0%}
-				<p style="page-break-after:always;"></p>
+			<!-- frequencies -->
+			<div class="container">
 				<br>
-				<div class="container" id="airplane">
-						<br>
-						<h1 style="font-weight:normal;">
-								<center>
-										<font size="6">
-												Weight and Balance 
-										</font>
-								</center>
-								<table border='1' style="width:50%;" cellpadding="10">
-									 <tr>
-											 <td></td>
-											 <td>Weight (lbs)</td>
-											 <td>Arm (in)</td>
-											 <td>Moment (lb·ft)</td>
-									 </tr>
-									 {% for item in airplane.weights %}
-											 <tr>
-													 <td> {{ item.num }} </td>
-													 <td> {{ item.weight }} </td>
-													 <td> {{ item.arm }} </td>
-													 <td> {{ item.moment }} </td>
-											 </tr>
-									 {% endfor %}
-									 <tr>
-											 <td>Total: </td>
-											 <td>{{ airplane.totalweight }} </td>
-											 <td>{{ airplane.cg }}</td>
-											 <td>{{ airplane.totalmoment }} </td>
-									 </tr>
-								</table>
-						</h1>
-				</div>
-				{% endif %}
-				<p style="page-break-after:always;"></p>
-				<br>
-				<div class="container">
-						<font size="5">
-							<div class="row">
-								<div class="col-md-11" style="border: 1px solid; border-radius:5px; padding:10px; margin:3%;">
-									<div class="row">
-										<div class="col-md-3">
-											METAR information for: <u>&nbsp; {{ env.location }} &nbsp;</u>
-										</div>
-										<div class="col-md-2">
-											Time: <u>&nbsp; {{ env.time }} &nbsp;</u>
-										</div>
-										<div class="col-md-2">
-											Altimeter: <u>&nbsp; {{ env.altimeter }} &nbsp;</u>
-										</div>
-										<div class="col-md-2">
-											Clouds: <u>&nbsp; {{ env.clouds }} &nbsp;</u>
-										</div>
-										<div class="col-md-2">
-											Wind: <u>&nbsp; {{ env.winddir }}, @ {{ env.wind }} kts &nbsp;</u>
-										</div>
-									</div>
-									<div class="row" style="margin:8px">
-									</div>
-									<div class="row">
-										<div class="col-md-2">
-											Visibility: <u>&nbsp; {{ env.visibility }} SM &nbsp;</u>
-										</div>
-										{% if not env.wx == "" %} 
-											<div class="col-md-2">
-												Weather: 
-												<u> {{ env.wx }} </u>
-											</div>
-										{% endif %} 
-										<div class="col-md-2">
-											Sky Conditions: <u>&nbsp; {{ env.skyCond }} &nbsp;</u>
-										</div>
-										<div class="col-md-2">
-											Pressure Altitude: <u>&nbsp; {{ env.pa }} &nbsp;</u>
-										</div>
-										<div class="col-md-2">
-											Density Altitude: <u>&nbsp; {{ env.da }} &nbsp;</u>
-										</div>
-									</div>
-								</div>
-						</div>
-						<br><br>
+				<h1 style="font-weight:normal;">
+					<table border='1' style="width:50%;" cellpadding="5">
+							<tr>
+								<td>Airport Identification</td>
+								<td>Type</td>
+								<td>Identification</td>
+								<td>Frequency</td>
+							</tr>
+							{% for thing in freqs %}
+								<tr>   
+									{% for freq in thing %}
+											<td> {{ freq }} </td>
+									{% endfor %} 
+								</tr>
+							{% endfor %}
+					</table>
+				</h1>
+			</div>
+			{% if not (airplane.weights|length) == 0%}
+			<p style="page-break-after:always;"></p>
+			<br>
+			<div class="container" id="airplane">
+					<br>
+					<h1 style="font-weight:normal;">
+							<center>
+									<font size="6">
+											Weight and Balance 
+									</font>
+							</center>
+							<table border='1' style="width:50%;" cellpadding="10">
+								 <tr>
+										 <td></td>
+										 <td>Weight (lbs)</td>
+										 <td>Arm (in)</td>
+										 <td>Moment (lb·ft)</td>
+								 </tr>
+								 {% for item in airplane.weights %}
+										 <tr>
+												 <td> {{ item.num }} </td>
+												 <td> {{ item.weight }} </td>
+												 <td> {{ item.arm }} </td>
+												 <td> {{ item.moment }} </td>
+										 </tr>
+								 {% endfor %}
+								 <tr>
+										 <td>Total: </td>
+										 <td>{{ airplane.totalweight }} </td>
+										 <td>{{ airplane.cg }}</td>
+										 <td>{{ airplane.totalmoment }} </td>
+								 </tr>
+							</table>
+					</h1>
+			</div>
+			{% endif %}
+			<p style="page-break-after:always;"></p>
+			<br>
+			<div class="container">
+					<font size="5">
 						<div class="row">
-								<div class="col-md-11" style="border: 1px solid; border-radius:5px; padding:10px; margin:3%;">
-									<div class="row">
-										<div class="col-md-3">
-											METAR information for: <u>&nbsp; {{ env2.location }} &nbsp;</u>
-										</div>
-										<div class="col-md-2">
-											Time: <u>&nbsp; {{ env2.time }} &nbsp;</u>
-										</div>
-										<div class="col-md-2">
-											Altimeter: <u>&nbsp; {{ env2.altimeter }} &nbsp;</u>
-										</div>
-										<div class="col-md-2">
-											Clouds: <u>&nbsp; {{ env2.clouds }} &nbsp;</u>
-										</div>
-										<div class="col-md-2">
-											Wind: <u>&nbsp; {{ env2.winddir }}, @ {{ env2.wind }} kts &nbsp;</u>
-										</div>
+							<div class="col-md-11" style="border: 1px solid; border-radius:5px; padding:10px; margin:3%;">
+								<div class="row">
+									<div class="col-md-3">
+										METAR information for: <u>&nbsp; {{ env.location }} &nbsp;</u>
 									</div>
-									<div class="row" style="margin:8px">
+									<div class="col-md-2">
+										Time: <u>&nbsp; {{ env.time }} &nbsp;</u>
 									</div>
-									<div class="row">
-										<div class="col-md-2">
-											Visibility: <u>&nbsp; {{ env2.visibility }} SM &nbsp;</u>
-										</div>
-										{% if not env.wx == "" %} 
-											<div class="col-md-2">
-												Weather: 
-												<u> {{ env.wx }} </u>
-											</div>
-										{% endif %} 
-										<div class="col-md-2">
-											Sky Conditions: <u>&nbsp; {{ env2.skyCond }} &nbsp;</u>
-										</div>
-										<div class="col-md-2">
-											Pressure Altitude: <u>&nbsp; {{ env2.pa }} &nbsp;</u>
-										</div>
-										<div class="col-md-2">
-											Density Altitude: <u>&nbsp; {{ env2.da }} &nbsp;</u>
-										</div>
+									<div class="col-md-2">
+										Altimeter: <u>&nbsp; {{ env.altimeter }} &nbsp;</u>
+									</div>
+									<div class="col-md-2">
+										Clouds: <u>&nbsp; {{ env.clouds }} &nbsp;</u>
+									</div>
+									<div class="col-md-2">
+										Wind: <u>&nbsp; {{ env.winddir }}, @ {{ env.wind }} kts &nbsp;</u>
 									</div>
 								</div>
-						</div>
-					</font>
-				</div>
-=======
-            <br>
-            <h1 style="font-weight:normal;">
-            <table border='1' style="width:50%;" cellpadding="5">
-                    <tr>
-                        <td>Airport Identification</td>
-                        <td>Type</td>
-                        <td>Identification</td>
-                        <td>Frequency</td>
-                    </tr>
-                {% for thing in freqs %}
-                    <tr>   
-                        {% for freq in thing %}
-                            <td> {{ freq }} </td>
-                        {% endfor %} 
-                    </tr>
-                {% endfor %}
-            </table>
-            </h3>
-        </div>
-        {% if not (airplane.weights|length) == 0%}
-        <p style="page-break-after:always;"></p>
-        <br>
-        <div class="container" id="airplane">
-            <br>
-            <h1 style="font-weight:normal;">
-                <center>
-                    <font size="6">
-                        Weight and Balance 
-                    </font>
-                </center>
-                <table border='1' style="width:50%;" cellpadding="10">
-                   <tr>
-                       <td></td>
-                       <td>Weight (lbs)</td>
-                       <td>Arm (in)</td>
-                       <td>Moment (lb·ft)</td>
-                   </tr>
-                   {% for item in airplane.weights %}
-                       <tr>
-                           <td> {{ item.num }} </td>
-                           <td> {{ item.weight }} </td>
-                           <td> {{ item.arm }} </td>
-                           <td> {{ item.moment }} </td>
-                       </tr>
-                   {% endfor %}
-                   <tr>
-                       <td>Total: </td>
-                       <td>{{ airplane.totalweight }} </td>
-                       <td>{{ airplane.cg }}</td>
-                       <td>{{ airplane.totalmoment }} </td>
-                   </tr>
-                </table>
-            </h1>
-        </div>
-        {% endif %}
-        <p style="page-break-after:always;"></p>
-        <br>
-        <div class="container">
-            <font size="5">
-        	    <div class="row">
-    		      	<div class="col-md-11" style="border: 1px solid; border-radius:5px; padding:10px; margin:3%;">
-    		      		<div class="row">
-  			       			<div class="col-md-3">
-  			       				METAR information for: <u>&nbsp; {{ env.location }} &nbsp;</u>
-  			       			</div>
-  			       			<div class="col-md-2">
-  			       				Time: <u>&nbsp; {{ env.time }} &nbsp;</u>
-  			       			</div>
-  			       			<div class="col-md-2">
-  			       				Altimeter: <u>&nbsp; {{ env.altimeter }} &nbsp;</u>
-  			       			</div>
-  			       			<div class="col-md-2">
-  			       				Clouds: <u>&nbsp; {{ env.clouds }} &nbsp;</u>
-  			       			</div>
-  			       			<div class="col-md-2">
-  			       				Wind: <u>&nbsp; {{ env.winddir }}, @ {{ env.wind }} kts &nbsp;</u>
-  			       			</div>
-  			       		</div>
-  			       		<div class="row" style="margin:8px">
-  			       		</div>
-  			       		<div class="row">
-  			       			<div class="col-md-2">
-  			       				Visibility: <u>&nbsp; {{ env.visibility }} SM &nbsp;</u>
-  			       			</div>
-  			       			{% if not env.wx == "" %} 
-  			       				<div class="col-md-2">
-  			       					Weather: 
-  			       					<u> {{ env.wx }} </u>
-  			       				</div>
-  			       			{% endif %} 
-  			       			<div class="col-md-2">
-  			       				Sky Conditions: <u>&nbsp; {{ env.skyCond }} &nbsp;</u>
-  			       			</div>
-                    <div class="col-md-2">
-                      Temp/Dewpoint (&deg;C): <u>&nbsp; {{ env.temp }},&nbsp; {{ env.dp}} &nbsp;</u>
-                    </div>
-  			       			<div class="col-md-2">
-  			       				Pressure Altitude: <u>&nbsp; {{ env.pa }} &nbsp;</u>
-  			       			</div>
-  			       			<div class="col-md-2">
-  			       				Density Altitude: <u>&nbsp; {{ env.da }} &nbsp;</u>
-  			       			</div>
-  			       		</div>
-    		      	</div>
-    		    </div>
-    		    <br><br>
-    		    <div class="row">
-    		      	<div class="col-md-11" style="border: 1px solid; border-radius:5px; padding:10px; margin:3%;">
-    		      		<div class="row">
-  			       			<div class="col-md-3">
-  			       				METAR information for: <u>&nbsp; {{ env2.location }} &nbsp;</u>
-  			       			</div>
-  			       			<div class="col-md-2">
-  			       				Time: <u>&nbsp; {{ env2.time }} &nbsp;</u>
-  			       			</div>
-  			       			<div class="col-md-2">
-  			       				Altimeter: <u>&nbsp; {{ env2.altimeter }} &nbsp;</u>
-  			       			</div>
-  			       			<div class="col-md-2">
-  			       				Clouds: <u>&nbsp; {{ env2.clouds }} &nbsp;</u>
-  			       			</div>
-  			       			<div class="col-md-2">
-  			       				Wind: <u>&nbsp; {{ env2.winddir }}, @ {{ env2.wind }} kts &nbsp;</u>
-  			       			</div>
-  			       		</div>
-  			       		<div class="row" style="margin:8px">
-  			       		</div>
-  			       		<div class="row">
-  			       			<div class="col-md-2">
-  			       				Visibility: <u>&nbsp; {{ env2.visibility }} SM &nbsp;</u>
-  			       			</div>
-  			       			{% if not env2.wx == "" %} 
-  			       				<div class="col-md-2">
-  			       					Weather: <u> &nbsp; {{ env2.wx }} &nbsp; </u>
-  			       				</div>
-  			       			{% endif %} 
-  			       			<div class="col-md-2">
-  			       				Sky Conditions: <u>&nbsp; {{ env2.skyCond }} &nbsp;</u>
-  			       			</div>
-                    <div class="col-md-2">
-                      Temp/Dewpoint (&deg;C): <u>&nbsp; {{ env2.temp }},&nbsp; {{ env2.dp}} &nbsp;</u>
-                    </div>
-  			       			<div class="col-md-2">
-  			       				Pressure Altitude: <u>&nbsp; {{ env2.pa }} &nbsp;</u>
-  			       			</div>
-  			       			<div class="col-md-2">
-  			       				Density Altitude: <u>&nbsp; {{ env2.da }} &nbsp;</u>
-  			       			</div>
-  			       		</div>
-    		      	</div>
-    		    </div>
-        	</font>
-        </div>
->>>>>>> origin/develop
+								<div class="row" style="margin:8px">
+								</div>
+								<div class="row">
+									<div class="col-md-2">
+										Visibility: <u>&nbsp; {{ env.visibility }} SM &nbsp;</u>
+									</div>
+									{% if not env.wx == "" %} 
+										<div class="col-md-2">
+											Weather: 
+											<u> {{ env.wx }} </u>
+										</div>
+									{% endif %} 
+									<div class="col-md-2">
+										Sky Conditions: <u>&nbsp; {{ env.skyCond }} &nbsp;</u>
+									</div>
+									<div class="col-md-2">
+										Pressure Altitude: <u>&nbsp; {{ env.pa }} &nbsp;</u>
+									</div>
+									<div class="col-md-2">
+										Density Altitude: <u>&nbsp; {{ env.da }} &nbsp;</u>
+									</div>
+								</div>
+							</div>
+					</div>
+					<br><br>
+					<div class="row">
+							<div class="col-md-11" style="border: 1px solid; border-radius:5px; padding:10px; margin:3%;">
+								<div class="row">
+									<div class="col-md-3">
+										METAR information for: <u>&nbsp; {{ env2.location }} &nbsp;</u>
+									</div>
+									<div class="col-md-2">
+										Time: <u>&nbsp; {{ env2.time }} &nbsp;</u>
+									</div>
+									<div class="col-md-2">
+										Altimeter: <u>&nbsp; {{ env2.altimeter }} &nbsp;</u>
+									</div>
+									<div class="col-md-2">
+										Clouds: <u>&nbsp; {{ env2.clouds }} &nbsp;</u>
+									</div>
+									<div class="col-md-2">
+										Wind: <u>&nbsp; {{ env2.winddir }}, @ {{ env2.wind }} kts &nbsp;</u>
+									</div>
+								</div>
+								<div class="row" style="margin:8px">
+								</div>
+								<div class="row">
+									<div class="col-md-2">
+										Visibility: <u>&nbsp; {{ env2.visibility }} SM &nbsp;</u>
+									</div>
+									{% if not env.wx == "" %} 
+										<div class="col-md-2">
+											Weather: 
+											<u> {{ env.wx }} </u>
+										</div>
+									{% endif %} 
+									<div class="col-md-2">
+										Sky Conditions: <u>&nbsp; {{ env2.skyCond }} &nbsp;</u>
+									</div>
+									<div class="col-md-2">
+										Pressure Altitude: <u>&nbsp; {{ env2.pa }} &nbsp;</u>
+									</div>
+									<div class="col-md-2">
+										Density Altitude: <u>&nbsp; {{ env2.da }} &nbsp;</u>
+									</div>
+								</div>
+							</div>
+					</div>
+				</font>
+			</div>
 	</body>
 </html>

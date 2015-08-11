@@ -1,4 +1,4 @@
-<html>
+    <html>
     <head>
         <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon"/>
         <link href="/static/css/bootstrap.min.css" rel="stylesheet">
@@ -105,23 +105,46 @@
 
                     <table border='1' style="width:50%;" cellpadding="10">
                         <tr>
-                            <td> Leg (from) </td>
-                            <td> Leg (to) </td>
-                            <td> Length (nm) </td>
-                            <td> Altitude (feet)</td>
-                            <td> True Airspeed </td>
-                            <td> Groundspeed (kts) </td>
-                            <td> Magnetic Heading (&deg;) <br><br><font size="1">(including Wind Correction Angle)</font></td>
+                            <th> Leg (from) </th>
+                            <th> Leg (to) </th>
+                            <th> Length (nm) </th>
+                            <th> Altitude (feet)</th>
+                            <th> True Airspeed (kts) </th>
+                            <th> Groundspeed (kts) </th>
+                            <th> 
+                                <table border='1' cellpadding="0" style="border-collapse: collapse; border-style: hidden;">
+                                    <tr>
+                                        <td class="nolines">True Course (&deg;)</td>
+                                        <td class="nolines">WCA</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="nolines"><b>Corrected Heading</b></td>
+                                        <td class="nolines">Mag. Var.</td>
+                                    </tr>
+                                </table>
+                            </th>
                         </tr>
                     <!--<br>-->
                     {% 
-                        for item in theRoute[:-1]
+                        for item in theRoute
                     %}
-                        {% if "TOC" in item.to_poi.name: %}
+                        {% if "TOC" in item.to_poi.name or dest.name in item.to_poi.name: %}
                             <tr>
                             {% for thing in item.getData() %}
-                                    <td>{{ thing }}</td>
+                                <td>{{ thing }}</td>
                             {% endfor %}
+                                <td>
+                                    <table border='1' cellpadding="0" style="border-collapse: collapse; border-style: hidden;">
+                                        <tr>
+                                            <td class="nolines">{{ item.seg_hdg }}</td>
+                                            <td class="nolines">{{ item.wca }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="nolines"><b> {{ item.hdg }} </b></td>
+                                            <td class="nolines"> {{ item. mag_var}}</td>
+                                        </tr>
+                                    </table>
+                                </td>
                             </tr>
                         {% else %} 
                             <tr>
@@ -140,6 +163,18 @@
                                 {% for thing in item.getData()[2:] %}
                                     <td>{{ thing }}</td>
                                 {% endfor %}
+                                <td>
+                                    <table border='1' cellpadding="0" style="border-collapse: collapse; border-style: hidden;">
+                                        <tr>
+                                            <td class="nolines">{{ item.seg_hdg }}</td>
+                                            <td class="nolines">{{ item.wca }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="nolines"><b> {{ item.hdg }} </b></td>
+                                            <td class="nolines"> {{ item. mag_var}}</td>
+                                        </tr>
+                                    </table>
+                                </td>
                             </tr>
                         {% 
                             endif
@@ -147,11 +182,6 @@
                     {% 
                         endfor
                     %}
-                        <tr>
-                    {% for thing in theRoute[-1].getData() %} 
-                            <td>{{ thing }}</td>
-                    {% endfor %}
-                        </tr>
                     </table>
                     <br><br><br>
                 </div>

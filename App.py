@@ -127,7 +127,7 @@ def update():
 		cache.set('myRoute', myRoute, timeout=500)
 		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, \
 			page_title = "Your Route", elevation=myRoute[3], freqs=myRoute[5], zipcode=myRoute[6], \
-			airplane=cache.get('airplane'))
+			airplane=cache.get('airplane'), dest = myRoute[2].destination)
 	except Exception, e: 
 		print str(e)
 		return render_template('fail.html', error="waypoint")
@@ -233,7 +233,7 @@ def search():
 
 		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms,\
 			page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs, freqs=myRoute[5], \
-			zipcode=myRoute[6], airplane=airplane)
+			zipcode=myRoute[6], airplane=airplane, dest = myRoute[2].destination)
 	except Exception, e: 
 		print str(e)
 		return render_template('fail.html', error="creation")
