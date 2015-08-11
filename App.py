@@ -197,7 +197,6 @@ def search():
 	
 		myRoute = createRoute(airp1, airp2, altitude, speed, environments=[env_origin, env_dest], \
 			climb_dist=climb_dist, climb_speed=climb_speed, region=region)
-		print 'done with route'
 		map_content = str(myRoute[0])
 	
 		forms = [] # used for changing waypoints 

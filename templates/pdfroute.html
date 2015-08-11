@@ -131,7 +131,7 @@
 			<p style="page-break-after:always;"></p>
 			<br>
 			<div class="container">
-					<font size="5">
+					<font size="4">
 						<div class="row">
 							<div class="col-md-11" style="border: 1px solid; border-radius:5px; padding:10px; margin:3%;">
 								<div class="row">
@@ -167,6 +167,9 @@
 										Sky Conditions: <u>&nbsp; {{ env.skyCond }} &nbsp;</u>
 									</div>
 									<div class="col-md-2">
+                    					Temp/Dewpoint (&deg;C): <u>&nbsp; {{ env.temp }},&nbsp; {{ env.dp}} &nbsp;</u>
+                    				</div>
+									<div class="col-md-2">
 										Pressure Altitude: <u>&nbsp; {{ env.pa }} &nbsp;</u>
 									</div>
 									<div class="col-md-2">
@@ -175,7 +178,7 @@
 								</div>
 							</div>
 					</div>
-					<br><br>
+					<br>
 					<div class="row">
 							<div class="col-md-11" style="border: 1px solid; border-radius:5px; padding:10px; margin:3%;">
 								<div class="row">
@@ -201,15 +204,18 @@
 									<div class="col-md-2">
 										Visibility: <u>&nbsp; {{ env2.visibility }} SM &nbsp;</u>
 									</div>
-									{% if not env.wx == "" %} 
+									{% if not env2.wx == "" %} 
 										<div class="col-md-2">
 											Weather: 
-											<u> {{ env.wx }} </u>
+											<u> {{ env2.wx }} </u>
 										</div>
 									{% endif %} 
 									<div class="col-md-2">
 										Sky Conditions: <u>&nbsp; {{ env2.skyCond }} &nbsp;</u>
 									</div>
+									<div class="col-md-2">
+                    					Temp/Dewpoint (&deg;C): <u>&nbsp; {{ env2.temp }},&nbsp; {{ env2.dp}} &nbsp;</u>
+                    				</div>
 									<div class="col-md-2">
 										Pressure Altitude: <u>&nbsp; {{ env2.pa }} &nbsp;</u>
 									</div>
