@@ -208,6 +208,9 @@ class Environment:
 			return ""
 		# the weather is between visibility and cloud conditions (always present)
 		wx = metar.split()[visInd+1:cloudInd] 
+		for item in wx: 
+			if "R" in item[0]: 
+				wx.remove(item)
 		if len(wx) > 1: 
 			print 'length of wx > 1: %s; metar=%s' % (wx, metar)
 			return ""
@@ -233,9 +236,9 @@ class Environment:
 			return 'IFR' # should not fly VFR in vicinity of TS
 		if 'CLR' or 'SKC' in clouds[0]: 
 			clouds[0] += "999" # makes the rest of determining the ceiling easier  
-		if clouds == "CLR" and visibility > 5: 
+		if clouds == "CLR" and visibility > 3: 
 			return 'VFR'
-		if float(clouds[0][3:].replace("CB", ""))*100 > 3000 and visibility > 5: 
+		if float(clouds[0][3:].replace("CB", ""))*100 > 3000 and visibility > 3: 
 			return 'VFR'
 		elif float(clouds[0][3:].replace("CB", ""))*100 < 3000 and float(clouds[0][3:].replace("CB", ""))*100 > 1000 and \
 		visibility > 3 and visibility < 5: 
@@ -506,6 +509,8 @@ def getWind(loc, metar=""):
 		return (0, 0)
 	wind = ()
 	for item in weather.split():
+		if "CALM" in item: 
+			return (0, 0)
 		if "KT" in item: 
 			winddir = item[0:3]
 			windstrength = item[3:5]
