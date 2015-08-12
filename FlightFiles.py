@@ -238,9 +238,15 @@ class Environment:
 			clouds[0] += "999" # makes the rest of determining the ceiling easier  
 		if clouds == "CLR" and visibility > 3: 
 			return 'VFR'
-		if float(clouds[0][3:].replace("CB", ""))*100 > 3000 and visibility > 3: 
+
+		ceil = 100000
+		for item in clouds: 
+			if "BKN" or "OVC" in item: 
+				ceil = float(item[3:].replace("CB", ""))*100
+
+		if ceil > 3000 and visibility > 3: 
 			return 'VFR'
-		elif float(clouds[0][3:].replace("CB", ""))*100 < 3000 and float(clouds[0][3:].replace("CB", ""))*100 > 1000 and \
+		elif ceil < 3000 and ceil > 1000 and \
 		visibility > 3 and visibility < 5: 
 			return 'SVFR'
 		return 'IFR' # all other weather types are IFR or LIFR 
