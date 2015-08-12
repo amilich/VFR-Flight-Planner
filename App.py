@@ -180,6 +180,9 @@ def search():
 			climb_speed = 75
 		else: 
 			climb_speed = float(climb_speed)
+
+		print 'Routing from %s to %s at %s kts and %s feet.' % (airp1, airp2, speed, altitude)
+
 		env_origin = Environment(airp1)
 		env_dest = Environment(airp2)
 		# these environments can be accessed when generating weather PDF and displaying messages

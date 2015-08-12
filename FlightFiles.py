@@ -47,7 +47,7 @@ class Airplane:
 	the final layout of the weight and balance page. 
 	"""
 	def __repr__(self):
-		return "I am an airplane of type: {" + self.plane_type + "} and CG=" + str(self.cg) + "."
+		return "Airplane of type: {" + self.plane_type + "} and CG=" + str(self.cg) + "."
 
 	"""
 	Calculates the center of gravity of an airpoane given each weight parameter 
@@ -234,16 +234,16 @@ class Environment:
 	def getSkyCond(cls, metar, clouds, visibility, wx): 
 		if 'TS' in wx: 
 			return 'IFR' # should not fly VFR in vicinity of TS
-		if 'CLR' or 'SKC' in clouds[0]: 
+		if "CLR" in str(clouds[0]) or "SKC" in str(clouds[0]): 
 			clouds[0] += "999" # makes the rest of determining the ceiling easier  
 		if clouds == "CLR" and visibility > 3: 
 			return 'VFR'
 
 		ceil = 100000
 		for item in clouds: 
-			if "BKN" or "OVC" in item: 
+			if "BKN" in item or "OVC" in item: 
 				ceil = float(item[3:].replace("CB", ""))*100
-
+				break # ceiling is FIRST broken or overcast layer
 		if ceil > 3000 and visibility > 3: 
 			return 'VFR'
 		elif ceil < 3000 and ceil > 1000 and \
