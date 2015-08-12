@@ -231,8 +231,10 @@ class Environment:
 	def getSkyCond(cls, metar, clouds, visibility, wx): 
 		if 'TS' in wx: 
 			return 'IFR' # should not fly VFR in vicinity of TS
-		#if 'CLR' or 'SKC' in clouds[0]: ???
-		#	clouds += '999' # makes the rest of determining the ceiling easier  
+		if 'CLR' or 'SKC' in clouds[0]: 
+			clouds[0] += "999" # makes the rest of determining the ceiling easier  
+		if clouds == "CLR" and visibility > 5: 
+			return 'VFR'
 		if float(clouds[0][3:].replace("CB", ""))*100 > 3000 and visibility > 5: 
 			return 'VFR'
 		elif float(clouds[0][3:].replace("CB", ""))*100 < 3000 and float(clouds[0][3:].replace("CB", ""))*100 > 1000 and \
