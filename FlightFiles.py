@@ -1207,8 +1207,8 @@ def getFrequencies(segments):
 		for item in airports: 
 			for line in lines: 
 				if item == line.split(",")[2]:
-					if line.split(",")[3] in "ATIS CTAF TWR GND UNIC FSS EFAS CNTR": 
-						freqs.append(line.replace("\n", "").split(",")[2:6])
+					# if line.split(",")[3] in "ATIS CTAF TWR GND UNIC FSS EFAS CNTR": 
+					freqs.append(line.replace("\n", "").split(",")[2:6])
 
 	currentAirport = ""
 	# makes it easier to see in table format if airport code only shown for 1st airport
