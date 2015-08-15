@@ -593,26 +593,30 @@ def getWindsAloft(lat, lon, alt, region):
 	alt = float(alt)
 	# information for winds aloft data - these are the altitude thresholds for each observation 
 	# FT  3000    6000    9000   12000   18000   24000  30000  34000  39000 
+	data = ""
 	if alt >= 0 and alt < 4500: # 3000  
-		return dataLine[1]
+		data = dataLine[1]
 	elif alt >= 4500 and alt < 7500: # 6000 
-		return dataLine[2]
+		data = dataLine[2]
 	elif alt >= 7500 and alt < 10500: # 9000 
-		return dataLine[3]
+		data = dataLine[3]
 	elif alt >= 10500 and alt < 15000: # 12000 
-		return dataLine[4]
+		data = dataLine[4]
 	elif alt >= 15000 and alt < 21000: # 18000 
-		return dataLine[5]
+		data = dataLine[5]
 	elif alt >= 21000 and alt < 27000: # 24000 
-		return dataLine[6]
+		data = dataLine[6]
 	elif alt >= 27000 and alt < 32000: # 30000 
-		return dataLine[7]
+		data = dataLine[7]
 	elif alt >= 32000 and alt < 36500: #34000 
-		return dataLine[8]
+		data = dataLine[8]
 	elif alt >= 36500 and alt < 40000: #34000 
-		return dataLine[9]
+		data = dataLine[9]
 	else: 
-		return "0000"
+		data = "0000"
+	if "9900" in data: # light and variable
+		data = "0000"
+	return data 
 
 """
 Finds the distance and heading between two locations. 
