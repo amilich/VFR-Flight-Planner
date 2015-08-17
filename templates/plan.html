@@ -18,18 +18,7 @@
 
     <!-- Route PDF button on mobile devices --> 
     <span id="buttons">&nbsp;</span>
-    <script>
-        if (screen.width < 900) {
-            console.log("Screen less than 900px")
-            var routebtn = document.createElement('BUTTON');
-            routebtn.innerHTML = 'Save PDF of Route';
-            routebtn.onclick = function(){
-                window.location.href = "/saveplan"
-            }; 
-            var buttons = document.getElementById("buttons");
-            buttons.appendChild(routebtn)
-        }
-    </script>
+    <script src="/static/js/scripts.js"></script>
 
     <!-- message alert section -->
     {% if showMsgs %} 
