@@ -125,7 +125,7 @@ def update():
 			forms.append(placeform(place=myRoute[2].courseSegs[x].to_poi.name, num=x))
 
 		cache.set('myRoute', myRoute, timeout=500)
-		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms, \
+		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2], forms=forms, \
 			page_title = "Your Route", elevation=myRoute[3], freqs=myRoute[5], zipcode=myRoute[6], \
 			airplane=cache.get('airplane'), dest = myRoute[2].destination)
 	except Exception, e: 
@@ -233,7 +233,7 @@ def search():
 		elapsedTime = time.time() - startTime
 		print 'function [{}] finished in {} ms'.format('route', int(elapsedTime * 1000))
 
-		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, forms=forms,\
+		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2], forms=forms,\
 			page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs, freqs=myRoute[5], \
 			zipcode=myRoute[6], airplane=airplane, dest = myRoute[2].destination)
 	except Exception, e: 

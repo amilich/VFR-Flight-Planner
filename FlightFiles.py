@@ -381,7 +381,10 @@ class Segment:
 		self.setCorrectedCourse()
 		self.setGS()
 		# time
-		self.time = self.length/self.gs # distance/rate=time
+		self.time = self.length/self.gs # distance/rate=time; in hours 
+		self.minutes = float("{0:.2f}".format((self.time - math.floor(self.time))*60))
+		self.hours = math.floor(self.time)
+		self.totMinutes = self.time*60
 
 		self.seg_hdg = float("{0:.2f}".format(from_poi.latlon.heading_initial(to_poi.latlon)))
 		if(self.seg_hdg < 0): 
@@ -430,7 +433,7 @@ class Segment:
 	Gets segment data to display to user. 
 	"""
 	def getData(self):
-		return [self.from_poi.name, self.to_poi.name, str("{0:.2f}".format(self.length)), str(self.alt), str(self.tas), "{0:.2f}".format(float(self.gs))]
+		return [self.from_poi.name, self.to_poi.name, str("{0:.2f}".format(self.length)), str(self.alt), str(self.tas), "{0:.2f}".format(float(self.gs)), str("{0:.2f}".format(self.totMinutes))]
 
 	"""
 	Converts segment to table entry. 
@@ -982,6 +985,14 @@ class Route:
 		for seg in self.courseSegs: 
 			if seg.from_poi.name == seg.to_poi.name: 
 				self.courseSegs.remove(seg)
+
+		time = 0
+		for item in self.courseSegs: 
+			time += item.time
+		self.time = time 
+		self.minutes = float("{0:.2f}".format((self.time - math.floor(self.time))*60))
+		self.hours = math.floor(self.time)
+
 		self.calculateFuelTime()
 		return 
 

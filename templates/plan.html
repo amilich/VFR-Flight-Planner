@@ -44,16 +44,20 @@
 
     <body>
         <div class="container">
-        <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab_a" data-toggle="tab">Route Map</a></li>
-            <li><a href="#elevation" data-toggle="tab">Elevation Map and Weather</a></li>
-            <li><a href="#waypoints" data-toggle="tab">Waypoint List and Route Changes</a></li>
-            <li><a href="#freqs" data-toggle="tab">Trip Frequencies</a></li>
-            {% if not (airplane.weights|length) == 0%}
-            <li><a href="#airplane" data-toggle="tab">Weight and Balance</a></li>
-            {% endif %}
-            <li><a href="#what" data-toggle="tab">What does your route include?</a></li>
-        </ul>
+        <div class="smalltabs">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab_a" data-toggle="tab">Route Map</a></li>
+                <li><a href="#elevation" data-toggle="tab">Elevation Map and Weather</a></li>
+                <li><a href="#waypoints" data-toggle="tab">Waypoints and Route Changes</a></li>
+                <li><a href="#freqs" data-toggle="tab">Trip Frequencies</a></li>
+                {% if not (airplane.weights|length) == 0%}
+                <li><a href="#airplane" data-toggle="tab">Weight and Balance</a></li>
+                {% endif %}
+                <li><a href="#how" data-toggle="tab">Filing your plan</a></li>
+                <li><a href="#diag" data-toggle="tab">Airport Diagrams</a></li>
+                <li><a href="#what" data-toggle="tab">Route Information</a></li>
+            </ul>
+        </div>
         <div class="tab-content">
             <div class="tab-pane active" id="tab_a">
                 {{ map }}
@@ -111,6 +115,7 @@
                             <th> Altitude (feet)</th>
                             <th> True Airspeed (kts) </th>
                             <th> Groundspeed (kts) </th>
+                            <th> Time (minutes) </th>
                             <th> 
                                 <table border='1' cellpadding="0" style="border-collapse: collapse; border-style: hidden;">
                                     <tr>
@@ -126,7 +131,7 @@
                         </tr>
                     <!--<br>-->
                     {% 
-                        for item in theRoute
+                        for item in theRoute.courseSegs
                     %}
                         {% if "TOC" in item.to_poi.name or dest.name in item.to_poi.name: %}
                             <tr>
@@ -234,6 +239,39 @@
                  </table>
             </div>
             {% endif %}
+            <div class="tab-pane" id="how">
+                <br>
+                <b>One way to file your flight plan:</b>
+                <br>
+                <br>
+                <li><b>Call +1 (800) WX-BRIEF</b></li>
+                <li>Provide your flight type: <b> VFR </b> </li>
+                <li>Your tail number</li>
+                <li>Your airspeed: <b>{{ theRoute.cruise_speed }} knots </b></li>
+                <li>Your departure airport: <b>{{ theRoute.origin.name }}</b></li>
+                <li>Your departure time </li>
+                <li>Your cruising altitude: <b>{{ theRoute.cruising_alt }}</b></li>
+                <li>Your route of flight: <b> direct </b> </li>
+                <li>Your destination: <b> {{ theRoute.destination.name }} </b></li>
+                <li>Your estimated time enroute: <b> {{ theRoute.hours }} hours {{ theRoute.minutes }} minutes</b></li>
+                <li>Your fuel onboard in hours and minutes</li>
+                <li>Your name, address, and phone</li>
+                <li>The number of people onboard, and</li>
+                <li>The color of your aircraft</li>
+            </div>
+            <div class="tab-pane" id="diag">
+                <center>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="http://flightaware.com/resources/airport/{{ theRoute.origin.name }}/APD/AIRPORT+DIAGRAM/png">
+                        </div>
+                        <div class="col-md-6">
+                            <img src="http://flightaware.com/resources/airport/{{ theRoute.destination.name }}/APD/AIRPORT+DIAGRAM/png">
+                        </div>
+                    </div> 
+                </center>
+                <br><br>
+            </div>
             <div class="tab-pane" id="what">
                 <br>
                 <b>Your route has been generated from a list of cities, towns, and airports. In addition: </b>

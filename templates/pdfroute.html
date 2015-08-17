@@ -9,7 +9,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
-	<body>
+	<body style='"Palatino Linotype", "Book Antiqua", Palatino, serif'>
 		<center>
 			<h1>
 				Your Route
@@ -17,17 +17,14 @@
 		</center>
 		<hr><br>
 		<center>
-			<img src="{{ map }}" alt="Route Map">
-		</center>
-		<br><br>
-		<center>
+			<img src="{{ map }}" alt="Route Map" width="">
+			<br><br>
 			<img src="{{ elevation }}" alt="Elevation Map">
 		</center>
-		
-		<br><br><br>
+		<br>
 		<div class="container">
 			<font size="4">
-				<table border='1' style="width:30%;" cellpadding="3">
+				<table border='1' style="width:30%;" cellpadding="1">
 					<tr>
                         <th> Leg (from) </th>
                         <th> Leg (to) </th>
@@ -35,8 +32,9 @@
                         <th> Altitude (feet)</th>
                         <th> True Airspeed (kts) </th>
                         <th> Groundspeed (kts) </th>
+                        <th> Time (minutes) </th>
                         <th> 
-                            <table style="border-collapse: collapse; border-style: hidden;" cellpadding="3">
+                            <table style="border-collapse: collapse; border-style: hidden;" cellpadding="0">
                                 <tr>
                                     <td style="border: 0px solid black;font-size: 10px;"> True Course (&deg;)</td>
                                     <td style="border: 0px solid black;font-size: 10px;"> WCA</td>
@@ -47,21 +45,22 @@
                                 </tr>
                             </table>
                         </th>
+                        <th> Completed (&#10004; or &#10008;) </th>
                     </tr>
-					{% for item in theRoute %}
+					{% for item in theRoute.courseSegs %}
 						<tr>
 							{% for thing in item.getData() %}
-										<td>{{ thing }}</td>
+										<td><center>{{ thing }}</center></td>
 							{% endfor %}
 							<td>
-                                <table style="border-collapse: collapse; border-style: hidden;" cellpadding="3">
+                                <table style="border-collapse: collapse; border-style: hidden;" cellpadding="2">
                                     <tr>
-                                        <td style="border: 0px solid black;font-size: 10px;">{{ item.seg_hdg }}</td>
-                                        <td style="border: 0px solid black;font-size: 10px;">{{ item.wca }}</td>
+                                        <td style="border: 0px solid black;font-size: 10px;"><center>{{ item.seg_hdg }}</center></td>
+                                        <td style="border: 0px solid black;font-size: 10px;"><center>{{ item.wca }}</center></td>
                                     </tr>
                                     <tr>
-                                        <td style="border: 0px solid black;font-size: 10px;"><b> {{ item.hdg }} </b></td>
-                                        <td style="border: 0px solid black;font-size: 10px;"> {{ item. mag_var}}</td>
+                                        <td style="border: 0px solid black;font-size: 10px;"><center><b>{{ item.hdg }}</b></center></td>
+                                        <td style="border: 0px solid black;font-size: 10px;"><center> {{ item. mag_var}}</center></td>
                                     </tr>
                                 </table>
                             </td>
@@ -92,40 +91,52 @@
 					</table>
 				</h1>
 			</div>
+			<p style="page-break-after:always;"></p>
+			<br>
+			<div class="tab-pane" id="diag">
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="http://flightaware.com/resources/airport/{{ theRoute.origin.name }}/APD/AIRPORT+DIAGRAM/png" width="430px">
+                    </div>
+                    <div class="col-md-6">
+                        <img src="http://flightaware.com/resources/airport/{{ theRoute.destination.name }}/APD/AIRPORT+DIAGRAM/png" width="430px">
+                    </div>
+                </div> 
+            </div>
 			{% if not (airplane.weights|length) == 0%}
 			<p style="page-break-after:always;"></p>
 			<br>
 			<div class="container" id="airplane">
-					<br>
-					<h1 style="font-weight:normal;">
-							<center>
-									<font size="6">
-											Weight and Balance 
-									</font>
-							</center>
-							<table border='1' style="width:50%;" cellpadding="10">
-								 <tr>
-										 <td></td>
-										 <td>Weight (lbs)</td>
-										 <td>Arm (in)</td>
-										 <td>Moment (lb·ft)</td>
-								 </tr>
-								 {% for item in airplane.weights %}
-										 <tr>
-												 <td> {{ item.num }} </td>
-												 <td> {{ item.weight }} </td>
-												 <td> {{ item.arm }} </td>
-												 <td> {{ item.moment }} </td>
-										 </tr>
-								 {% endfor %}
-								 <tr>
-										 <td>Total: </td>
-										 <td>{{ airplane.totalweight }} </td>
-										 <td>{{ airplane.cg }}</td>
-										 <td>{{ airplane.totalmoment }} </td>
-								 </tr>
-							</table>
-					</h1>
+				<br>
+				<h1 style="font-weight:normal;">
+					<center>
+						<font size="6">
+							Weight and Balance 
+						</font>
+					</center>
+					<table border='1' style="width:50%;" cellpadding="10">
+						<tr>
+							<td></td>
+							<td>Weight (lbs)</td>
+							<td>Arm (in)</td>
+							<td>Moment (lb·ft)</td>
+						</tr>
+						{% for item in airplane.weights %}
+							<tr>
+								<td> {{ item.num }} </td>
+								<td> {{ item.weight }} </td>
+								<td> {{ item.arm }} </td>
+								<td> {{ item.moment }} </td>
+							</tr>
+						{% endfor %}
+						<tr>
+							<td>Total: </td>
+							<td>{{ airplane.totalweight }} </td>
+							<td>{{ airplane.cg }}</td>
+							<td>{{ airplane.totalmoment }} </td>
+						</tr>
+					</table>
+				</h1>
 			</div>
 			{% endif %}
 			<p style="page-break-after:always;"></p>
