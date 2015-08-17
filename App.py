@@ -94,7 +94,7 @@ def savePlan():
 		environment = cache.get('env_origin')
 		environment2 = cache.get('env_dest')
 		map_content = str(makeStaticMap(myRoute[2].courseSegs, myRoute[2].destination)).replace("\n", "")
-		route_pdf = gen_pdf(render_template('pdfroute.html', map=Markup(map_content), theRoute = myRoute[2].courseSegs, \
+		route_pdf = gen_pdf(render_template('pdfroute.html', map=Markup(map_content), theRoute = myRoute[2], \
 			elevation=myRoute[3], freqs=myRoute[5], env=environment, env2=environment2, airplane=cache.get('airplane')))
 		response = make_response(route_pdf)
 		response.mimetype = 'application/pdf'
@@ -253,5 +253,5 @@ Run app.
 """
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.debug = True
+    app.debug = False
     app.run(host='0.0.0.0', port=port)
