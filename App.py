@@ -141,6 +141,7 @@ def search():
 	# this will get the weight and balance parameters
 	weights = []
 	try: 
+		# gather data from all the boxes the user filled out 
 		for x in range(1, 10): 
 			w = request.form['w%s' % (x)] 
 			a = request.form['a%s' % (x)] 
