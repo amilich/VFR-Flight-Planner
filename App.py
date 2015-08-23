@@ -24,6 +24,8 @@ import os, time
 
 	Written Summer 2015.  
 
+	Live url: http://flyvfr.com
+
 	Potential features: 
 		* Diversion airports 
 		* Fuel stops (unicom, etc.)
