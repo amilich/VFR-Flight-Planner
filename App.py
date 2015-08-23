@@ -30,14 +30,15 @@ import os, time
 		* Diversion airports 
 		* Fuel stops (unicom, etc.)
 			* [DONE] Frequencies 
-		* [DONE] Simple weight and balance (using dynamic form)
-			* C172 and generalized 
+			* Max range box (calculated? fuel burn gph?)
 		* Add loading page for update route 
-		* Custom airplane features dynamically transferred to weight/balance 
 		* Airplane performance statistics (at least C172SP NAV III)
 		* User friendly tutorial 
+		* [DONE - as dynamic form] Custom airplane features dynamically transferred to weight/balance 
 		* [DONE] Elevation awareness and maps 
 		* [DONE] Climbs across waypoints 
+		* [DONE] Simple weight and balance (using dynamic form)
+			* C172 and generalized 
 		* [DONE] Save routes as PDF 
 			* [DONE] Save weather, frequencies as well 
 
@@ -228,8 +229,10 @@ def search():
 		# mail me a copy of the route for recordkeeping 
 		try: 
 			msg = Message("Route planned from " + airp1 + " to " + airp2, sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com']) 
+			msg.body = "Route planned from %s to %s at %s feet and %s kts." % (airp1, airp2, altitude, speed)
 			mail.send(msg)
 		except: 
+			print 'Mail creation failed.' # for logging
 			pass
 
 		# need to know this 
