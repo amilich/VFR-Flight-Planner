@@ -42,7 +42,7 @@
                  else {
                     // each element's id corresponds to a new weight and arm
                     var newdiv = document.createElement('div');
-                    newdiv.innerHTML = "<br>Moment " + (counter+1) + ": &nbsp;<input type='text' style='width:15%; border-radius: 5px; padding:3px;' name='w" + (counter+1) + "' id='w" + (counter+1) + "' placeholder='Weight (lbs)'>&nbsp;<input type='text' style='width:15%; border-radius: 5px; padding:3px;' name='a" + (counter+1) + "' id='a" + (counter+1) + "' placeholder='Arm (in)'>";
+                    newdiv.innerHTML = "<br><b>Moment " + (counter+1) + "</b>: &nbsp;<input type='text' style='width:15%; border-radius: 5px; padding:3px;' name='w" + (counter+1) + "' id='w" + (counter+1) + "' placeholder='Weight (lbs)'>&nbsp;<input type='text' style='width:15%; border-radius: 5px; padding:3px;' name='a" + (counter+1) + "' id='a" + (counter+1) + "' placeholder='Arm (in)'>";
                     document.getElementById(divName).appendChild(newdiv);
                     counter++;
                  }
@@ -68,7 +68,7 @@
                 VFR FLIGHT PLANNER
             </h1>
         </div>
-
+        <hr>
         <div id="loading">
             <br>
             <div class="centered">
@@ -96,11 +96,14 @@
                 </div>
             </div>
         </div>
-        <br>
         <div id="content">
             <form action="/fplanner" method="post" role="form">
                 <div>
                     <div class="container">
+                        <h4>
+                            Route Information
+                        </h4>
+                        <br>
                         {{ form.hidden_tag() }}
                         <div class="form-group">
                             <label class="control-label col-sm-2" for="name">{{ form.region.label }}</label>
@@ -168,18 +171,21 @@
                         Airplane Weight and Balance <font color="#d3d3d3">(optional)</font>
                     </h4>
                     <br>
-                    <font size = "2">
-                        Airplane Type: 
-                    </font>
-                    <br>
-                    <input type='text' id="plane_type" style='width:15%; border-radius: 5px; padding:3px;' name='plane_type' value="C172SP NAV III">
-                    <br>
-                    <br>
                     <!-- Allows user to add more input boxes -->
-                    <div id="dynamicInput"> 
-                        Moment 1:&nbsp;
-                        <input type='text' id="w1" style='width:15%; border-radius: 5px; padding:3px;' name='w1' placeholder="Weight (lbs)">
-                        <input type='text' id="a1" style='width:15%; border-radius: 5px; padding:3px;' name='a1' placeholder="Arm (in)">
+                    <div class="container">
+                        <font size = "2">
+                            <b>Airplane Type: </b>
+                        </font>
+                        <br>
+                        <br>
+                        <input type='text' id="plane_type" style='width:15%; border-radius: 5px; padding:3px;' name='plane_type' value="C172SP NAV III">
+                        <br>
+                        <br>
+                        <div id="dynamicInput"> 
+                            <b>Moment 1:</b>&nbsp;
+                            <input type='text' id="w1" style='width:15%; border-radius: 5px; padding:3px;' name='w1' placeholder="Weight (lbs)">
+                            <input type='text' id="a1" style='width:15%; border-radius: 5px; padding:3px;' name='a1' placeholder="Arm (in)">
+                        </div>
                     </div>
                     <br>
                     <input type="button" class="btn btn-sm btn-primary" value="Add another text input" onClick="addInput('dynamicInput');">
@@ -206,7 +212,6 @@
                 </div>
             </div>
         </div>
-        <br>
         <br>
         <div class="container">
             <!--© 2015. Protected under Creative Commons Attribution-NonCommercial License. -->
