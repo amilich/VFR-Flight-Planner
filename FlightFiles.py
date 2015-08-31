@@ -1205,7 +1205,7 @@ frequencies.
 @rtype	list
 @return list of frequencies
 """
-def getFrequencies(segments):
+def getFrequencies(segments, setUnicom=False):
 	freqs = [] 
 	airports = [] 
 	for item in segments: 
@@ -1225,6 +1225,13 @@ def getFrequencies(segments):
 	# makes it easier to see in table format if airport code only shown for 1st airport
 	for item in freqs: 
 		if item[0] == currentAirport: 
+			for seg in segments: 
+				if seg.from_poi.name == currentAirport: 
+					if item[1] == "UNICOM": 
+						segments[-1].to_poi.unicom = item[-1] # last item should be frequency - NEEDS VERIFICATION
+			if segments[-1].to_poi.name == currentAirport: 
+				if item[1] == "UNICOM": 
+					segments[-1].to_poi.unicom = item[-1] # last item should be frequency - NEEDS VERIFICATION
 			item[0] = "" 
 		else: 
 			currentAirport = item[0]
