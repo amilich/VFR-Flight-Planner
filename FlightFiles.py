@@ -354,6 +354,14 @@ class Point_Of_Interest:
 		self.setting = setting
 		return 
 
+	# an initial qualification 
+	def hasFuel(self): 
+		try: 
+			if(self.unicom != ""): 
+				return True 
+		except: 
+			return False 
+
 	def __repr__(self): 
 		return str(self.name) + ": " +  str(self.dist)
 
