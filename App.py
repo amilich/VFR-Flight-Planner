@@ -78,12 +78,6 @@ def contact():
     elif request.method == 'GET':
         return render_template('contact.html', form=form) # show the contact form
 
-@app.route('/test')
-def testform():
-	options = getAirportOptions()
-	form = searchform()
-	return render_template('route_test.html', options=Markup(options), form=form)
-
 """
 Converts flight plan page with map, elevation diagram, and table of segments into printable PDF. 
 """
