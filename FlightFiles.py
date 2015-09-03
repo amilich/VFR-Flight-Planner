@@ -39,6 +39,7 @@ class Airplane:
 		for x in range(len(self.weights)): 
 			self.weights[x].num = "Moment %i" % (x+1)
 		self.calcCG()
+		self.calcPerformance()
 		# ** NOTE ** need to log the tail number in database (can be done in App.py)
 		return 
 
@@ -48,6 +49,13 @@ class Airplane:
 	"""
 	def __repr__(self):
 		return "Airplane of type: {" + self.plane_type + "} and CG=" + str(self.cg) + "."
+
+	# performance: fuel for now
+	def calcPerformance(self):
+		self.gph = 10 # should this be in an input box? 
+		self.maxrange = 4.5 # in hours? 
+		
+		return 
 
 	"""
 	Calculates the center of gravity of an airpoane given each weight parameter 
