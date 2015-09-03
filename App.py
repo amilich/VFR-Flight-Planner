@@ -71,15 +71,12 @@ def contact():
         	return render_template('index.html', form=form)
         else:
             msg = Message("Message from your visitor " + form.name.data, sender=form.email.data, recipients=['codesearch5@gmail.com'])
-            msg.body = """
-            From: %s <%s>,
-            %s
-            """ % (form.name.data, form.email.data, form.message.data)
+            msg.body = """ From: %s <%s>, %s """ % (form.name.data, form.email.data, form.message.data)
             mail.send(msg)
             form = searchform()
-            return render_template('index.html', form=form)
+            return render_template('index.html', form=form) # back to homepage because form completed 
     elif request.method == 'GET':
-        return render_template('contact.html', form=form)
+        return render_template('contact.html', form=form) # show the contact form
 
 @app.route('/test')
 def testform():
@@ -191,7 +188,7 @@ def search():
 		env_dest = Environment(airp2)
 		# these environments can be accessed when generating weather PDF and displaying messages
 		# cache.set('airplane', airplane, timeout=500)
-		cache.set('env_origin', env_origin, timeout=500)
+		cache.set('env_origin', env_origin, timeout=500) # cached for PDF use later 
 		cache.set('env_dest', env_dest, timeout=500)
 	
 		session['ORIG'] = airp1

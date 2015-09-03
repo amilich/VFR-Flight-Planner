@@ -358,9 +358,9 @@ class Point_Of_Interest:
 	def hasFuel(self): 
 		try: 
 			if(self.unicom != ""): 
-				return True 
+				self.hasFuel = True 
 		except: 
-			return False 
+			self.hasFuel = False 
 
 	def __repr__(self): 
 		return str(self.name) + ": " +  str(self.dist)
@@ -1165,14 +1165,19 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], clim
 	mymap.addpoint(float(ll[0]), float(ll[1]))
 	path = []
 	path.append((float(ll[0]), float(ll[1])))
-	
+	frequencies = getFrequencies(route.courseSegs)
 	# route path line 
 	for item in route.courseSegs: 
 		path.append((float(item.to_poi.lat), float(item.to_poi.lon)))
-		mymap.addpoint(float(item.to_poi.lat), float(item.to_poi.lon))
+		if item.to_poi.hasFuel # this will not work if frequencies have not yet been set
+			# some fuel/gas sign here 
+			mymap.addpoint(float(item.to_poi.lat), float(item.to_poi.lon))
+		else: 
+			mymap.addpoint(float(item.to_poi.lat), float(item.to_poi.lon))
+		# add point with fuel or not 
 
 	mymap.addpath(path,"#4169E1")
-	return (getHtml(mymap, route.landmarks), noTOC, route, elevation_map, messages, getFrequencies(route.courseSegs), getZip(origin))
+	return (getHtml(mymap, route.landmarks), noTOC, route, elevation_map, messages, frequencies, getZip(origin))
  
 """
 Creates a static map for PDF viewing. Alternatively could use a 
