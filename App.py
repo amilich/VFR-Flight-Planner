@@ -13,7 +13,7 @@ import os, time
 	VFR-Flight-Planner
 
 	@author 	Andrew Milich 
-	@version 	0.5 
+	@version 	0.7
 
 	This application is designed to simplify the extensive planning prior to VFR flghts. 
 	It finds cities and airports along the route to ensure a pilot remains on course, 
@@ -132,6 +132,7 @@ relevant maps and displayed on the screen.
 """
 @app.route('/fplanner', methods = ['POST'])
 def search():
+	startTime = time.time() # start the timer for the route 
 	# this will get the weight and balance parameters
 	weights = []
 	try: 
@@ -151,7 +152,6 @@ def search():
 	cache.set('airplane', airplane, timeout=500)
 
 	try:
-		startTime = time.time()
 		# basic route information 
 		airp1 = request.form['orig'].upper() 
 		airp2 = request.form['dest'].upper()
@@ -161,7 +161,7 @@ def search():
 			return render_template('fail.html', error="distance")
 		altitude = request.form['alt']
 		if altitude == "": 
-			altitude = "3500"
+			altitude = "5500"
 		speed = request.form['speed']
 		if speed == "": 
 			speed = "110"
