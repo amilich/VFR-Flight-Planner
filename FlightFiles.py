@@ -1302,7 +1302,8 @@ def getData(filename, p, prevLoc, r, allowSpaces = False):
 	return potChanges
 
 # changes a particular landmark along a route and returns a new route
-def changeRoute(r, n, p, home, dest, altitude, airspeed, climb_dist, climb_speed, region): # route, leg # to change, where to change it to 
+def changeRoute(r, n, p, home, dest, altitude, airspeed, climb_dist, climb_speed, region): 
+	# route, leg # to change, where to change it to 
 	print 'changing route from %s to %s at segment %i to: %s' % (home, dest, n, p)
 	prevLoc = r.courseSegs[n].from_poi
 	potChanges = []
