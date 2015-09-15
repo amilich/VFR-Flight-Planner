@@ -1301,7 +1301,9 @@ def getData(filename, p, prevLoc, r, allowSpaces = False):
 				potChanges.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
 	return potChanges
 
-# changes a particular landmark along a route and returns a new route
+"""
+Changes a particular landmark along a route and returns a new route. 
+"""
 def changeRoute(r, n, p, home, dest, altitude, airspeed, climb_dist, climb_speed, region): 
 	# route, leg # to change, where to change it to 
 	print 'changing route from %s to %s at segment %i to: %s' % (home, dest, n, p)
@@ -1320,3 +1322,14 @@ def changeRoute(r, n, p, home, dest, altitude, airspeed, climb_dist, climb_speed
 	newLandmarks[n+1] = selectedChange # increment by one because you are using the TO poi (+1)
 	return createRoute(home, dest, altitude, airspeed, newLandmarks, climb_dist = climb_dist, climb_speed=climb_speed, region=region)
 
+"""
+For encoding all route parameters in a database. 
+"""
+def encodeRoute(r): 
+	return
+
+"""
+For decoding a route from database. 
+"""
+def decodeRoute(r):
+	return 
