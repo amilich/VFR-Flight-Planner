@@ -1329,7 +1329,7 @@ def encodeRoute(r):
 	return
 
 """
-For decoding a route. 
+For decoding a route from database. 
 """
 def decodeRoute(r):
 	return 
