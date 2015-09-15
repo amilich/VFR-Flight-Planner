@@ -1322,3 +1322,14 @@ def changeRoute(r, n, p, home, dest, altitude, airspeed, climb_dist, climb_speed
 	newLandmarks[n+1] = selectedChange # increment by one because you are using the TO poi (+1)
 	return createRoute(home, dest, altitude, airspeed, newLandmarks, climb_dist = climb_dist, climb_speed=climb_speed, region=region)
 
+"""
+For encoding all route parameters in a database. 
+"""
+def encodeRoute(r): 
+	return
+
+"""
+For decoding a route. 
+"""
+def decodeRoute(r):
+	return 
