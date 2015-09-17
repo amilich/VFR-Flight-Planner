@@ -13,7 +13,7 @@ import os, time
 	VFR-Flight-Planner
 
 	@author 	Andrew Milich 
-	@version 	0.7
+	@version 	0.8
 
 	This application is designed to simplify the extensive planning prior to VFR flghts. 
 	It finds cities and airports along the route to ensure a pilot remains on course, 
@@ -43,7 +43,8 @@ import os, time
 			* [DONE] Save weather, frequencies as well 
 
 	Possible improvements: 
-		* Search for waypoints after TOC 
+		* Waypoint auto completion 
+		* Route searching/tracking 
 """
 
 app = Flask(__name__)
