@@ -44,8 +44,7 @@ class Airplane:
 		return 
 
 	"""
-	Print the airplane type and CG. More information could be included depending on 
-	the final layout of the weight and balance page. 
+	Print the airplane type and CG as the representation of the airplane object. 
 	"""
 	def __repr__(self):
 		return "Airplane of type: {" + self.plane_type + "} and CG=" + str(self.cg) + "."
@@ -365,6 +364,118 @@ class Point_Of_Interest:
 
 	def __repr__(self): 
 		return str(self.name) + ": " +  str(self.dist)
+
+
+"""
+A route contains a list of segments and airplane parameters replated to a particular flight. 
+"""
+class Route: 
+	def __init__(self, course, origin, destination, routeType="direct", night = False, custom=[], \
+		cruising_alt=3500, cruise_speed=110, climb_speed=75, climb_dist=5, gph=10, descent_speed=90, doWeather=True, region="NORTHEAST"): 
+		self.reset(course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, \
+			climb_speed, climb_dist, gph, descent_speed, doWeather=doWeather, region=region)
+		return 
+
+	def reset(self, course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, \
+		climb_speed, climb_dist, gph, descent_speed, climb_done=False, doWeather=False, region="NORTHEAST"): 
+		self.origin = origin 
+		self.destination = destination
+		self.climb_speed = climb_speed
+		self.climb_dist = climb_dist # nm, depends on cruising altitude - should become dynamic
+		self.gph = gph
+		self.fuelTaxi = 1.4
+		self.routeType = routeType
+		self.night = night
+		self.errors = []
+		self.cruising_alt = cruising_alt
+		self.cruise_speed = cruise_speed
+		self.descent_speed = descent_speed
+		self.region = region
+		# perform route calculations
+		self.course = course 
+		self.landmarks = custom
+		if(routeType.lower() is not "direct" or climb_done): 
+			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, \
+				self.climb_speed, self.descent_speed, custom=custom, isCustom=True, doWeather=doWeather, region=self.region)
+			# using custom route or route with climb
+		else: 
+			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, \
+				self.climb_speed, self.descent_speed, custom=custom, doWeather=doWeather, region=self.region)
+		for seg in self.courseSegs: 
+			if seg.from_poi.name == seg.to_poi.name: 
+				self.courseSegs.remove(seg)
+
+		time = 0
+		for item in self.courseSegs: 
+			time += item.time
+		self.time = time 
+		self.minutes = float("{0:.2f}".format((self.time - math.floor(self.time))*60))
+		self.hours = math.floor(self.time)
+
+		self.calculateFuelTime()
+		return 
+
+	"""
+	Takes a route and puts a climb in it 
+		* TODO: insert climb before creating route. 
+	"""
+	def insertClimb(self): 
+		if(self.course[0] < self.climb_dist): # someone 
+			self.errors.append("Climb distance longer than route. Ignoring climb parameters.")
+			print "Climb distance longer than route. Ignoring climb parameters" 
+			# still adding landmarks 
+			newLandmarks = [] 
+			newLandmarks.append(self.origin)
+			for x in range(len(self.courseSegs)): 
+				newLandmarks.append(self.courseSegs[x].to_poi)
+			self.landmarks = newLandmarks
+			return 
+		currentAlt = 0
+		currentDist = 0
+		remove = []
+		if(self.courseSegs[0].length < self.climb_dist): 
+			for x in range(len(self.courseSegs)):
+				if(currentDist > self.climb_dist):
+					break
+				# climb distance is the LATERAL distance 
+				currentDist += self.courseSegs[x].length
+				if "custom" not in self.courseSegs[x].to_poi.setting: # TODO: check if this should also be from_poi
+					remove.append(x)
+		newLandmarks = [] 
+		newLandmarks.append(self.origin)
+		# now add TOC 
+		heading = self.courseSegs[0].course[1] 
+		offset = str(self.origin.latlon.offset(heading, float(self.climb_dist)*nm_to_km))
+		offsetLatLon = (float(offset.split(", ")[0]), float(offset.split(", ")[1]))
+		offsetObj = Point_Of_Interest("TOC", offsetLatLon[0], offsetLatLon[1])
+		newLandmarks.append(offsetObj)
+		for x in range(len(self.courseSegs)): 
+			if x not in remove: 
+				newLandmarks.append(self.courseSegs[x].to_poi)
+		self.reset(self.course, self.origin, self.destination, self.routeType, self.night, newLandmarks, self.cruising_alt, \
+			self.cruise_speed, self.climb_speed, self.climb_dist, self.gph, self.descent_speed, climb_done = True, doWeather = True, region=self.region)
+		return 
+
+	"""
+	Calculates necessary amount of fuel for a flight. 
+		* TODO: this method should be in Airplane class
+	"""
+	def calculateFuelTime(self): # fuel includes taxi; time does not
+		# needs refinement 
+		self.fuelRequired = 0
+		self.time = 0
+		self.totalDist = 0
+		if self.night: 
+			self.fuelRequired += 0.75*self.gph # 45 minute minimum reserve for night flights 
+		else: 
+			self.fuelRequired += 0.5*self.gph # 30 minute minimum reserve for day flights
+		for leg in self.courseSegs: 
+			self.time += leg.time 
+			self.fuelRequired += leg.time*self.gph
+			self.totalDist += leg.length
+		self.fuelRequired += self.fuelTaxi
+		return 
+
 
 """
 Segments, which comprise a route, contain individual altitudes, headings, origins, destinations, wind, and other relevant pieces of data. 
@@ -955,116 +1066,6 @@ def createSegments(origin, destination, course, alt, tas, climb_speed = 75, \
 	return segments 
 
 """
-A route contains a list of segments and airplane parameters replated to a particular flight. 
-"""
-class Route: 
-	def __init__(self, course, origin, destination, routeType="direct", night = False, custom=[], \
-		cruising_alt=3500, cruise_speed=110, climb_speed=75, climb_dist=5, gph=10, descent_speed=90, doWeather=True, region="NORTHEAST"): 
-		self.reset(course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, \
-			climb_speed, climb_dist, gph, descent_speed, doWeather=doWeather, region=region)
-		return 
-
-	def reset(self, course, origin, destination, routeType, night, custom, cruising_alt, cruise_speed, \
-		climb_speed, climb_dist, gph, descent_speed, climb_done=False, doWeather=False, region="NORTHEAST"): 
-		self.origin = origin 
-		self.destination = destination
-		self.climb_speed = climb_speed
-		self.climb_dist = climb_dist # nm, depends on cruising altitude - should become dynamic
-		self.gph = gph
-		self.fuelTaxi = 1.4
-		self.routeType = routeType
-		self.night = night
-		self.errors = []
-		self.cruising_alt = cruising_alt
-		self.cruise_speed = cruise_speed
-		self.descent_speed = descent_speed
-		self.region = region
-		# perform route calculations
-		self.course = course 
-		self.landmarks = custom
-		if(routeType.lower() is not "direct" or climb_done): 
-			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, \
-				self.climb_speed, self.descent_speed, custom=custom, isCustom=True, doWeather=doWeather, region=self.region)
-			# using custom route or route with climb
-		else: 
-			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, \
-				self.climb_speed, self.descent_speed, custom=custom, doWeather=doWeather, region=self.region)
-		for seg in self.courseSegs: 
-			if seg.from_poi.name == seg.to_poi.name: 
-				self.courseSegs.remove(seg)
-
-		time = 0
-		for item in self.courseSegs: 
-			time += item.time
-		self.time = time 
-		self.minutes = float("{0:.2f}".format((self.time - math.floor(self.time))*60))
-		self.hours = math.floor(self.time)
-
-		self.calculateFuelTime()
-		return 
-
-	"""
-	Takes a route and puts a climb in it 
-		* TODO: insert climb before creating route. 
-	"""
-	def insertClimb(self): 
-		if(self.course[0] < self.climb_dist): # someone 
-			self.errors.append("Climb distance longer than route. Ignoring climb parameters.")
-			print "Climb distance longer than route. Ignoring climb parameters" 
-			# still adding landmarks 
-			newLandmarks = [] 
-			newLandmarks.append(self.origin)
-			for x in range(len(self.courseSegs)): 
-				newLandmarks.append(self.courseSegs[x].to_poi)
-			self.landmarks = newLandmarks
-			return 
-		currentAlt = 0
-		currentDist = 0
-		remove = []
-		if(self.courseSegs[0].length < self.climb_dist): 
-			for x in range(len(self.courseSegs)):
-				if(currentDist > self.climb_dist):
-					break
-				# climb distance is the LATERAL distance 
-				currentDist += self.courseSegs[x].length
-				if "custom" not in self.courseSegs[x].to_poi.setting: # TODO: check if this should also be from_poi
-					remove.append(x)
-		newLandmarks = [] 
-		newLandmarks.append(self.origin)
-		# now add TOC 
-		heading = self.courseSegs[0].course[1] 
-		offset = str(self.origin.latlon.offset(heading, float(self.climb_dist)*nm_to_km))
-		offsetLatLon = (float(offset.split(", ")[0]), float(offset.split(", ")[1]))
-		offsetObj = Point_Of_Interest("TOC", offsetLatLon[0], offsetLatLon[1])
-		newLandmarks.append(offsetObj)
-		for x in range(len(self.courseSegs)): 
-			if x not in remove: 
-				newLandmarks.append(self.courseSegs[x].to_poi)
-		self.reset(self.course, self.origin, self.destination, self.routeType, self.night, newLandmarks, self.cruising_alt, \
-			self.cruise_speed, self.climb_speed, self.climb_dist, self.gph, self.descent_speed, climb_done = True, doWeather = True, region=self.region)
-		return 
-
-	"""
-	Calculates necessary amount of fuel for a flight. 
-		* TODO: this method should be in Airplane class
-	"""
-	def calculateFuelTime(self): # fuel includes taxi; time does not
-		# needs refinement 
-		self.fuelRequired = 0
-		self.time = 0
-		self.totalDist = 0
-		if self.night: 
-			self.fuelRequired += 0.75*self.gph # 45 minute minimum reserve for night flights 
-		else: 
-			self.fuelRequired += 0.5*self.gph # 30 minute minimum reserve for day flights
-		for leg in self.courseSegs: 
-			self.time += leg.time 
-			self.fuelRequired += leg.time*self.gph
-			self.totalDist += leg.length
-		self.fuelRequired += self.fuelTaxi
-		return 
-
-"""
 Rounds number up to nearest thousand. 
 
 @type 	num: float 
@@ -1168,7 +1169,7 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], clim
 	# route path line 
 	for item in route.courseSegs: 
 		path.append((float(item.to_poi.lat), float(item.to_poi.lon)))
-		if item.to_poi.hasFuel # this will not work if frequencies have not yet been set
+		if item.to_poi.hasFuel: # this will not work if frequencies have not yet been set
 			# some fuel/gas sign here 
 			mymap.addpoint(float(item.to_poi.lat), float(item.to_poi.lon))
 		else: 
