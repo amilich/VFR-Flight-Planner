@@ -13,7 +13,9 @@ import pygmaps
 Objects and functions necessary for route planning. 
 """
 
-# conversion constants
+"""
+General conversion constants. 
+"""
 km_to_nm = 0.539957
 km_to_miles = 0.621371
 nm_to_km = 1.852
@@ -24,7 +26,6 @@ meters_to_feet = 3.28084
 An airplane is used to store relevant information for weight and balance calculations. 
 """
 class Airplane: 
-	# ** NOTE ** for now, all data is for C172 
 	"""
 	Initialize the plane with type and list of weights. 
 
@@ -429,8 +430,6 @@ class Segment:
 			self.w, self.vw = getWind(self.from_poi.name)
 		else: 
 			aloft = str(self.aloft)
-			#if("9900" in str(aloft)): 
-			#	aloft = "0000+00"
 			self.w = 10*float(aloft[:2]) # only 2 digits
 			self.vw = float(aloft[2:4])
 			if(len(aloft) > 4): 
