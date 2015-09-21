@@ -24,7 +24,6 @@ meters_to_feet = 3.28084
 An airplane is used to store relevant information for weight and balance calculations. 
 """
 class Airplane: 
-	# ** NOTE ** for now, all data is for C172 
 	"""
 	Initialize the plane with type and list of weights. 
 
