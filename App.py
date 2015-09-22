@@ -117,6 +117,7 @@ def update():
 		forms = []
 		counter = 0
 		for x in range(len(myRoute[2].courseSegs)):
+			# add onsubmit() even to show loading screen 
 			forms.append(placeform(place=myRoute[2].courseSegs[x].to_poi.name, num=x))
 
 		cache.set('myRoute', myRoute, timeout=500)
