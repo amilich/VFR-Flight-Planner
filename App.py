@@ -13,7 +13,7 @@ import os, time
 	VFR-Flight-Planner
 
 	@author 	Andrew Milich 
-	@version 	0.8
+	@version 	0.85
 
 	This application is designed to simplify the extensive planning prior to VFR flghts. 
 	It finds cities and airports along the route to ensure a pilot remains on course, 
@@ -22,7 +22,7 @@ import os, time
 	altitude hazards and suggest a new cruising altitude. A user can also perform simple 
 	weight, balance, performance, and weather calculations.
 
-	Written Summer 2015.  
+	Written summer and fall 2015.  
 
 	Live url: http://flyvfr.com
 

@@ -1170,9 +1170,10 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], clim
 	for item in route.courseSegs: 
 		path.append((float(item.to_poi.lat), float(item.to_poi.lon)))
 		if item.to_poi.hasFuel: # this will not work if frequencies have not yet been set
-			# some fuel/gas sign here 
+			# some fuel/gas sign here - clipart type thing 
 			mymap.addpoint(float(item.to_poi.lat), float(item.to_poi.lon))
 		else: 
+			# no discrimination based on fuel currentlyforms
 			mymap.addpoint(float(item.to_poi.lat), float(item.to_poi.lon))
 		# add point with fuel or not 
 
