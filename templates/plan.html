@@ -176,7 +176,7 @@
                                     <td stype="padding:0;"> <!-- form here -->
                                         <form action="/update" method="post" role="form">
                                             {{ forms[item.num].hidden_tag() }}
-                                            {{ forms[item.num].place() }}
+                                            {{ forms[item.num].place(onsubmit="loading();") }}
                                         </form>
                                     </td>
     
