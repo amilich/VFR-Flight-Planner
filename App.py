@@ -45,6 +45,8 @@ import os, time
 	Possible improvements: 
 		* Waypoint auto completion 
 		* Route searching/tracking 
+
+	© 2015. Protected under Creative Commons Attribution-NonCommercial License.
 """
 
 app = Flask(__name__)
