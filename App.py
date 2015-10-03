@@ -46,7 +46,7 @@ import os, time
 		* Waypoint auto completion 
 		* Route searching/tracking 
 
-	© 2015. Protected under Creative Commons Attribution-NonCommercial License.
+	Copyright 2015. Protected under Creative Commons Attribution-NonCommercial License.
 """
 
 app = Flask(__name__)
@@ -137,6 +137,13 @@ def update():
 	except Exception, e: 
 		print str(e)
 		return render_template('fail.html', error="waypoint")
+
+"""
+Goes to tutorial page.
+"""
+@app.route('/tutorial', methods=['GET'])
+def tutorial(): 
+	return render_template('tutorial.html')
 
 """
 Once the user submits aircraft data and basic route information, a route is generated with 
