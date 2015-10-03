@@ -422,7 +422,7 @@ class Route:
 	def insertClimb(self): 
 		if(self.course[0] < self.climb_dist): # someone 
 			self.errors.append("Climb distance longer than route. Ignoring climb parameters.")
-			print "Climb distance longer than route. Ignoring climb parameters" 
+			print "Climb distance longer than route. Ignoring climb parameters." 
 			# still adding landmarks 
 			newLandmarks = [] 
 			newLandmarks.append(self.origin)
