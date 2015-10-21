@@ -11,6 +11,7 @@ import os, time
 
 """
 	VFR-Flight-Planner
+		"File and Forget" 
 
 	@author 	Andrew Milich 
 	@version 	0.85
