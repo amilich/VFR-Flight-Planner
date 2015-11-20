@@ -47,7 +47,7 @@ import os, time
 		* Waypoint auto completion 
 		* Route searching/tracking 
 
-	Copyright 2015. Protected under Creative Commons Attribution-NonCommercial License.
+	Copyright 2015-2016. Protected under Creative Commons Attribution-NonCommercial License.
 """
 
 app = Flask(__name__)
