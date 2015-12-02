@@ -1,4 +1,5 @@
 from __future__ import division
+from fractions import Fraction
 from geopy.geocoders import Nominatim
 from geopy.distance import vincenty
 from LatLon import LatLon, Latitude, Longitude
@@ -289,7 +290,11 @@ class Environment:
 	def getVisibility(cls, metar): 
 		for item in metar.split(): 
 			if 'SM'in item[-2:]: 
-				return int(item[:-2])
+				try: 
+					return int(float((item[:-2])))
+				except: 
+					x = Fraction(item[:-2])
+					return int(x)
 		return 0
 
 	"""
