@@ -1350,3 +1350,17 @@ For decoding a route from database.
 """
 def decodeRoute(r):
 	return 
+
+"""
+Looks at wind patterns to determine best altitude to fly at. 
+"""
+def findBestAlt(lat, lon, region, cruise_alt): 
+	w_1 = getWindsAloft(lat, lon, region, cruise_alt)
+	w_2 = getWindsAloft(lat, lon, region, cruise_alt+2000)
+	w_3 = getWindsAloft(lat, lon, region, cruise_alt+4000)
+	# should probably be run from route page
+	# sort from possible hemisphere route altitudes for VFR flight 
+	# look at winds aloft at different altitudes. 
+	# strongest wind*cos(wind_vector - route_vector)
+	# display new possible times for route at different altitudes 
+	return 
