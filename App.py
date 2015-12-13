@@ -14,7 +14,7 @@ import os, time
 		"File and Forget" 
 
 	@author 	Andrew Milich 
-	@version 	0.85
+	@version 	0.87
 
 	This application is designed to simplify the extensive planning prior to VFR flghts. 
 	It finds cities and airports along the route to ensure a pilot remains on course, 
@@ -240,7 +240,7 @@ def search():
 		# mail me a copy of the route for recordkeeping 
 		try: 
 			msg = Message("Route planned from " + airp1 + " to " + airp2, sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com']) 
-			msg.body = "Route planned from %s to %s at %s feet and %s kts." % (airp1, airp2, altitude, speed)
+			msg.body = "Route planned from %s to %s at %s feet and %s kts. %s. " % (airp1, airp2, altitude, speed, str(myRoute))
 			mail.send(msg)
 		except: 
 			print 'Mail creation failed.' # for logging
