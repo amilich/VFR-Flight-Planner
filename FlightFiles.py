@@ -177,8 +177,10 @@ class Environment:
 	@classmethod
 	def getTempDP(cls, metar):
 		for item in metar.split(): 
-			if "/" in item: 
-				return (item.split("/")[0], item.split("/")[1])
+			if "/" in item and "FT" not in item and "SM" not in item: 
+				temp = item.split("/")[0]
+				dp = item.split("/")[1]
+				return (temp, dp)
 		return (0, 0)
 
 	"""
@@ -226,7 +228,7 @@ class Environment:
 		# the weather is between visibility and cloud conditions (always present)
 		wx = metar.split()[visInd+1:cloudInd] 
 		for item in wx: 
-			if "R" in item[0]: 
+			if "R" in item[0] or "A" in item[0] or "RMK" in item: 
 				wx.remove(item)
 		if len(wx) > 1: 
 			print 'length of wx > 1: %s; metar=%s' % (wx, metar)
@@ -247,6 +249,7 @@ class Environment:
 	@rType 	string  
 	@return current weather conditions
 	"""
+	# incorporate airspace!!! 
 	@classmethod
 	def getSkyCond(cls, metar, clouds, visibility, wx): 
 		if 'TS' in wx: 
