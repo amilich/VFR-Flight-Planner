@@ -7,7 +7,8 @@ from FlightFiles import *
 from forms import *
 from flask.ext.cache import Cache 
 from pdf import *
-import os, time
+import os 
+import time
 
 """
 	VFR-Flight-Planner
