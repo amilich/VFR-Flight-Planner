@@ -7,7 +7,12 @@ from geomag import mag_heading
 from BeautifulSoup import BeautifulSoup
 from downloadmap import *
 from Elevations import *
-import urllib, re, sys, os, math, copy
+import urllib 
+import re 
+import sys 
+import os 
+import math 
+import copy
 import pygmaps 
 
 """
