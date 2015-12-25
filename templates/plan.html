@@ -214,19 +214,18 @@
                                 <td><b>Type</b></td>
                                 <td><b>Identification</b></td>
                                 <td><b>Frequency</b></td>
-                                <td><b>Services</b></td>
+                                <!-- <td><b>Services</b></td> -->
                             </tr>
                         {% for thing in freqs %}
                             <tr>   
-                                {% if thing.hasFuel %} 
-                                    Fuel likely provided 
-                                {% else %} 
-                                    May have services 
-                                {% endif %}
-                                <td> </td>
                                 {% for freq in thing %}
                                     <td> {{ freq }} </td>
                                 {% endfor %} 
+                                <!-- {% if thing.hasFuel %} 
+                                   <td> Fuel likely provided </td>
+                                {% else %} 
+                                   <td> May have services </td>
+                                {% endif %} -->
                             </tr>
                         {% endfor %}
                     </table>
