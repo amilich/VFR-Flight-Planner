@@ -17,6 +17,8 @@ import pygmaps
 
 """
 Objects and functions necessary for route planning. 
+Airplanes, weights, environments, airports, cities, 
+routes, and basic calculations. 
 
 @class
 	Airplane 
