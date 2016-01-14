@@ -483,6 +483,14 @@ class Route:
 		return 
 
 	"""
+	String representation. Used for storing in database.  
+	"""
+	def __repr__(self): 
+		rep = ""
+		for item in self.courseSegs: 
+			rep += item 
+
+	"""
 	Calculates necessary amount of fuel for a flight. 
 		* TODO: this method should be in Airplane class
 	"""
