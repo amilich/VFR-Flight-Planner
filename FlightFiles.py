@@ -30,6 +30,9 @@ routes, and basic calculations.
 	Point_Of_Interest
 @class 
 	Route 
+
+@author: Andrew M. 
+@date: 2015-2016
 """
 
 """
