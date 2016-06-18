@@ -1,21 +1,6 @@
-from __future__ import division
-from fractions import Fraction
-from geopy.geocoders import Nominatim
-from geopy.distance import vincenty
-from LatLon import LatLon, Latitude, Longitude
-from geomag import mag_heading
-from BeautifulSoup import BeautifulSoup
-from downloadmap import *
-from Elevations import *
-import urllib 
-import re 
-import sys 
-import os 
-import math 
-import copy
-import pygmaps 
-
 """
+File: FlightFiles.py
+-----------------------
 Objects and functions necessary for route planning. 
 Airplanes, weights, environments, airports, cities, 
 routes, and basic calculations. 
@@ -34,6 +19,24 @@ routes, and basic calculations.
 @author: Andrew M. 
 @date: 2015-2016
 """
+
+from __future__ import division
+
+import os 
+import re 
+import sys 
+import math 
+import copy
+import urllib 
+import pygmaps 
+from Elevations import *
+from downloadmap import *
+from geomag import mag_heading
+from fractions import Fraction
+from geopy.distance import vincenty
+from geopy.geocoders import Nominatim
+from LatLon import LatLon, Latitude, Longitude
+from BeautifulSoup import BeautifulSoup
 
 """
 General conversion constants. 
@@ -997,6 +1000,9 @@ Find landmarks along duration of route.
 @return list of Point_Of_Interest objects 
 """
 def calculateRouteLandmarks(origin, destination, course): 
+	# what is the slow part? 
+	# from relevant airports, calculate Manhattan distance 
+	# A* 
 	allRelevantAirports = getDistancesInRange(origin, destination, course) # work on SHORTENING this
 	currentDist = course[0] # will be worked down to 0 (roughly)
 	counter = 0
@@ -1004,7 +1010,7 @@ def calculateRouteLandmarks(origin, destination, course):
 	currentLandmark = origin 
 	routeLandmarks.append(origin)
 	while True or counter < 100: # in case the route is impossible
-		if(currentDist < 25): 
+		if (currentDist < 25): 
 			routeLandmarks.append(destination)
 			break # your final landmark will be the end airport 
 		else: 
@@ -1357,7 +1363,7 @@ def changeRoute(r, n, p, home, dest, altitude, airspeed, climb_dist, climb_speed
 	prevLandmarks.append(item.to_poi)
 	newLandmarks = list(prevLandmarks)
 	selectedChange.setting = "custom"
-	newLandmarks[n+1] = selectedChange # increment by one because you are using the TO poi (+1)
+	newLandmarks[n + 1] = selectedChange # increment by one because you are using the TO poi (+1)
 	return createRoute(home, dest, altitude, airspeed, newLandmarks, climb_dist = climb_dist, climb_speed=climb_speed, region=region)
 
 """
@@ -1377,8 +1383,8 @@ Looks at wind patterns to determine best altitude to fly at.
 """
 def findBestAlt(lat, lon, region, cruise_alt): 
 	w_1 = getWindsAloft(lat, lon, region, cruise_alt)
-	w_2 = getWindsAloft(lat, lon, region, cruise_alt+2000)
-	w_3 = getWindsAloft(lat, lon, region, cruise_alt+4000)
+	w_2 = getWindsAloft(lat, lon, region, cruise_alt + 2000)
+	w_3 = getWindsAloft(lat, lon, region, cruise_alt + 4000)
 	# should probably be run from route page
 	# sort from possible hemisphere route altitudes for VFR flight 
 	# look at winds aloft at different altitudes. 
