@@ -29,6 +29,7 @@ import math
 import copy
 import urllib 
 import pygmaps 
+import Queue as Q
 from Elevations import *
 from downloadmap import *
 from geomag import mag_heading
@@ -1000,19 +1001,22 @@ Find landmarks along duration of route.
 @return list of Point_Of_Interest objects 
 """
 def calculateRouteLandmarks(origin, destination, course): 
-	# what is the slow part? 
+	# course: tuple from getDistHeading
 	# from relevant airports, calculate Manhattan distance 
 	# A* 
+	# q = Q.PriorityQueue() 
+
 	allRelevantAirports = getDistancesInRange(origin, destination, course) # work on SHORTENING this
-	currentDist = course[0] # will be worked down to 0 (roughly)
+	currentDist = course[0] 
 	counter = 0
 	routeLandmarks = []
 	currentLandmark = origin 
 	routeLandmarks.append(origin)
+
 	while True or counter < 100: # in case the route is impossible
 		if (currentDist < 25): 
 			routeLandmarks.append(destination)
-			break # your final landmark will be the end airport 
+			break # the route is done; you are close enough to the destination 
 		else: 
 			tolerance = 1
 			currentLandmarks = getValidLandmarks(currentLandmark, allRelevantAirports, course, tolerance)
