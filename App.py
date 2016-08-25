@@ -15,7 +15,7 @@ import time
 		"File and Forget" 
 
 	@author 	Andrew Milich 
-	@version 	0.90
+	@version 	0.91
 
 	This application is designed to simplify the extensive planning prior to VFR flghts. 
 	It finds cities and airports along the route to ensure a pilot remains on course, 
@@ -48,7 +48,7 @@ import time
 		* Waypoint auto completion 
 		* Route searching/tracking 
 
-	Copyright 2015-2016. Protected under Creative Commons Attribution-NonCommercial License.
+	Copyright 2016-2017. Protected under Creative Commons Attribution-NonCommercial License.
 """
 
 app = Flask(__name__)
