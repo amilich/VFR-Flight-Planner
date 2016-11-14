@@ -199,13 +199,13 @@ def search():
 
 		print 'Routing from %s to %s at %s kts and %s feet.' % (airp1, airp2, speed, altitude)
 
-		env_origin = Environment(airp1)
-		env_dest = Environment(airp2)
+		env_origin = None #Environment(airp1)
+		env_dest = None #Environment(airp2)
 		# these environments can be accessed when generating weather PDF and displaying messages
 		# cache.set('airplane', airplane, timeout=500)
 		cache.set('env_origin', env_origin, timeout=500) # cached for PDF use later 
 		cache.set('env_dest', env_dest, timeout=500)
-	
+		
 		session['ORIG'] = airp1
 		session['DEST'] = airp2
 		session['ALT'] = altitude
@@ -214,6 +214,7 @@ def search():
 		session['CLMB'] = climb_dist
 		session['CLMB_SPD'] = climb_speed
 	
+		print 'Creating route'
 		myRoute = createRoute(airp1, airp2, altitude, speed, environments=[env_origin, env_dest], \
 			climb_dist=climb_dist, climb_speed=climb_speed, region=region)
 		map_content = str(myRoute[0])
@@ -225,16 +226,17 @@ def search():
 		cache.set('myRoute', myRoute, timeout=500)
 		messages = myRoute[4]
 	
-		if not (env_origin.weather == "NONE"): 
-			if env_origin.skyCond == 'IFR': 
-				messages.append("Origin is in IFR conditions")
-			elif env_origin.skyCond == 'SVFR': 
-				messages.append("Origin is in SVFR conditions")
-		
-			if env_dest.skyCond == 'IFR': 
-				messages.append("Destination is in IFR conditions")
-			elif env_dest.skyCond == 'SVFR': 
-				messages.append("Destination is in SVFR conditions")
+		if env_origin is not None and env_dest is not None: 
+			if not (env_origin.weather == "NONE"): 
+				if env_origin.skyCond == 'IFR': 
+					messages.append("Origin is in IFR conditions")
+				elif env_origin.skyCond == 'SVFR': 
+					messages.append("Origin is in SVFR conditions")
+			
+				if env_dest.skyCond == 'IFR': 
+					messages.append("Destination is in IFR conditions")
+				elif env_dest.skyCond == 'SVFR': 
+					messages.append("Destination is in SVFR conditions")
 	
 		showMsgs = True if(len(messages) is not 0) else False
 		
