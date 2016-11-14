@@ -427,11 +427,14 @@ class Route:
 		# perform route calculations
 		self.course = course 
 		self.landmarks = custom
+		print 'Create segments'
 		if(routeType.lower() is not "direct" or climb_done): 
+			print 'Not direct'
 			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, \
 				self.climb_speed, self.descent_speed, custom=custom, isCustom=True, doWeather=doWeather, region=self.region)
 			# using custom route or route with climb
 		else: 
+			print 'Direct'
 			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, \
 				self.climb_speed, self.descent_speed, custom=custom, doWeather=doWeather, region=self.region)
 		for seg in self.courseSegs: 
@@ -1098,18 +1101,22 @@ def createSegments(origin, destination, course, alt, tas, climb_speed = 75, \
 	middle = len(landmarks)
 	num = getMid(len(landmarks))
 
+	print 'Get winds aloft'
 	if(doWeather):
-		wAloft = getWindsAloft(landmarks[num].lat, landmarks[num].lon, alt, region)
+		wAloft = "0000+00" # TODO getWindsAloft(landmarks[num].lat, landmarks[num].lon, alt, region)
 	else: 
 		wAloft = "0000+00"
 	for x in range(len(landmarks)-1): 
-		if x == 0: 
+		nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], alt, tas, num=x, aloft=wAloft) # ending is field elevation
+		"""if x == 0: 
 			# we want to use the METAR for the origin airport here 
 			nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], getFieldElevation(origin.name), climb_speed, True, False, x, aloft=wAloft) 
 			# starting alt is field elevation 
 		else: 
 			nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], alt, tas, num=x, aloft=wAloft) # ending is field elevation
+		"""
 		segments.append(nextLeg)
+	print 'Segments returned'
 	return segments 
 
 """
@@ -1198,9 +1205,11 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], clim
 		final_alt = cruising_alt
 		messages.append("Changed cruising altitude")
 	rType = "direct" if len(custom) == 0 else "custom"
+	print 'Make route'
 	route = Route(course, origin, destination, routeType=rType, custom=custom, cruising_alt=final_alt, cruise_speed=airspeed, \
 		climb_speed=climb_speed, climb_dist=climb_dist, doWeather=False, region=region)
 
+	print 'Insert climb'
 	noTOC = copy.copy(route)
 	route.insertClimb()
 	messages.append("Added Top of Climb (TOC) waypoint")
