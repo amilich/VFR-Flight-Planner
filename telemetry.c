@@ -39,14 +39,34 @@
 00:00:05:27.78 msg: CK A GOOD
 00:00:05:27.78 msg: Incoming char: A0 :  , state: 7, CMDS = 20 4, LENGTH=20, CKA=38, CKB=A0, NUM_PACKETS=0
 00:00:05:27.79 msg: CK B GOOD
+00:00:05:27.80 msg: Incoming char: 86 : †, state: 8, CMDS = 20 4, LENGTH=20, CKA=10, CKB=20, NUM_PACKETS=0
+00:00:05:27.82 msg: Incoming char: A2 : ¢, state: 8, CMDS = 20 4, LENGTH=20, CKA=96, CKB=B6, NUM_PACKETS=1
+00:00:05:27.84 msg: Incoming char: 40 : @, state: 8, CMDS = 20 4, LENGTH=20, CKA=38, CKB=EE, NUM_PACKETS=2
+00:00:05:27.86 msg: Incoming char: 40 : @, state: 8, CMDS = 20 4, LENGTH=20, CKA=78, CKB=66, NUM_PACKETS=3
+00:00:05:27.87 msg: Incoming char: 40 : @, state: 8, CMDS = 20 4, LENGTH=20, CKA=B8, CKB=1E, NUM_PACKETS=4
+00:00:05:27.89 msg: Incoming char: 40 : @, state: 8, CMDS = 20 4, LENGTH=20, CKA=F8, CKB=16, NUM_PACKETS=5
+00:00:05:27.91 msg: Incoming char: 60 : `, state: 8, CMDS = 20 4, LENGTH=20, CKA=38, CKB=4E, NUM_PACKETS=6
+00:00:05:27.93 msg: Incoming char: 96 : –, state: 8, CMDS = 20 4, LENGTH=20, CKA=98, CKB=E6, NUM_PACKETS=7
+00:00:05:27.95 msg: Incoming char: 96 : –, state: 8, CMDS = 20 4, LENGTH=20, CKA=2E, CKB=14, NUM_PACKETS=8
+00:00:05:27.97 msg: Incoming char: 6C : l, state: 8, CMDS = 20 4, LENGTH=20, CKA=C4, CKB=D8, NUM_PACKETS=9
+00:00:05:27.99 msg: Incoming char: A0 :  , state: 8, CMDS = 20 4, LENGTH=20, CKA=30, CKB=8, NUM_PACKETS=10
+00:00:05:28.01 msg: Incoming char: AC : ¬, state: 8, CMDS = 20 4, LENGTH=20, CKA=D0, CKB=D8, NUM_PACKETS=11
+00:00:05:28.03 msg: Incoming char: 92 : ’, state: 8, CMDS = 20 4, LENGTH=20, CKA=7C, CKB=54, NUM_PACKETS=12
 00:00:05:28.05 msg: Incoming char: 61 : a, state: 8, CMDS = 20 4, LENGTH=20, CKA=E, CKB=62, NUM_PACKETS=13
-00:00:05:28.20 msg: CK A GOOD 
+00:00:05:28.07 msg: Incoming char: 3 : [03], state: 8, CMDS = 20 4, LENGTH=20, CKA=6F, CKB=D1, NUM_PACKETS=14
+00:00:05:28.09 msg: Incoming char: F0 : ð, state: 8, CMDS = 20 4, LENGTH=20, CKA=72, CKB=43, NUM_PACKETS=15
+00:00:05:28.11 msg: Incoming char: 61 : a, state: 8, CMDS = 20 4, LENGTH=20, CKA=62, CKB=A5, NUM_PACKETS=16
+00:00:05:28.13 msg: Incoming char: D : , state: 8, CMDS = 20 4, LENGTH=20, CKA=C3, CKB=68, NUM_PACKETS=17
+00:00:05:28.15 msg: Incoming char: B6 : ¶, state: 8, CMDS = 20 4, LENGTH=20, CKA=D0, CKB=38, NUM_PACKETS=18
+00:00:05:28.17 msg: Incoming char: 9E : ž, state: 8, CMDS = 20 4, LENGTH=20, CKA=86, CKB=BE, NUM_PACKETS=19
+00:00:05:28.19 msg: Incoming char: 24 : $, state: 8, CMDS = 20 4, LENGTH=20, CKA=24, CKB=E2, NUM_PACKETS=20
+00:00:05:28.20 msg: CK A GOOD
 00:00:05:28.20 msg: Incoming char: E2 : â, state: 9, CMDS = 20 4, LENGTH=20, CKA=24, CKB=E2, NUM_PACKETS=20
-00:00:05:28.21 msg: CK B GOOD 
+00:00:05:28.21 msg: CK B GOOD
 00:00:05:28.21 msg: Received a valid packet 
 00:00:05:28.22 msg: Forwarding Packet 
-00:00:05:28.22 msg: Radio Command: 2004
-00:00:05:28.22 msg: Packet is a GS message 
+00:00:01:22.28 msg: Radio Command: 2004
+00:00:01:22.29 msg: Received GS message! 
 
 
 
