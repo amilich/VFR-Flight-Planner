@@ -11,3 +11,7 @@ Getting started:
 3. pip install -r requirements.txt
 
 4. python App.py
+
+# Version
+1.0.2
+
