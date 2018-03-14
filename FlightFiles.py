@@ -427,7 +427,6 @@ class Route:
 		# perform route calculations
 		self.course = course 
 		self.landmarks = custom
-		print 'Create segments'
 		if(routeType.lower() is not "direct" or climb_done): 
 			print 'Not direct'
 			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, \
@@ -1147,8 +1146,13 @@ def getProperAlt(origin, destination, course):
 	end = str(destination.latlon)
 	path = start + "|" + end
 	elevations = getElevation(path, chartSize="700x200")
+	print 'get elevations'
 	# get the maximum altitude 
-	maxAlt = max(elevations)
+	if len(elevations) == 0:
+		maxAlt = 0.0
+	else:
+		maxAlt = max(elevations)
+	# print 'done'
 	# for hemispheric rule for cruising altitudes 
 	start_lat = start.split(", ")[0]
 	start_lon = start.split(", ")[1]
@@ -1234,7 +1238,8 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], clim
 		# add point with fuel or not 
 
 	mymap.addpath(path,"#4169E1")
-	return (getHtml(mymap, route.landmarks), noTOC, route, elevation_map, messages, frequencies, getZip(origin))
+	a = getHtml2(mapLL, route.landmarks, path, mymap), noTOC, route, elevation_map, messages, frequencies, getZip(origin)
+	return (a)
  
 """
 Creates a static map for PDF viewing. Alternatively could use a 

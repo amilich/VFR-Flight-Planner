@@ -1,4 +1,20 @@
+from gmplot_cust import *
 import pygmaps
+
+def getHtml2(mapLL, landmarks, path, mymap):
+	if len(landmarks) == 0:
+		print 'exited'
+		return ""
+	string = ""
+	del path[-1]
+	lat = [float(x[0]) for x in path]
+	lon = [float(x[1]) for x in path]
+	mapper = GoogleMapPlotter(mymap.center[0], mymap.center[1], mymap.zoom)
+	ll_path = lat + lon
+	ll_comb = [lat, lon]
+	mapper.plot(ll_comb[0], ll_comb[1], "plum", edge_width=5)
+	mapStr = mapper.draw()
+	return mapStr
 
 """
 Given a pygmap, this function converts it into javascript. It is extremely similar 
