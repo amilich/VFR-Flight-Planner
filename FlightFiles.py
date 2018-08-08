@@ -907,7 +907,10 @@ def getDistancesInRange(origin, dest, course):
 			if city_name in city_names:
 				continue
 			city_names.add(city_name)
+			data[2] = data[2].replace('\n', '')
 			if(len(data) < 3): 
+				continue
+			if abs(float(data[1]) - originLoc.latitude) > 10 or abs(float(data[2]) - originLoc.longitude):
 				continue
 			temp = geopy.Point(data[1], data[2])
 			tempDist = geopy.distance.distance(originLoc, temp).kilometers * km_to_nm
