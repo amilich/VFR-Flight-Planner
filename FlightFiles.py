@@ -899,9 +899,14 @@ def getDistancesInRange(origin, dest, course):
 				distances.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
 	print('Gathering cities')
 	with open("data/cities.txt") as f:
+		city_names = set()
 		lines = f.readlines()
 		for line in lines: 
 			data = line.split(", ")
+			city_name = data[0]
+			if city_name in city_names:
+				continue
+			city_names.add(city_name)
 			if(len(data) < 3): 
 				continue
 			temp = geopy.Point(data[1], data[2])
