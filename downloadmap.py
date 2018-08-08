@@ -9,7 +9,7 @@ def getHtml2(mapLL, landmarks, path, mymap):
 	del path[-1]
 	lat = [float(x[0]) for x in path]
 	lon = [float(x[1]) for x in path]
-	mapper = GoogleMapPlotter(mymap.center[0], mymap.center[1], mymap.zoom, apikey='AIzaSyCeDCaWhk9KnfQsA5-1HMou5eshW2x0zuo')
+	mapper = GoogleMapPlotter(mymap.center[0], mymap.center[1], mymap.zoom, apikey='AIzaSyB22o-wcPGlbVxE_UElRjWxwKzGOfbnExU')
 	ll_path = lat + lon
 	ll_comb = [lat, lon]
 	mapper.plot(ll_comb[0], ll_comb[1], "plum", edge_width=5)
