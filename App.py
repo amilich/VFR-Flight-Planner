@@ -190,7 +190,7 @@ def search():
 		airp2 = request.form['dest'].upper()
 		region = request.form['region'].upper()
 		# there will always be an answer to the above 3 - they are select fields 
-		if getDist(airp1, airp2) > 5000: 
+		if getDist(airp1, airp2) > 970: # ORD to HPN approx in NM
 			return render_template('fail.html', error="distance")
 		altitude = request.form['alt']
 		if altitude == "": 
