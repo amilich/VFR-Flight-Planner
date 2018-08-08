@@ -29,15 +29,15 @@ import math
 import copy
 import urllib 
 import pygmaps 
-import Queue as Q
+import geopy
+
 from Elevations import *
 from downloadmap import *
 from geomag import mag_heading
 from fractions import Fraction
 from geopy.distance import vincenty
 from geopy.geocoders import Nominatim
-from LatLon import LatLon, Latitude, Longitude
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 """
 General conversion constants. 
@@ -240,7 +240,7 @@ class Environment:
 			if "R" in item[0] or "A" in item[0] or "RMK" in item: 
 				wx.remove(item)
 		if len(wx) > 1: 
-			print 'length of wx > 1: %s; metar=%s' % (wx, metar)
+			print('length of wx > 1: %s; metar=%s' % (wx, metar))
 			return ""
 		return wx 
 
@@ -382,7 +382,11 @@ class Point_Of_Interest:
 		self.lat = lat
 		self.lon = lon
 		self.priority = 0
-		self.latlon = LatLon(Latitude(lat), Longitude(lon))
+		try:
+			self.latlon = geopy.point.Point(lat, lon)
+		except:
+			print('Creating geopy point failed, trying float')
+			self.latlon = geopy.point.Point(float(lat), float(lon))
 		self.data = data
 		self.setting = setting
 		return 
@@ -428,12 +432,13 @@ class Route:
 		self.course = course 
 		self.landmarks = custom
 		if(routeType.lower() is not "direct" or climb_done): 
-			print 'Not direct'
+			print('Not direct')
+			print('Creating segments')
 			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, \
 				self.climb_speed, self.descent_speed, custom=custom, isCustom=True, doWeather=doWeather, region=self.region)
 			# using custom route or route with climb
 		else: 
-			print 'Direct'
+			print('Direct')
 			self.courseSegs = createSegments(self.origin, self.destination, self.course, self.cruising_alt, self.cruise_speed, \
 				self.climb_speed, self.descent_speed, custom=custom, doWeather=doWeather, region=self.region)
 		for seg in self.courseSegs: 
@@ -457,7 +462,7 @@ class Route:
 	def insertClimb(self): 
 		if(self.course[0] < self.climb_dist): # someone 
 			self.errors.append("Climb distance longer than route. Ignoring climb parameters.")
-			print "Climb distance longer than route. Ignoring climb parameters." 
+			print("Climb distance longer than route. Ignoring climb parameters.")
 			# still adding landmarks 
 			newLandmarks = [] 
 			newLandmarks.append(self.origin)
@@ -480,7 +485,9 @@ class Route:
 		newLandmarks.append(self.origin)
 		# now add TOC 
 		heading = self.courseSegs[0].course[1] 
-		offset = str(self.origin.latlon.offset(heading, float(self.climb_dist)*nm_to_km))
+		v_d = geopy.distance.VincentyDistance(kilometers = float(self.climb_dist)*nm_to_km)
+		offset_pt = v_d.destination(point=self.origin.latlon, bearing=heading)
+		offset = str((offset_pt.latitude, offset_pt.longitude))[1:-1]
 		offsetLatLon = (float(offset.split(", ")[0]), float(offset.split(", ")[1]))
 		offsetObj = Point_Of_Interest("TOC", offsetLatLon[0], offsetLatLon[1])
 		newLandmarks.append(offsetObj)
@@ -529,7 +536,7 @@ class Segment:
 		self.from_poi = from_poi # Airport object 
 		self.to_poi = to_poi # Airport object 
 		self.true_hdg = true_hdg # Float 
-		self.course = getDistHeading(from_poi, to_poi)
+		self.course = getDistHeading(from_poi.latlon, to_poi.latlon)
 		self.true_hdg = self.course[1] # actual true heading! 
 		self.alt = alt # Float 
 		self.tas = tas # Float 
@@ -538,7 +545,7 @@ class Segment:
 		self.num=num # integer
 		self.aloft = aloft
 		# initialize complex data
-		self.length = from_poi.latlon.distance(to_poi.latlon)*km_to_nm # important! convert to miles
+		self.length = geopy.distance.distance(from_poi.latlon, to_poi.latlon).kilometers * km_to_nm # important! convert to miles
 		self.magCorrect()
 		self.getWindS()
 		self.setCorrectedCourse()
@@ -548,8 +555,7 @@ class Segment:
 		self.minutes = float("{0:.2f}".format((self.time - math.floor(self.time))*60))
 		self.hours = math.floor(self.time)
 		self.totMinutes = self.time*60
-
-		self.seg_hdg = float("{0:.2f}".format(from_poi.latlon.heading_initial(to_poi.latlon)))
+		self.seg_hdg = float("{0:.2f}".format(getGeopyHeading(from_poi.latlon, to_poi.latlon)))
 		if(self.seg_hdg < 0): 
 			self.seg_hdg += 360
 		return 
@@ -610,8 +616,8 @@ class Segment:
 			self.to_poi.name + "' name=\"to\" readonly='false' ondblclick=\"this.readOnly='';\"> <input type=\"hidden\" name=\"num\" value=\"" + \
 			str(num) + "\"> </form> " + "</td><td>" + str("{0:.2f}".format(self.length*km_to_nm))+ "</td><td>" + str(self.alt) + "</td><td>" + \
 			str(self.tas) + "</td><td>" + str(self.gs) + "</td><td>" + str(self.hdg) + "</td>"
-		except Exception,e: 
-			print str(e) 
+		except Exception as e: 
+			print(str(e))
 
 	"""
 	Visual representation of segment. 
@@ -657,6 +663,7 @@ def getWeather(loc):
 		found = soup.findAll('font') # METAR data within font tag 
 		return str(found).split(">")[1].split("<")[0]
 	except: 
+		print('Weather fail')
 		return ""
 
 """
@@ -750,7 +757,7 @@ def getWindsAloft(lat, lon, alt, region):
 		except:
 			continue
 	for item in windLocs: 
-		item.dist = item.latlon.distance(loc.latlon)*km_to_nm
+		item.dist = geopy.distance.distance(item.latlon, loc.latlon).kilometers * km_to_nm
 	sortedAirports = sorted(windLocs, key=lambda x: x.dist, reverse=False)
 
 	dataLine = sortedAirports[0].data.split(" ")
@@ -783,6 +790,20 @@ def getWindsAloft(lat, lon, alt, region):
 	return data 
 
 """
+Return heading from poi1 (geopy Point) to poi2.
+"""
+def getGeopyHeading(poi1, poi2):
+	lon2 = poi2.longitude
+	lon1 = poi1.longitude
+	lat2 = poi2.latitude
+	lat1 = poi1.latitude
+	dLon = lon2 - lon1;
+	y = math.sin(dLon) * math.cos(lat2);
+	x = math.cos(lat1)*math.sin(lat2) - math.sin(lat1)*math.cos(lat2)*math.cos(dLon);
+	h = math.degrees(math.atan2(y, x))
+	return h
+
+"""
 Finds the distance and heading between two locations. 
 
 @type 	poi1: Point_Of_Interest
@@ -793,14 +814,20 @@ Finds the distance and heading between two locations.
 @return distance and heading in tuple
 """
 def getDistHeading(poi1, poi2): 
+	print('GDH')
+	print('GDH: ({},{}) ({},{})'.format(poi1.latitude, poi1.longitude, poi2.latitude, poi2.longitude))
 	try: 
-		d = poi1.latlon.distance(poi2.latlon)*km_to_nm
-		h = poi1.latlon.heading_initial(poi2.latlon)
+		d = geopy.distance.distance(poi1, poi2).kilometers * km_to_nm
+		# print('got d')
+		print(poi1, poi2)
+		h = getGeopyHeading(poi1, poi2)
+		print('h = {}'.format(h))
 		if h < 0: 
 			h += 360 # sometimes gives negative headings which screws things up
 		return (d, h)
-	except: 
-		'error'
+	except Exception as e: 
+		print('error getting headings')
+		print(e)
 		return (float("inf"), 0) #should be out of range, but need better fix
 
 """
@@ -816,10 +843,10 @@ Finds the distance between two airports (not POIs).
 def getDist(icao1, icao2):
 	ll1 = getLatLon(icao1)
 	ll2 = getLatLon(icao2)
-	latlon1 = LatLon(ll1[0], ll1[1])
-	latlon2 = LatLon(ll2[0], ll2[1])
-	d = latlon1.distance(latlon2)*km_to_nm
-	print "route d: " + str(d)
+	latlon1 = geopy.Point(ll1[0], ll1[1])
+	latlon2 = geopy.Point(ll2[0], ll2[1])
+	d = geopy.distance.distance(latlon1, latlon2).kilometers * km_to_nm
+	print("route d: " + str(d))
 	return d
 
 """
@@ -857,25 +884,28 @@ Finds the landmarks that are in range of an origin point.
 def getDistancesInRange(origin, dest, course): 
 	distances = []
 	originLoc = origin.latlon
+	print('Gathering airports')
 	with open("data/newairports_2.txt") as f:
 		lines = f.readlines()
 		for line in lines: 
 			data = line.split(", ")
-			if(len(data) < 3): 
+			if(len(data) < 2): 
 				continue
-			temp = LatLon(Latitude(data[1]), Longitude(data[2]))
-			tempDist = originLoc.distance(temp)*km_to_nm
+			data[2] = data[2].replace('\n', '')
+			data_ll = (float(data[1]), float(data[2]))
+			temp = geopy.point.Point(data_ll[0], data_ll[1])
+			tempDist = geopy.distance.distance(originLoc, temp).kilometers * km_to_nm
 			if(tempDist < math.ceil(course[0])): 
 				distances.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
-	
+	print('Gathering cities')
 	with open("data/cities.txt") as f:
 		lines = f.readlines()
 		for line in lines: 
 			data = line.split(", ")
 			if(len(data) < 3): 
 				continue
-			temp = LatLon(Latitude(data[1]), Longitude(data[2]))
-			tempDist = originLoc.distance(temp)*km_to_nm
+			temp = geopy.Point(data[1], data[2])
+			tempDist = geopy.distance.distance(originLoc, temp).kilometers * km_to_nm
 			if(tempDist < math.ceil(course[0])):
 				distances.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
 	return distances 
@@ -918,16 +948,16 @@ Determines if a location can be used as a subsequent landmark from a base point 
 def isValidLandmark(base, poi, course, tolerance): 
 	l1 = base.latlon 
 	l2 = poi.latlon
-	tempDist = l1.distance(l2)*km_to_nm
-	heading = l1.heading_initial(l2)
+	tempDist = geopy.distance.distance(l1, l2).kilometers * km_to_nm
+	heading = getGeopyHeading(l1, l2)
 
 	base = 10
 	if course[0] > 250: 
 		base = 40
 
-	if(tempDist < base*(1/tolerance) or tempDist > (base*2.5)*tolerance): # check tolerance math
+	if(tempDist < base * (1 / tolerance) or tempDist > (base * 2.5) * tolerance): # check tolerance math
 		return False 
-	if(abs(getHeadingDiff(heading, course[1])) < 20*tolerance):
+	if(abs(getHeadingDiff(heading, course[1])) < 20 * tolerance):
 		return True
 	return False 
 
@@ -977,14 +1007,14 @@ def prioritizeLandmarks(landmarks, origin, course): #only used by above method
 	for landmark in landmarks: 
 		if landmark.name.isupper():
 			landmark.priority += 8 # tweak these numbers
-		diff = abs(origin.latlon.heading_initial(landmark.latlon) - course[1])
+		diff = abs(getGeopyHeading(origin.latlon, landmark.latlon) - course[1])
 		if diff < 5: 
 			landmark.priority += 5
 		if diff < 8: 
 			landmark.priority += 3
 		if diff < 10: 
 			landmark.priority += 2
-		dist = origin.latlon.distance(landmark.latlon)*km_to_nm
+		dist = geopy.distance.distance(origin.latlon, landmark.latlon).kilometers * km_to_nm
 		if(abs(dist-20) < 5): 
 			landmark.priority += 2
 	sortedLandmarks = sorted(landmarks, key=lambda x: x.priority, reverse=True)
@@ -1007,14 +1037,14 @@ def calculateRouteLandmarks(origin, destination, course):
 	# from relevant airports, calculate Manhattan distance 
 	# A* 
 	# q = Q.PriorityQueue() 
-
 	allRelevantAirports = getDistancesInRange(origin, destination, course) # work on SHORTENING this
+	print('Got distances')
 	currentDist = course[0] 
 	counter = 0
 	routeLandmarks = []
 	currentLandmark = origin 
 	routeLandmarks.append(origin)
-
+	print('Starting search')
 	while True or counter < 100: # in case the route is impossible
 		if (currentDist < 25): 
 			routeLandmarks.append(destination)
@@ -1028,9 +1058,11 @@ def calculateRouteLandmarks(origin, destination, course):
 				currentLandmarks = getValidLandmarks(currentLandmark, allRelevantAirports, course, tolerance)
 			currentLandmark = currentLandmarks[0]
 			routeLandmarks.append(currentLandmark)
-			currentDist = currentLandmark.latlon.distance(destination.latlon)*km_to_nm
+			currentDist = geopy.distance.distance(currentLandmark.latlon, destination.latlon).kilometers * km_to_nm
 		counter += 1
-		course = getDistHeading(currentLandmark, destination)
+		course = getDistHeading(currentLandmark.latlon, destination.latlon)
+		print('Updated course to {}'.format(course))
+	print('Done with landmarks')
 	return routeLandmarks 
 
 """
@@ -1093,6 +1125,7 @@ Creates segments for a particular route.
 def createSegments(origin, destination, course, alt, tas, climb_speed = 75, \
 	descent_speed = 90, custom = [], isCustom=False, doWeather=True, region="NORTHEAST"): 
 	if len(custom) == 0:
+		print('Calculating landmarks')
 		landmarks = calculateRouteLandmarks(origin, destination, course)
 	else: 
 		landmarks = custom
@@ -1100,7 +1133,7 @@ def createSegments(origin, destination, course, alt, tas, climb_speed = 75, \
 	middle = len(landmarks)
 	num = getMid(len(landmarks))
 
-	print 'Get winds aloft'
+	print('Get winds aloft')
 	if(doWeather):
 		wAloft = "0000+00" # TODO getWindsAloft(landmarks[num].lat, landmarks[num].lon, alt, region)
 	else: 
@@ -1115,7 +1148,7 @@ def createSegments(origin, destination, course, alt, tas, climb_speed = 75, \
 			nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], alt, tas, num=x, aloft=wAloft) # ending is field elevation
 		"""
 		segments.append(nextLeg)
-	print 'Segments returned'
+	print('Segments returned')
 	return segments 
 
 """
@@ -1142,11 +1175,12 @@ Finds a cruising altitude appropriate for route.
 @return proper cruising altitude 
 """
 def getProperAlt(origin, destination, course):
-	start = str(origin.latlon)
-	end = str(destination.latlon)
+	start = str((origin.latlon.latitude, origin.latlon.longitude))[1:-1]
+	end = str((destination.latlon.latitude, destination.latlon.longitude))[1:-1]
 	path = start + "|" + end
+	print('about to get elevations')
 	elevations = getElevation(path, chartSize="700x200")
-	print 'get elevations'
+	print('get elevations')
 	# get the maximum altitude 
 	if len(elevations) == 0:
 		maxAlt = 0.0
@@ -1199,7 +1233,7 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], clim
 	ll = getLatLon(home)
 	origin = Point_Of_Interest(home, ll[0], ll[1], 0)
 	destination =  Point_Of_Interest(dest, getLatLon(dest)[0], getLatLon(dest)[1], -1)
-	course = getDistHeading(origin, destination)
+	course = getDistHeading(origin.latlon, destination.latlon)
 	
 	elevation_data = getProperAlt(origin, destination, course)
 	cruising_alt = elevation_data[0]
@@ -1209,13 +1243,14 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], clim
 		final_alt = cruising_alt
 		messages.append("Changed cruising altitude")
 	rType = "direct" if len(custom) == 0 else "custom"
-	print 'Make route'
+	print('Make route')
 	route = Route(course, origin, destination, routeType=rType, custom=custom, cruising_alt=final_alt, cruise_speed=airspeed, \
 		climb_speed=climb_speed, climb_dist=climb_dist, doWeather=False, region=region)
 
-	print 'Insert climb'
+	print('Insert climb')
 	noTOC = copy.copy(route)
 	route.insertClimb()
+	print('Climb done')
 	messages.append("Added Top of Climb (TOC) waypoint")
 
 	# map creation
@@ -1330,7 +1365,7 @@ def getZip(poi):
 				zipcode = item 
 		return zipcode
 	except: 
-		print 'WX Fail %s' % (poi.name) # for weather radar 
+		print('WX Fail %s' % (poi.name)) # for weather radar 
 		return ""
 
 """
@@ -1357,8 +1392,8 @@ def getData(filename, p, prevLoc, r, allowSpaces = False):
 			data = line.split(", ")
 			if(len(data) < 3 or p.lower().replace(" ", "") not in data[0].replace(" ", "").lower()): 
 				continue
-			temp = LatLon(Latitude(data[1]), Longitude(data[2]))
-			tempDist = prevLoc.latlon.distance(temp)*km_to_nm
+			temp = geopy.Point(data[1], data[2])
+			tempDist = geopy.distance.distance(prevLoc.latlon, temp).kilometers * km_to_nm
 			if(tempDist < 2*math.ceil(r.course[0])): # still lets you route a course through new location that may be further away 
 				potChanges.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
 	return potChanges
@@ -1368,7 +1403,7 @@ Changes a particular landmark along a route and returns a new route.
 """
 def changeRoute(r, n, p, home, dest, altitude, airspeed, climb_dist, climb_speed, region): 
 	# route, leg # to change, where to change it to 
-	print 'changing route from %s to %s at segment %i to: %s' % (home, dest, n, p)
+	print('changing route from %s to %s at segment %i to: %s' % (home, dest, n, p))
 	prevLoc = r.courseSegs[n].from_poi
 	potChanges = []
 	potChanges += (getData("data/cities.txt", p, prevLoc, r, True))

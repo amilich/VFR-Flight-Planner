@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+"beautifulsoup4" = "*"
+flask = "*"
+flask-wtf = "*"
+flask-mail = "*"
+simplejson = "*"
+requests = "*"
+geomag = "*"
+geopy = "*"
+flask-caching = "*"
+"xhtml2pdf" = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.7"

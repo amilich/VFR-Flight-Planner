@@ -1,15 +1,15 @@
-from gmplot_cust import *
 import pygmaps
+from gmplot_cust import *
 
 def getHtml2(mapLL, landmarks, path, mymap):
 	if len(landmarks) == 0:
-		print 'exited'
+		print('exited')
 		return ""
 	string = ""
 	del path[-1]
 	lat = [float(x[0]) for x in path]
 	lon = [float(x[1]) for x in path]
-	mapper = GoogleMapPlotter(mymap.center[0], mymap.center[1], mymap.zoom)
+	mapper = GoogleMapPlotter(mymap.center[0], mymap.center[1], mymap.zoom, apikey='AIzaSyCeDCaWhk9KnfQsA5-1HMou5eshW2x0zuo')
 	ll_path = lat + lon
 	ll_comb = [lat, lon]
 	mapper.plot(ll_comb[0], ll_comb[1], "plum", edge_width=5)
@@ -30,7 +30,7 @@ writing to a file, this returns a string containing the encoded map.
 """
 def getHtml(myMap, landmarks): 
 		if len(landmarks) == 0:
-			print 'exited'
+			print('exited')
 			return ""
 		string = "" 
 		string += ('<div>\n')

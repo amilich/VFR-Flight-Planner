@@ -1,21 +1,9 @@
-from flask import Flask, render_template, g, Markup, session, request, redirect, make_response
-from flask_wtf import Form
-from flask_mail import Mail, Message
-from wtforms import StringField
-from wtforms.validators import DataRequired
-from FlightFiles import *
-from forms import *
-from flask.ext.cache import Cache 
-from pdf import *
-import os 
-import time
-
 """
 	VFR-Flight-Planner
 		"File and Forget" 
 
 	@author 	Andrew Milich 
-	@version 	0.91
+	@version 	1.0
 
 	This application is designed to simplify the extensive planning prior to VFR flghts. 
 	It finds cities and airports along the route to ensure a pilot remains on course, 
@@ -50,6 +38,18 @@ import time
 
 	Copyright 2016-2017. Protected under Creative Commons Attribution-NonCommercial License.
 """
+
+from flask import Flask, render_template, g, Markup, session, request, redirect, make_response
+from flask_wtf import Form
+from flask_mail import Mail, Message
+from wtforms import StringField
+from wtforms.validators import DataRequired
+from FlightFiles import *
+from forms import *
+from flask_caching import Cache
+from pdf import *
+import os 
+import time
 
 app = Flask(__name__)
 app.secret_key = 'xbf\xcb7\x0bv\xcf\xc0N\xe1\x86\x98g9\xfei\xdc\xab\xc6\x05\xff%\xd3\xdf'
@@ -99,8 +99,9 @@ def savePlan():
 		response.mimetype = 'application/pdf'
 		response.headers["Content-Disposition"] = "attachment; filename=route.pdf"
 		return response
-	except Exception, e: 
-		print str(e)
+	except Exception as e: 
+		print('SavePlan')
+		print(str(e))
 		return render_template('fail.html', error="pdf")
 
 """
@@ -129,15 +130,16 @@ def update():
 		try: 
 			msg = Message("Route changed", sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com']) 
 			mail.send(msg)
-		except: 
-			print 'Mail creation failed.' # for logging
+		except:
+			print('Mail creation failed.') # for logging
 			pass
 
 		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2], forms=forms, \
 			page_title = "Your Route", elevation=myRoute[3], freqs=myRoute[5], zipcode=myRoute[6], \
 			airplane=cache.get('airplane'), dest = myRoute[2].destination)
-	except Exception, e: 
-		print str(e)
+	except Exception as e: 
+		print('Update')
+		print(str(e))
 		return render_template('fail.html', error="waypoint")
 
 """
@@ -169,7 +171,7 @@ def search():
 
 	plane_type = request.form['plane_type']
 	airplane = Airplane(plane_type, weights)
-	print airplane
+	print(airplane)
 	cache.set('airplane', airplane, timeout=500)
 
 	try:
@@ -197,7 +199,7 @@ def search():
 		else: 
 			climb_speed = float(climb_speed)
 
-		print 'Routing from %s to %s at %s kts and %s feet.' % (airp1, airp2, speed, altitude)
+		print('Routing from %s to %s at %s kts and %s feet.' % (airp1, airp2, speed, altitude))
 
 		env_origin = None #Environment(airp1)
 		env_dest = None #Environment(airp2)
@@ -214,7 +216,7 @@ def search():
 		session['CLMB'] = climb_dist
 		session['CLMB_SPD'] = climb_speed
 	
-		print 'Creating route'
+		print('Creating route')
 		myRoute = createRoute(airp1, airp2, altitude, speed, environments=[env_origin, env_dest], \
 			climb_dist=climb_dist, climb_speed=climb_speed, region=region)
 		map_content = str(myRoute[0])
@@ -246,18 +248,18 @@ def search():
 			msg.body = "Route planned from %s to %s at %s feet and %s kts. %s. " % (airp1, airp2, altitude, speed, str(myRoute))
 			mail.send(msg)
 		except: 
-			print 'Mail creation failed.' # for logging
+			print('Mail creation failed.') # for logging
 			pass
 
 		# need to know this 
 		elapsedTime = time.time() - startTime
-		print 'function [{}] finished in {} ms'.format('route', int(elapsedTime * 1000))
+		print('function [{}] finished in {} ms'.format('route', int(elapsedTime * 1000)))
 
 		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2], forms=forms,\
 			page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs, freqs=myRoute[5], \
 			zipcode=myRoute[6], airplane=airplane, dest = myRoute[2].destination)
-	except Exception, e: 
-		print str(e)
+	except Exception as e: 
+		print(str(e))
 		return render_template('fail.html', error="creation")
 
 """
