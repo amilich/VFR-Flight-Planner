@@ -28,7 +28,6 @@ import sys
 import math 
 import copy
 import urllib 
-import pygmaps 
 import geopy
 
 from Elevations import *
