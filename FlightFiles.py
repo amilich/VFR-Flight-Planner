@@ -1066,7 +1066,7 @@ def calculateRouteLandmarks(origin, destination, course):
 			currentDist = geopy.distance.distance(currentLandmark.latlon, destination.latlon).kilometers * km_to_nm
 		counter += 1
 		course = getDistHeading(currentLandmark.latlon, destination.latlon)
-		print('Updated course to {}'.format(course))
+		# print('Updated course to {}'.format(course))
 	print('Done with landmarks')
 	print(routeLandmarks)
 	return routeLandmarks 
