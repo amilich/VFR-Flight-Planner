@@ -2,6 +2,7 @@ import math
 ###########################################################
 ## Google map python wrapper V0.1
 ## 
+## Credit: https://github.com/thearn/pygmaps-extended
 ############################################################
 
 class maps:

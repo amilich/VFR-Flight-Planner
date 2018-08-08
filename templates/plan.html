@@ -14,6 +14,10 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Flight Plan</title>
+        <!-- <meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> -->
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        {{"decoupled-map"|googlemap_js(37.4419, -122.1419, markers=[(37.4419, -122.1419)])}}
+        {{route_map.js}}
     </head>
 
     <!-- Route PDF button on mobile devices --> 
@@ -75,7 +79,7 @@
             </div>
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_a">
-                    {{ map }}
+                    {{ route_map.html }}
                     <br>
                     <br>
                     <br>
