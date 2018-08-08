@@ -14,6 +14,7 @@ geomag = "*"
 geopy = "*"
 flask-caching = "*"
 "xhtml2pdf" = "*"
+geographiclib = "*"
 
 [dev-packages]
 

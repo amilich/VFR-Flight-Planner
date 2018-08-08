@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1f6a59b244afbde9b8df126d758d4b861f5e6d5bf26601a90ba6a42b16172971"
+            "sha256": "f5ce30a34ad19965471573141280dc39ef997f86b4d30d786814895f7f42a984"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -87,6 +87,7 @@
             "hashes": [
                 "sha256:635da648fce80a57b81b28875d103dacf7deb12a3f5f7387ba7d39c51e096533"
             ],
+            "index": "pypi",
             "version": "==1.49"
         },
         "geomag": {

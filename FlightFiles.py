@@ -38,6 +38,7 @@ from fractions import Fraction
 from geopy.distance import vincenty
 from geopy.geocoders import Nominatim
 from bs4 import BeautifulSoup
+from geographiclib.geodesic import Geodesic
 
 """
 General conversion constants. 
@@ -485,6 +486,9 @@ class Route:
 		newLandmarks.append(self.origin)
 		# now add TOC 
 		heading = self.courseSegs[0].course[1] 
+		print('Heading = {}'.format(heading))
+		print(self.courseSegs[0])
+		print(self.courseSegs[0].course)
 		v_d = geopy.distance.VincentyDistance(kilometers = float(self.climb_dist)*nm_to_km)
 		offset_pt = v_d.destination(point=self.origin.latlon, bearing=heading)
 		offset = str((offset_pt.latitude, offset_pt.longitude))[1:-1]
@@ -797,11 +801,9 @@ def getGeopyHeading(poi1, poi2):
 	lon1 = poi1.longitude
 	lat2 = poi2.latitude
 	lat1 = poi1.latitude
-	dLon = lon2 - lon1;
-	y = math.sin(dLon) * math.cos(lat2);
-	x = math.cos(lat1)*math.sin(lat2) - math.sin(lat1)*math.cos(lat2)*math.cos(dLon);
-	h = math.degrees(math.atan2(y, x))
-	return h
+	dLon = lon2 - lon1
+	dat = Geodesic.WGS84.Inverse(lat1, lon1, lat2, lon2)
+	return dat['azi1']
 
 """
 Finds the distance and heading between two locations. 
@@ -814,14 +816,9 @@ Finds the distance and heading between two locations.
 @return distance and heading in tuple
 """
 def getDistHeading(poi1, poi2): 
-	print('GDH')
-	print('GDH: ({},{}) ({},{})'.format(poi1.latitude, poi1.longitude, poi2.latitude, poi2.longitude))
 	try: 
 		d = geopy.distance.distance(poi1, poi2).kilometers * km_to_nm
-		# print('got d')
-		print(poi1, poi2)
 		h = getGeopyHeading(poi1, poi2)
-		print('h = {}'.format(h))
 		if h < 0: 
 			h += 360 # sometimes gives negative headings which screws things up
 		return (d, h)
@@ -1071,6 +1068,7 @@ def calculateRouteLandmarks(origin, destination, course):
 		course = getDistHeading(currentLandmark.latlon, destination.latlon)
 		print('Updated course to {}'.format(course))
 	print('Done with landmarks')
+	print(routeLandmarks)
 	return routeLandmarks 
 
 """
@@ -1281,8 +1279,9 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], clim
 		# add point with fuel or not 
 
 	mymap.addpath(path,"#4169E1")
-	a = getHtml2(mapLL, route.landmarks, path, mymap), noTOC, route, elevation_map, messages, frequencies, getZip(origin)
-	return (a)
+	map_and_course_data = \
+		(getHtml3(mapLL, route.landmarks, path, mymap), noTOC, route, elevation_map, messages, frequencies, getZip(origin))
+	return map_and_course_data
  
 """
 Creates a static map for PDF viewing. Alternatively could use a 

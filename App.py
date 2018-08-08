@@ -39,6 +39,9 @@
 	Copyright 2016-2017. Protected under Creative Commons Attribution-NonCommercial License.
 """
 
+import os 
+import time
+
 from flask import Flask, render_template, g, Markup, session, request, redirect, make_response
 from flask_wtf import Form
 from flask_mail import Mail, Message
@@ -48,8 +51,9 @@ from FlightFiles import *
 from forms import *
 from flask_caching import Cache
 from pdf import *
-import os 
-import time
+
+from flask_googlemaps import GoogleMaps
+from flask_googlemaps import Map
 
 app = Flask(__name__)
 app.secret_key = 'xbf\xcb7\x0bv\xcf\xc0N\xe1\x86\x98g9\xfei\xdc\xab\xc6\x05\xff%\xd3\xdf'
@@ -61,7 +65,11 @@ app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = gmail_name
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_KEY')
+# This key is restricted to requests on this webapp
+app.config['GOOGLEMAPS_KEY'] = 'AIzaSyB22o-wcPGlbVxE_UElRjWxwKzGOfbnExU'
 mail = Mail(app)
+
+GoogleMaps(app)
 
 """
 Email feedback from contact form. 
@@ -92,7 +100,9 @@ def savePlan():
 		myRoute = cache.get('myRoute')
 		environment = cache.get('env_origin')
 		environment2 = cache.get('env_dest')
+		print('Making map')
 		map_content = str(makeStaticMap(myRoute[2].courseSegs, myRoute[2].destination)).replace("\n", "")
+		print('Start PDF gen')
 		route_pdf = gen_pdf(render_template('pdfroute.html', map=Markup(map_content), theRoute = myRoute[2], \
 			elevation=myRoute[3], freqs=myRoute[5], env=environment, env2=environment2, airplane=cache.get('airplane')))
 		response = make_response(route_pdf)
@@ -219,7 +229,7 @@ def search():
 		print('Creating route')
 		myRoute = createRoute(airp1, airp2, altitude, speed, environments=[env_origin, env_dest], \
 			climb_dist=climb_dist, climb_speed=climb_speed, region=region)
-		map_content = str(myRoute[0])
+		map_content = myRoute[0]
 	
 		forms = [] # used for changing waypoints 
 		for x in range(len(myRoute[2].courseSegs)):
@@ -255,7 +265,7 @@ def search():
 		elapsedTime = time.time() - startTime
 		print('function [{}] finished in {} ms'.format('route', int(elapsedTime * 1000)))
 
-		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2], forms=forms,\
+		return render_template('plan.html', route_map=map_content, theRoute = myRoute[2], forms=forms,\
 			page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs, freqs=myRoute[5], \
 			zipcode=myRoute[6], airplane=airplane, dest = myRoute[2].destination)
 	except Exception as e: 

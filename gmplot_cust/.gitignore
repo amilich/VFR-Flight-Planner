@@ -1,7 +1,0 @@
-.DS_Store
-*.pyc
-*.swp
-.idea
-mymap.html
-dist
-gmplot.egg-info
