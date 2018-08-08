@@ -3,7 +3,7 @@
 		"File and Forget" 
 
 	@author 	Andrew Milich 
-	@version 	1.0
+	@version 	0.91
 
 	This application is designed to simplify the extensive planning prior to VFR flghts. 
 	It finds cities and airports along the route to ensure a pilot remains on course, 
