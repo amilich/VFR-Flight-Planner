@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "f5ce30a34ad19965471573141280dc39ef997f86b4d30d786814895f7f42a984"
+            "sha256": "e9e3d8d31ac853352077425aaf20da27e5893ec9809a4f257cc5c395c8251495"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -67,6 +67,14 @@
             ],
             "index": "pypi",
             "version": "==1.4.0"
+        },
+        "flask-googlemaps": {
+            "hashes": [
+                "sha256:a3de1e5dcd652feb6d43362900a052e3d91a1a2eafb9aae98b7c533bee286fa8",
+                "sha256:ea045e06236095bf4c8da6993c2abee2878b779d2362b2ae8139f62edb618165"
+            ],
+            "index": "pypi",
+            "version": "==0.2.6"
         },
         "flask-mail": {
             "hashes": [
