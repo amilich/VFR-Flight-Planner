@@ -1,6 +1,4 @@
-import pygmaps
-from flask_googlemaps import GoogleMaps
-from flask_googlemaps import Map
+from flask_googlemaps import *
 
 def getHtml3(malLL, landmarks, path, mymap):
 	del path[-1]
