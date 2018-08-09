@@ -1165,8 +1165,10 @@ def calculateRouteLandmarks(origin, destination, course):
 	routeLandmarks.append(origin)
 	if currentDist < 500:
 		leg_len = 20
-	else:
+	elif currentDist < 1000:
 		leg_len = 45
+	else:
+		leg_len = 90
 	max_num_landmarks = int(course[0] / leg_len)
 	points = []
 	for idx in range(int(max_num_landmarks)):
@@ -1178,7 +1180,7 @@ def calculateRouteLandmarks(origin, destination, course):
 		currentLandmarks = []
 		tolerance = 1.0
 		while len(currentLandmarks) == 0 and tolerance < 2.0: 
-			allRelevantAirports = getDistancesInRange2(offset_pt, float(leg_len) * 1.5)
+			allRelevantAirports = getDistancesInRange2(offset_pt, float(leg_len) * 0.8)
 			currentLandmarks = getValidLandmarks2(offset_pt, allRelevantAirports, course, tolerance)
 			tolerance += 0.3
 		if len(currentLandmarks) > 0:
