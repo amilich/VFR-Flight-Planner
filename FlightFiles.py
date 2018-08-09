@@ -29,6 +29,7 @@ import math
 import copy
 import urllib 
 import pygmaps 
+import random
 import geopy
 
 from Elevations import *
@@ -39,6 +40,8 @@ from geopy.distance import vincenty
 from geopy.geocoders import Nominatim
 from bs4 import BeautifulSoup
 from geographiclib.geodesic import Geodesic
+from flask_caching import Cache
+from flask import current_app
 
 """
 General conversion constants. 
@@ -48,6 +51,9 @@ km_to_miles = 0.621371
 nm_to_km = 1.852
 feet_to_nm = 0.000164579
 meters_to_feet = 3.28084
+sm_per_deg = 69.0000
+nm_per_sm = 0.868976
+nm_per_deg = sm_per_deg * nm_per_sm
 
 """
 An airplane is used to store relevant information for weight and balance calculations. 
@@ -461,7 +467,8 @@ class Route:
 		* TODO: insert climb before creating route. 
 	"""
 	def insertClimb(self): 
-		if(self.course[0] < self.climb_dist): # someone 
+		if(self.course[0] < self.climb_dist): # someone
+			print('Short course') 
 			self.errors.append("Climb distance longer than route. Ignoring climb parameters.")
 			print("Climb distance longer than route. Ignoring climb parameters.")
 			# still adding landmarks 
@@ -474,6 +481,7 @@ class Route:
 		currentAlt = 0
 		currentDist = 0
 		remove = []
+		print('courseSegs check')
 		if(self.courseSegs[0].length < self.climb_dist): 
 			for x in range(len(self.courseSegs)):
 				if(currentDist > self.climb_dist):
@@ -794,18 +802,6 @@ def getWindsAloft(lat, lon, alt, region):
 	return data 
 
 """
-Return heading from poi1 (geopy Point) to poi2.
-"""
-def getGeopyHeading(poi1, poi2):
-	lon2 = poi2.longitude
-	lon1 = poi1.longitude
-	lat2 = poi2.latitude
-	lat1 = poi1.latitude
-	dLon = lon2 - lon1
-	dat = Geodesic.WGS84.Inverse(lat1, lon1, lat2, lon2)
-	return dat['azi1']
-
-"""
 Finds the distance and heading between two locations. 
 
 @type 	poi1: Point_Of_Interest
@@ -817,7 +813,8 @@ Finds the distance and heading between two locations.
 """
 def getDistHeading(poi1, poi2): 
 	try: 
-		d = geopy.distance.distance(poi1, poi2).kilometers * km_to_nm
+		# d = geopy.distance.distance(poi1, poi2).kilometers * km_to_nm
+		d = geopy_cache_dist(poi1, poi2)
 		h = getGeopyHeading(poi1, poi2)
 		if h < 0: 
 			h += 360 # sometimes gives negative headings which screws things up
@@ -842,7 +839,8 @@ def getDist(icao1, icao2):
 	ll2 = getLatLon(icao2)
 	latlon1 = geopy.Point(ll1[0], ll1[1])
 	latlon2 = geopy.Point(ll2[0], ll2[1])
-	d = geopy.distance.distance(latlon1, latlon2).kilometers * km_to_nm
+	# d = geopy.distance.distance(latlon1, latlon2).kilometers * km_to_nm
+	d = geopy_cache_dist(latlon1, latlon2)
 	print("route d: " + str(d))
 	return d
 
@@ -879,40 +877,105 @@ Finds the landmarks that are in range of an origin point.
 @return list of Point_Of_Interest 
 """
 def getDistancesInRange(origin, dest, course): 
+	cache = current_app.cache
 	distances = []
 	originLoc = origin.latlon
-	print('Gathering airports')
-	with open("data/newairports_2.txt") as f:
-		lines = f.readlines()
-		for line in lines: 
-			data = line.split(", ")
-			if(len(data) < 2): 
-				continue
-			data[2] = data[2].replace('\n', '')
-			data_ll = (float(data[1]), float(data[2]))
-			temp = geopy.point.Point(data_ll[0], data_ll[1])
-			tempDist = geopy.distance.distance(originLoc, temp).kilometers * km_to_nm
-			if(tempDist < math.ceil(course[0])): 
-				distances.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
+	max_dist = math.ceil(course[0])
+	if not cache.get('airport_lines'):
+		with open('data/newairports_2.txt') as f:
+			lines = f.readlines()
+			# cache.set('airport_lines', lines, timeout=300)
+	else:
+		lines = cache.get('airport_lines')
+	for line in lines: 
+		data = line.split(", ")
+		if(len(data) < 2): 
+			continue
+		data[2] = data[2].replace('\n', '')
+		data_ll = (float(data[1]), float(data[2]))
+		lat_diff_deg = float(data[1]) - originLoc.latitude
+		lon_diff_deg = float(data[2]) - originLoc.longitude
+		if abs(lat_diff_deg * nm_per_deg) > max_dist \
+			or abs(lon_diff_deg * nm_per_deg) > max_dist:
+			continue
+		temp = geopy.point.Point(data_ll[0], data_ll[1])
+		tempDist = geopy_cache_dist(originLoc, temp)
+		heading_diff = getHeadingDiff(getGeopyHeading(originLoc, temp), course[1])
+		if (tempDist < max_dist) and heading_diff < 180: 
+			distances.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
 	print('Gathering cities')
-	with open("data/cities.txt") as f:
-		city_names = set()
+	if not cache.get('city_lines'):
+		with open('data/cities.txt') as f:
+			lines = f.readlines()
+			# cache.set('city_lines', lines, timeout=300)
+	else:
+		lines = cache.get('city_lines')
+	city_names = set()
+	for line in lines: 
+		data = line.split(", ")
+		city_name = data[0]
+		if city_name in city_names:
+			continue
+		city_names.add(city_name)
+		data[2] = data[2].replace('\n', '')
+		if (len(data) < 3): 
+			continue
+		lat_diff_deg = float(data[1]) - originLoc.latitude
+		lon_diff_deg = float(data[2]) - originLoc.longitude
+		if abs(lat_diff_deg * nm_per_deg) > max_dist \
+			or abs(lon_diff_deg * nm_per_deg) > max_dist:
+			continue
+		temp = geopy.Point(data[1], data[2])
+		# tempDist = geopy.distance.distance(originLoc, temp).kilometers * km_to_nm
+		tempDist = geopy_cache_dist(originLoc, temp)
+		heading_diff = getHeadingDiff(getGeopyHeading(originLoc, temp), course[1])
+		if (tempDist < max_dist) and heading_diff < 180: 
+			distances.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
+	print('distances len = {}'.format(len(distances)))
+	return distances 
+
+def getDistancesInRange2(originLoc, max_dist): 
+	distances = []
+	with open('data/newairports_2.txt') as f:
 		lines = f.readlines()
-		for line in lines: 
-			data = line.split(", ")
-			city_name = data[0]
-			if city_name in city_names:
-				continue
-			city_names.add(city_name)
-			data[2] = data[2].replace('\n', '')
-			if(len(data) < 3): 
-				continue
-			if abs(float(data[1]) - originLoc.latitude) > 10 or abs(float(data[2]) - originLoc.longitude):
-				continue
-			temp = geopy.Point(data[1], data[2])
-			tempDist = geopy.distance.distance(originLoc, temp).kilometers * km_to_nm
-			if(tempDist < math.ceil(course[0])):
-				distances.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
+	for line in lines: 
+		data = line.split(", ")
+		if(len(data) < 2): 
+			continue
+		data[2] = data[2].replace('\n', '')
+		data_ll = (float(data[1]), float(data[2]))
+		lat_diff_deg = float(data[1]) - originLoc.latitude
+		lon_diff_deg = float(data[2]) - originLoc.longitude
+		if abs(lat_diff_deg * nm_per_deg) > max_dist \
+			or abs(lon_diff_deg * nm_per_deg) > max_dist:
+			continue
+		temp = geopy.point.Point(data_ll[0], data_ll[1])
+		tempDist = geopy_cache_dist(originLoc, temp)
+		if (tempDist < max_dist):
+			distances.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
+	print('Gathering cities')
+	with open('data/cities.txt') as f:
+		lines = f.readlines()
+	city_names = set()
+	for line in lines: 
+		data = line.split(", ")
+		city_name = data[0]
+		if city_name in city_names:
+			continue
+		city_names.add(city_name)
+		data[2] = data[2].replace('\n', '')
+		if (len(data) < 3): 
+			continue
+		lat_diff_deg = float(data[1]) - originLoc.latitude
+		lon_diff_deg = float(data[2]) - originLoc.longitude
+		if abs(lat_diff_deg * nm_per_deg) > max_dist \
+			or abs(lon_diff_deg * nm_per_deg) > max_dist:
+			continue
+		temp = geopy.Point(data[1], data[2])
+		tempDist = geopy_cache_dist(originLoc, temp)
+		if (tempDist < max_dist): 
+			distances.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
+	print('distances len = {}'.format(len(distances)))
 	return distances 
  
 """
@@ -937,6 +1000,34 @@ def getHeadingDiff(h1, h2):
 	return 360 - absDiff
 
 """
+Return heading from poi1 (geopy Point) to poi2.
+"""
+def getGeopyHeading(poi1, poi2):
+	cache = current_app.cache
+	cache_str = 'hdg_from_{}_to_{}'.format(poi1, poi2)
+	res = cache.get(cache_str)
+	if res:
+		return res
+	lon2 = poi2.longitude
+	lon1 = poi1.longitude
+	lat2 = poi2.latitude
+	lat1 = poi1.latitude
+	dLon = lon2 - lon1
+	hdg = Geodesic.WGS84.Inverse(lat1, lon1, lat2, lon2)['azi1']
+	cache.set(cache_str, hdg, timeout=300)
+	return hdg
+
+def geopy_cache_dist(poi1, poi2):
+	cache = current_app.cache
+	cache_str = 'dist_from_{}_to_{}'.format(poi1, poi2)
+	res = cache.get(cache_str)
+	if res:
+		return res
+	tempDist = geopy.distance.distance(poi1, poi2).kilometers * km_to_nm
+	cache.set(cache_str, tempDist, timeout=300)
+	return tempDist
+
+"""
 Determines if a location can be used as a subsequent landmark from a base point (ex. origin to first waypoint). 
 
 @type 	base: Point_Of_Interest
@@ -953,16 +1044,13 @@ Determines if a location can be used as a subsequent landmark from a base point 
 def isValidLandmark(base, poi, course, tolerance): 
 	l1 = base.latlon 
 	l2 = poi.latlon
-	tempDist = geopy.distance.distance(l1, l2).kilometers * km_to_nm
+	# tempDist = geopy_cache_dist(l1, l2)
 	heading = getGeopyHeading(l1, l2)
 
-	base = 10
-	if course[0] > 250: 
-		base = 40
-
-	if(tempDist < base * (1 / tolerance) or tempDist > (base * 2.5) * tolerance): # check tolerance math
-		return False 
-	if(abs(getHeadingDiff(heading, course[1])) < 20 * tolerance):
+	# base = 10 if course[0] > 250 else 40 # tuning parameter
+	# if (tempDist < base * (1 / tolerance) or tempDist > (base * 2.5) * tolerance): # check tolerance math
+	# 	return False 
+	if (abs(getHeadingDiff(heading, course[1])) < 20 * tolerance):
 		return True
 	return False 
 
@@ -980,20 +1068,45 @@ Finds the prioritized landmarks from an origin location.
 @rtype 	list 
 @return prioritized list of landmarks 
 """
-def getValidLandmarks(origin, validDistances, course, tolerance): 
+def getValidLandmarks(cur_origin, validDistances, course, tolerance): 
 	landmarks = []
-	for airport in validDistances: 
-		if(isValidLandmark(origin, airport, course, tolerance)): 
+	for airport in validDistances:
+		if (isValidLandmark(cur_origin, airport, course, tolerance)): 
 			landmarks.append(airport)
-	finalMarks = []
-	test = ""
-	for item in landmarks: 
-		if item.name in test: 
-			continue 
-		else: 
-			finalMarks.append(item)
-			test += item.name + " "
-	return prioritizeLandmarks(finalMarks, origin, course)
+	return prioritizeLandmarks(landmarks, cur_origin, course)
+
+def isValidLandmark2(base, poi, course, tolerance): 
+	l1 = base
+	l2 = poi.latlon
+	heading = getGeopyHeading(l1, l2)
+	if (abs(getHeadingDiff(heading, course[1])) < 20 * tolerance):
+		return True
+	return False 
+
+def prioritizeLandmarks2(landmarks, origin, course): # only used by above method
+	for landmark in landmarks: 
+		if landmark.name.isupper():
+			landmark.priority += 15 # tweak these numbers
+		diff = abs(getGeopyHeading(origin, landmark.latlon) - course[1])
+		if diff < 5: 
+			landmark.priority += 5
+		if diff < 8: 
+			landmark.priority += 3
+		if diff < 10: 
+			landmark.priority += 2
+		# dist = geopy.distance.distance(origin.latlon, landmark.latlon).kilometers * km_to_nm
+		dist = geopy_cache_dist(origin, landmark.latlon)
+		if (abs(dist - course[0] / 10) < 10):
+			landmark.priority += 4
+	sortedLandmarks = sorted(landmarks, key=lambda x: x.priority, reverse=True)
+	return sortedLandmarks
+
+def getValidLandmarks2(cur_origin, validDistances, course, tolerance): 
+	landmarks = []
+	for airport in validDistances:
+		if (isValidLandmark2(cur_origin, airport, course, tolerance)): 
+			landmarks.append(airport)
+	return prioritizeLandmarks2(landmarks, cur_origin, course)
 
 """
 Prioritize the landmarks from a particular location. Prioritizes points of interests 
@@ -1008,7 +1121,7 @@ by heading difference, distance, and facility type (ex. town vs. airport).
 @rtype 	list
 @return ordered list of Point_Of_Interest objects (high to low priority)
 """
-def prioritizeLandmarks(landmarks, origin, course): #only used by above method
+def prioritizeLandmarks(landmarks, origin, course): # only used by above method
 	for landmark in landmarks: 
 		if landmark.name.isupper():
 			landmark.priority += 8 # tweak these numbers
@@ -1019,9 +1132,10 @@ def prioritizeLandmarks(landmarks, origin, course): #only used by above method
 			landmark.priority += 3
 		if diff < 10: 
 			landmark.priority += 2
-		dist = geopy.distance.distance(origin.latlon, landmark.latlon).kilometers * km_to_nm
-		if(abs(dist-20) < 5): 
-			landmark.priority += 2
+		# dist = geopy.distance.distance(origin.latlon, landmark.latlon).kilometers * km_to_nm
+		dist = geopy_cache_dist(origin.latlon, landmark.latlon)
+		if (abs(dist - course[0] / 10) < 10):
+			landmark.priority += 4
 	sortedLandmarks = sorted(landmarks, key=lambda x: x.priority, reverse=True)
 	return sortedLandmarks
 
@@ -1042,34 +1156,42 @@ def calculateRouteLandmarks(origin, destination, course):
 	# from relevant airports, calculate Manhattan distance 
 	# A* 
 	# q = Q.PriorityQueue() 
-	allRelevantAirports = getDistancesInRange(origin, destination, course) # work on SHORTENING this
+	# allRelevantAirports = getDistancesInRange(origin, destination, course)
 	print('Got distances')
 	currentDist = course[0] 
 	counter = 0
 	routeLandmarks = []
 	currentLandmark = origin 
 	routeLandmarks.append(origin)
-	print('Starting search')
-	while True or counter < 100: # in case the route is impossible
-		if (currentDist < 25): 
-			routeLandmarks.append(destination)
-			break # the route is done; you are close enough to the destination 
-		else: 
-			tolerance = 1
-			currentLandmarks = getValidLandmarks(currentLandmark, allRelevantAirports, course, tolerance)
-			while len(currentLandmarks) == 0: 
-				# gradually increases tolerance
-				tolerance += 0.3 
-				currentLandmarks = getValidLandmarks(currentLandmark, allRelevantAirports, course, tolerance)
+	leg_len = 45
+	max_num_landmarks = int(course[0] / leg_len)
+	points = []
+	for idx in range(int(max_num_landmarks)):
+		print('{}: {}'.format(idx, routeLandmarks))
+		if idx == 0:
+			continue
+		v_d = geopy.distance.VincentyDistance(kilometers = leg_len * nm_to_km * idx)
+		offset_pt = v_d.destination(point=origin.latlon, bearing=course[1])
+		currentLandmarks = []
+		tolerance = 1.0
+		while len(currentLandmarks) == 0 and tolerance < 2.0: 
+			allRelevantAirports = getDistancesInRange2(offset_pt, float(leg_len) * 1.5)
+			currentLandmarks = getValidLandmarks2(offset_pt, allRelevantAirports, course, tolerance)
+			tolerance += 0.3
+		if len(currentLandmarks) > 0:
 			currentLandmark = currentLandmarks[0]
 			routeLandmarks.append(currentLandmark)
-			currentDist = geopy.distance.distance(currentLandmark.latlon, destination.latlon).kilometers * km_to_nm
-		counter += 1
-		course = getDistHeading(currentLandmark.latlon, destination.latlon)
-		# print('Updated course to {}'.format(course))
-	print('Done with landmarks')
+			currentDist = geopy_cache_dist(currentLandmark.latlon, destination.latlon)
+		else:
+			currentDist = geopy_cache_dist(offset_pt, destination.latlon)
+		if (currentDist < 35): 
+			print('{} so breaking'.format(currentDist))
+			break
+	routeLandmarks.append(destination)
+	print('Done with hard part')
 	print(routeLandmarks)
-	return routeLandmarks 
+	return routeLandmarks
+
 
 """
 Finds the field elevation of an airport. 
@@ -1400,7 +1522,8 @@ def getData(filename, p, prevLoc, r, allowSpaces = False):
 			if(len(data) < 3 or p.lower().replace(" ", "") not in data[0].replace(" ", "").lower()): 
 				continue
 			temp = geopy.Point(data[1], data[2])
-			tempDist = geopy.distance.distance(prevLoc.latlon, temp).kilometers * km_to_nm
+			# tempDist = geopy.distance.distance(prevLoc.latlon, temp).kilometers * km_to_nm
+			tempDist = geopy_cache_dist(prevLoc.latlon, temp)
 			if(tempDist < 2*math.ceil(r.course[0])): # still lets you route a course through new location that may be further away 
 				potChanges.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
 	return potChanges

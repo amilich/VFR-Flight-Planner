@@ -1,10 +1,10 @@
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField, validators, HiddenField, SelectField
 
 """
 Home search page form for route and aircraft information. 
 """ 
-class searchform(Form):
+class searchform(FlaskForm):
     options = []
     # gather all the ICAO codes - more efficient to do it here because the same
     # options variable is used for 'orig' and 'dest'
@@ -28,14 +28,14 @@ class searchform(Form):
 """
 Form to change waypoint location with hidden waypoint number and user identified new location. 
 """
-class placeform(Form):
+class placeform(FlaskForm):
     place = StringField('Origin Airport:', [validators.DataRequired()])
     num = HiddenField("num")
 
 """
 Email feedback. 
 """
-class ContactForm(Form):
+class ContactForm(FlaskForm):
     name = StringField('Your Name:', [validators.DataRequired()])
     email = StringField('Your e-mail address:', [validators.DataRequired(), validators.Email('your@email.com')])
     message = TextAreaField('Your message:', [validators.DataRequired()])

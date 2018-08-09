@@ -57,7 +57,10 @@ from flask_googlemaps import Map
 
 app = Flask(__name__)
 app.secret_key = 'xbf\xcb7\x0bv\xcf\xc0N\xe1\x86\x98g9\xfei\xdc\xab\xc6\x05\xff%\xd3\xdf'
-cache = Cache(app,config={'CACHE_TYPE': 'simple'})
+# cache = Cache(app,config={'CACHE_TYPE': 'simple'})
+app.config['CACHE_TYPE'] = 'simple'
+app.cache = Cache(app)
+cache = app.cache
 
 gmail_name = 'codesearch5@gmail.com'
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -66,7 +69,7 @@ app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = gmail_name
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_KEY')
 # This key is restricted to requests on this webapp
-app.config['GOOGLEMAPS_KEY'] = 'AIzaSyB22o-wcPGlbVxE_UElRjWxwKzGOfbnExU'
+# app.config['GOOGLEMAPS_KEY'] = 'AIzaSyB22o-wcPGlbVxE_UElRjWxwKzGOfbnExU'
 mail = Mail(app)
 
 GoogleMaps(app)
@@ -126,7 +129,7 @@ def update():
 		myRoute = changeRoute(myRoute[1], int(num)-1, str(newLoc), session['ORIG'], \
 			session['DEST'], session['ALT'], session['SPD'], session['CLMB'], \
 			session['CLMB_SPD'], session['REGION'])
-		map_content = str(myRoute[0])
+		map_content = myRoute[0]
 		cache.set('myRoute', myRoute, timeout=500)
 
 		forms = []
@@ -144,9 +147,9 @@ def update():
 			print('Mail creation failed.') # for logging
 			pass
 
-		return render_template('plan.html', map=Markup(map_content), theRoute = myRoute[2], forms=forms, \
+		return render_template('plan.html', route_map=map_content, theRoute = myRoute[2], forms=forms, \
 			page_title = "Your Route", elevation=myRoute[3], freqs=myRoute[5], zipcode=myRoute[6], \
-			airplane=cache.get('airplane'), dest = myRoute[2].destination)
+			airplane=cache.get('airplane'), dest=myRoute[2].destination)
 	except Exception as e: 
 		print('Update')
 		print(str(e))
@@ -190,7 +193,7 @@ def search():
 		airp2 = request.form['dest'].upper()
 		region = request.form['region'].upper()
 		# there will always be an answer to the above 3 - they are select fields 
-		if getDist(airp1, airp2) > 970: # ORD to HPN approx in NM
+		if getDist(airp1, airp2) > 2800: # ORD to HPN approx in NM
 			return render_template('fail.html', error="distance")
 		altitude = request.form['alt']
 		if altitude == "": 
