@@ -17,7 +17,7 @@ class searchform(FlaskForm):
     region = SelectField('Region: ', choices=[('Northeast', 'Northeast'), ('Southeast', 'Southeast'), ('Gulf', 'Gulf'), \
         ('West', 'North/South West'), ('WestCent', 'West Central'), ('Lakes', 'Great Lakes')], default="Northeast")
     orig = SelectField('Origin Airport: ', choices=options, default="KHPN")
-    dest = SelectField('Destination Airport: ', choices=options, default="KGON")
+    dest = SelectField('Destination Airport: ', choices=options, default="KATL")
     speed = StringField('Cruising Speed (kts):', [validators.DataRequired()], default="110")
     alt = StringField('Altitude (feet):', [validators.DataRequired()], default="3500")
     climb = StringField('Climb Distance (nm):', [validators.DataRequired()], default="5")

@@ -22,7 +22,7 @@ def getHtml3(malLL, landmarks, path, mymap):
 	route_polyline = {
         'stroke_color': '#ff00ff',
         'stroke_opacity': 1.0,
-        'stroke_weight': 3,
+        'stroke_weight': 5,
         'path': landmark_line_arr,
     }
 	print(landmark_line_arr)
@@ -37,6 +37,8 @@ def getHtml3(malLL, landmarks, path, mymap):
 		markers=marker_arr,
 		zoom=mymap.zoom,
 		polylines=[route_polyline],
+		maptype_control=False,
+		maptype="TERRAIN",
 	)
 	return route_map
 

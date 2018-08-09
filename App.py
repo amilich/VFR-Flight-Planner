@@ -69,7 +69,7 @@ app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = gmail_name
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_KEY')
 # This key is restricted to requests on this webapp
-# app.config['GOOGLEMAPS_KEY'] = 'AIzaSyB22o-wcPGlbVxE_UElRjWxwKzGOfbnExU'
+app.config['GOOGLEMAPS_KEY'] = 'AIzaSyB22o-wcPGlbVxE_UElRjWxwKzGOfbnExU'
 mail = Mail(app)
 
 GoogleMaps(app)
