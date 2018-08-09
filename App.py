@@ -147,9 +147,12 @@ def update():
 			print('Mail creation failed.') # for logging
 			pass
 
-		return render_template('plan.html', route_map=map_content, theRoute = myRoute[2], forms=forms, \
+		messages = cache.get('messages')
+		msg_types = cache.get('msg_types')
+		return render_template('plan.html', route_map=map_content, theRoute=myRoute[2], forms=forms, \
 			page_title = "Your Route", elevation=myRoute[3], freqs=myRoute[5], zipcode=myRoute[6], \
-			airplane=cache.get('airplane'), dest=myRoute[2].destination)
+			airplane=cache.get('airplane'), dest=myRoute[2].destination, messages=messages, \
+			msg_types=msg_types, showMsgs=len(messages)>0)
 	except Exception as e: 
 		print('Update')
 		print(str(e))
@@ -214,8 +217,8 @@ def search():
 
 		print('Routing from %s to %s at %s kts and %s feet.' % (airp1, airp2, speed, altitude))
 
-		env_origin = None #Environment(airp1)
-		env_dest = None #Environment(airp2)
+		env_origin = Environment(airp1)
+		env_dest = Environment(airp2)
 		# these environments can be accessed when generating weather PDF and displaying messages
 		# cache.set('airplane', airplane, timeout=500)
 		cache.set('env_origin', env_origin, timeout=500) # cached for PDF use later 
@@ -240,21 +243,31 @@ def search():
 		
 		cache.set('myRoute', myRoute, timeout=500)
 		messages = myRoute[4]
+		msg_types = []
+		for item in messages:
+			if 'top of climb' in item:
+				msg_types.append('warning')
+			else:
+				msg_types.append('danger')
 	
 		if env_origin is not None and env_dest is not None: 
-			if not (env_origin.weather == "NONE"): 
-				if env_origin.skyCond == 'IFR': 
-					messages.append("Origin is in IFR conditions")
-				elif env_origin.skyCond == 'SVFR': 
-					messages.append("Origin is in SVFR conditions")
-			
-				if env_dest.skyCond == 'IFR': 
-					messages.append("Destination is in IFR conditions")
-				elif env_dest.skyCond == 'SVFR': 
-					messages.append("Destination is in SVFR conditions")
-	
-		showMsgs = True if(len(messages) is not 0) else False
+			if not (env_origin.weather == 'None'): 
+				messages.append('Origin is in {} conditions'.format(env_origin.skyCond))
+				if env_origin.skyCond == 'VFR':
+					msg_types.append('success')
+				else:
+					msg_types.append('danger')
+
+			if not (env_dest.weather == 'None'):
+				messages.append('Destination is in {} conditions'.format(env_dest.skyCond))
+				if env_dest.skyCond == 'VFR':
+					msg_types.append('success')
+				else:
+					msg_types.append('danger')
 		
+		cache.set('messages', messages, timeout=500)
+		cache.set('msg_types', msg_types, timeout=500)
+
 		# mail me a copy of the route for recordkeeping 
 		try: 
 			msg = Message("Route planned from " + airp1 + " to " + airp2, sender="codesearch5@gmail.com", recipients=['codesearch5@gmail.com']) 
@@ -268,9 +281,9 @@ def search():
 		elapsedTime = time.time() - startTime
 		print('function [{}] finished in {} ms'.format('route', int(elapsedTime * 1000)))
 
-		return render_template('plan.html', route_map=map_content, theRoute = myRoute[2], forms=forms,\
-			page_title = "Your Route", elevation=myRoute[3], messages=messages, showMsgs = showMsgs, freqs=myRoute[5], \
-			zipcode=myRoute[6], airplane=airplane, dest = myRoute[2].destination)
+		return render_template('plan.html', route_map=map_content, theRoute=myRoute[2], forms=forms,\
+			page_title="Your Route", elevation=myRoute[3], messages=messages, showMsgs=len(messages)>0, freqs=myRoute[5], \
+			zipcode=myRoute[6], airplane=airplane, dest = myRoute[2].destination, msg_types=msg_types)
 	except Exception as e: 
 		print(str(e))
 		return render_template('fail.html', error="creation")

@@ -164,7 +164,7 @@ class Environment:
 	def __init__(self, location, metar=""): 
 		self.location = location # A point of interest (ex. airport)
 		self.metar = metar if not metar=="" else getWeather(location) # set METAR 
-		if not self.metar == "": 
+		if not self.metar == '': 
 			self.weather = "METAR"
 		else: 
 			self.weather = "NONE"
@@ -176,7 +176,7 @@ class Environment:
 		self.clouds = Environment.getClouds(self.metar) # CB clouds are only type shown
 		self.elevation = getFieldElevation(self.location)
 		self.wx = Environment.getWx(self.metar, self.clouds, self.visibility)
-		self.skyCond = Environment.getSkyCond(self.metar, self.clouds, self.metar, self.wx)
+		self.skyCond = Environment.getSkyCond(self.metar, self.clouds, self.visibility, self.wx)
 		self.temp, self.dp = Environment.getTempDP(self.metar)
 		self.pa = Environment.getPA(self.elevation, self.altimeter)
 		self.da = Environment.getDA(self.pa, self.temp, self.elevation)
@@ -270,15 +270,15 @@ class Environment:
 	def getSkyCond(cls, metar, clouds, visibility, wx): 
 		if 'TS' in wx: 
 			return 'IFR' # should not fly VFR in vicinity of TS
-		if "CLR" in str(clouds[0]) or "SKC" in str(clouds[0]): 
+		if 'CLR' in str(clouds[0]) or 'SKC' in str(clouds[0]): 
 			clouds[0] += "999" # makes the rest of determining the ceiling easier  
 		if clouds == "CLR" and visibility > 3: 
 			return 'VFR'
 
 		ceil = 100000
 		for item in clouds: 
-			if "BKN" in item or "OVC" in item: 
-				ceil = float(item[3:].replace("CB", ""))*100
+			if 'BKN' in item or 'OVC' in item: 
+				ceil = float(item[3:].replace('CB', ''))*100
 				break # ceiling is FIRST broken or overcast layer
 		if ceil > 3000 and visibility > 3: 
 			return 'VFR'
@@ -456,7 +456,7 @@ class Route:
 		for item in self.courseSegs: 
 			time += item.time
 		self.time = time 
-		self.minutes = float("{0:.2f}".format((self.time - math.floor(self.time))*60))
+		self.minutes = float('{0:.2f}'.format((self.time - math.floor(self.time))*60))
 		self.hours = math.floor(self.time)
 
 		self.calculateFuelTime()
@@ -669,14 +669,19 @@ def getWeather(loc):
 		return ""
 	try: 
 		url = 'http://www.aviationweather.gov/adds/metars/?station_ids=%s&std_trans=standard&chk_metars=on&hoursStr=most+recent+only&submitmet=Submit' % (loc)
-		page = urllib.urlopen(url)
-		page = page.read()
-		soup = BeautifulSoup(''.join(page))
-		found = soup.findAll('font') # METAR data within font tag 
-		return str(found).split(">")[1].split("<")[0]
-	except: 
-		print('Weather fail')
-		return ""
+		print('Weather {}'.format(loc))
+		page = urllib.request.urlopen(url).read()
+		soup = BeautifulSoup(page, features="html5lib")
+		found = soup.find_all('font') # METAR data within font tag 
+		if len(found) == 1:
+			found = found[0] # will only work if so
+		else:
+			return ''
+		wx = str(found).split('>')[1].split('<')[0]
+		return wx
+	except Exception as e: 
+		print('Weather fail: {}'.format(e))
+		return ''
 
 """
 Finds the wind at a particular airport.
@@ -746,10 +751,9 @@ def getWindsAloft(lat, lon, alt, region):
 
 	# all winds aloft information 
 	for url in urls: 
-		page = urllib.urlopen(url)
-		page = page.read()
-		soup = BeautifulSoup(''.join(page))
-		found += soup.findAll('pre')
+		page = urllib.request.urlopen(url).read()
+		soup = BeautifulSoup(page, features="html5lib")
+		found += soup.find_all('pre')
 	windLocs = []
 	for line in str(found).split("\n"):
 		if "pre" in line or "VALID" in line: 
@@ -771,7 +775,7 @@ def getWindsAloft(lat, lon, alt, region):
 	for item in windLocs: 
 		item.dist = geopy.distance.distance(item.latlon, loc.latlon).kilometers * km_to_nm
 	sortedAirports = sorted(windLocs, key=lambda x: x.dist, reverse=False)
-
+	print('WIND')
 	dataLine = sortedAirports[0].data.split(" ")
 	alt = float(alt)
 	# information for winds aloft data - these are the altitude thresholds for each observation 
@@ -799,6 +803,7 @@ def getWindsAloft(lat, lon, alt, region):
 		data = "0000"
 	if "9900" in data: # light and variable
 		data = "0000"
+	print(data)
 	return data 
 
 """
@@ -876,64 +881,6 @@ Finds the landmarks that are in range of an origin point.
 @rtype 	list
 @return list of Point_Of_Interest 
 """
-def getDistancesInRange(origin, dest, course): 
-	cache = current_app.cache
-	distances = []
-	originLoc = origin.latlon
-	max_dist = math.ceil(course[0])
-	if not cache.get('airport_lines'):
-		with open('data/newairports_2.txt') as f:
-			lines = f.readlines()
-			# cache.set('airport_lines', lines, timeout=300)
-	else:
-		lines = cache.get('airport_lines')
-	for line in lines: 
-		data = line.split(", ")
-		if(len(data) < 2): 
-			continue
-		data[2] = data[2].replace('\n', '')
-		data_ll = (float(data[1]), float(data[2]))
-		lat_diff_deg = float(data[1]) - originLoc.latitude
-		lon_diff_deg = float(data[2]) - originLoc.longitude
-		if abs(lat_diff_deg * nm_per_deg) > max_dist \
-			or abs(lon_diff_deg * nm_per_deg) > max_dist:
-			continue
-		temp = geopy.point.Point(data_ll[0], data_ll[1])
-		tempDist = geopy_cache_dist(originLoc, temp)
-		heading_diff = getHeadingDiff(getGeopyHeading(originLoc, temp), course[1])
-		if (tempDist < max_dist) and heading_diff < 180: 
-			distances.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
-	print('Gathering cities')
-	if not cache.get('city_lines'):
-		with open('data/cities.txt') as f:
-			lines = f.readlines()
-			# cache.set('city_lines', lines, timeout=300)
-	else:
-		lines = cache.get('city_lines')
-	city_names = set()
-	for line in lines: 
-		data = line.split(", ")
-		city_name = data[0]
-		if city_name in city_names:
-			continue
-		city_names.add(city_name)
-		data[2] = data[2].replace('\n', '')
-		if (len(data) < 3): 
-			continue
-		lat_diff_deg = float(data[1]) - originLoc.latitude
-		lon_diff_deg = float(data[2]) - originLoc.longitude
-		if abs(lat_diff_deg * nm_per_deg) > max_dist \
-			or abs(lon_diff_deg * nm_per_deg) > max_dist:
-			continue
-		temp = geopy.Point(data[1], data[2])
-		# tempDist = geopy.distance.distance(originLoc, temp).kilometers * km_to_nm
-		tempDist = geopy_cache_dist(originLoc, temp)
-		heading_diff = getHeadingDiff(getGeopyHeading(originLoc, temp), course[1])
-		if (tempDist < max_dist) and heading_diff < 180: 
-			distances.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
-	print('distances len = {}'.format(len(distances)))
-	return distances 
-
 def getDistancesInRange2(originLoc, max_dist): 
 	distances = []
 	with open('data/newairports_2.txt') as f:
@@ -953,7 +900,6 @@ def getDistancesInRange2(originLoc, max_dist):
 		tempDist = geopy_cache_dist(originLoc, temp)
 		if (tempDist < max_dist):
 			distances.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
-	print('Gathering cities')
 	with open('data/cities.txt') as f:
 		lines = f.readlines()
 	city_names = set()
@@ -975,7 +921,6 @@ def getDistancesInRange2(originLoc, max_dist):
 		tempDist = geopy_cache_dist(originLoc, temp)
 		if (tempDist < max_dist): 
 			distances.append(Point_Of_Interest(data[0], data[1], data[2], tempDist))
-	print('distances len = {}'.format(len(distances)))
 	return distances 
  
 """
@@ -1193,7 +1138,6 @@ def calculateRouteLandmarks(origin, destination, course):
 			print('{} so breaking'.format(currentDist))
 			break
 	routeLandmarks.append(destination)
-	print('Done with hard part')
 	print(routeLandmarks)
 	return routeLandmarks
 
@@ -1267,10 +1211,14 @@ def createSegments(origin, destination, course, alt, tas, climb_speed = 75, \
 	num = getMid(len(landmarks))
 
 	print('Get winds aloft')
-	if(doWeather):
-		wAloft = "0000+00" # TODO getWindsAloft(landmarks[num].lat, landmarks[num].lon, alt, region)
+	if (doWeather):
+		try:
+			wAloft = getWindsAloft(landmarks[num].lat, landmarks[num].lon, alt, region)
+		except Exception as e:
+			print('Winds failed: {}'.format(e))
+			wAloft = '0000+00'
 	else: 
-		wAloft = "0000+00"
+		wAloft = '0000+00'
 	for x in range(len(landmarks)-1): 
 		nextLeg = Segment(landmarks[x], landmarks[x+1], course[1], alt, tas, num=x, aloft=wAloft) # ending is field elevation
 		"""if x == 0: 
@@ -1384,7 +1332,7 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], clim
 	noTOC = copy.copy(route)
 	route.insertClimb()
 	print('Climb done')
-	messages.append("Added Top of Climb (TOC) waypoint")
+	messages.append("Added top of climb (TOC) waypoint")
 
 	# map creation
 	num = getMid(len(route.courseSegs))

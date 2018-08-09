@@ -26,7 +26,7 @@
     <!-- message alert section -->
     {% if showMsgs %} 
         {% for msg in messages %}
-            <div class="alert alert-danger fade in" style="width:100%">
+            <div class="alert alert-{{ msg_types[loop.index0] }} fade in" style="width:100%">
                 <a href="#" class="close" data-dismiss="alert">&times;</a>
                 <strong>Please note: </strong> {{ msg }}
             </div>            
