@@ -1163,7 +1163,10 @@ def calculateRouteLandmarks(origin, destination, course):
 	routeLandmarks = []
 	currentLandmark = origin 
 	routeLandmarks.append(origin)
-	leg_len = 45
+	if currentDist < 500:
+		leg_len = 20
+	else:
+		leg_len = 45
 	max_num_landmarks = int(course[0] / leg_len)
 	points = []
 	for idx in range(int(max_num_landmarks)):
@@ -1184,7 +1187,7 @@ def calculateRouteLandmarks(origin, destination, course):
 			currentDist = geopy_cache_dist(currentLandmark.latlon, destination.latlon)
 		else:
 			currentDist = geopy_cache_dist(offset_pt, destination.latlon)
-		if (currentDist < 35): 
+		if (currentDist < leg_len * 1.3): 
 			print('{} so breaking'.format(currentDist))
 			break
 	routeLandmarks.append(destination)
