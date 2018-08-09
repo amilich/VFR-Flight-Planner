@@ -24,7 +24,7 @@
     <span id="buttons">&nbsp;</span>
 
     <body>
-        <div id="loading">
+        <!-- <div id="loading">
             <br>
             <div class="centered">
                 <div id="myCarousel" class="carousel slide" data-ride="carousel">
@@ -35,21 +35,34 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <div style="width: 100%;">
+            <div style="float:left; width:25%; margin-left:10px; margin-right:10px; padding-top: 0px">
+                <!-- message alert section -->
+                <h3 style="margin-top:0px">Messages</h3>
+                {% if showMsgs %} 
+                    {% for msg in messages %}
+                        <div class="alert alert-{{ msg_types[loop.index0] }} role="alert"">
+                            <!-- <a href="#" class="close" data-dismiss="alert">&times;</a> -->
+                            <strong>Please note: </strong> {{ msg }}
+                        </div>            
+                    {% endfor %} 
+                {% endif %} 
+                <!-- message alert section end -->
+           </div>
            <div style="float:left; width: 70%">
                 <div class="smalltabs">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#tab_a" data-toggle="tab">Route Map</a></li>
-                        <li><a href="#elevation" data-toggle="tab">Elevation Map and Weather</a></li>
-                        <li><a href="#waypoints" data-toggle="tab">Waypoints and Route Changes</a></li>
+                        <li><a href="#elevation" data-toggle="tab">Weather and Elevation</a></li>
+                        <li><a href="#waypoints" data-toggle="tab">Waypoints</a></li>
                         <li><a href="#freqs" data-toggle="tab">Trip Frequencies</a></li>
                         {% if not (airplane.weights|length) == 0%}
                             <li><a href="#airplane" data-toggle="tab">Weight and Balance</a></li>
                         {% endif %}
-                        <li><a href="#how" data-toggle="tab">Filing your plan</a></li>
+                        <li><a href="#how" data-toggle="tab">Filing</a></li>
                         <li><a href="#diag" data-toggle="tab">Airport Diagrams</a></li>
-                        <li><a href="#what" data-toggle="tab">Route Information</a></li>
+                        <li><a href="#what" data-toggle="tab">Help</a></li>
                     </ul>
                 </div>
                 <div class="tab-content">
@@ -289,22 +302,6 @@
                 </div>
            </div>
         </div>
-        <div style="float:left; width:10px; border-left: 2px solid black">
-
-        </div>
-        <div style="float:left; width:20%; margin-left:10px; padding-top: 0px">
-            <!-- message alert section -->
-            <h3>Messages</h3>
-            {% if showMsgs %} 
-                {% for msg in messages %}
-                    <div class="alert alert-{{ msg_types[loop.index0] }} role="alert"">
-                        <!-- <a href="#" class="close" data-dismiss="alert">&times;</a> -->
-                        <strong>Please note: </strong> {{ msg }}
-                    </div>            
-                {% endfor %} 
-            {% endif %} 
-            <!-- message alert section end -->
-       </div>
     </body>
 
     <footer>
