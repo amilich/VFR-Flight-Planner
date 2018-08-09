@@ -23,17 +23,6 @@
     <!-- Route PDF button on mobile devices --> 
     <span id="buttons">&nbsp;</span>
 
-    <!-- message alert section -->
-    {% if showMsgs %} 
-        {% for msg in messages %}
-            <div class="alert alert-{{ msg_types[loop.index0] }} fade in" style="width:100%">
-                <a href="#" class="close" data-dismiss="alert">&times;</a>
-                <strong>Please note: </strong> {{ msg }}
-            </div>            
-        {% endfor %} 
-    {% endif %} 
-    <!-- message alert section end -->
-
     <body>
         <div id="loading">
             <br>
@@ -41,278 +30,281 @@
                 <div id="myCarousel" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner h3" role="listbox">
                         <div class="item active">
-                            checking your cruising altitude
-                        </div>
-                        <div class="item">
-                            creating elevation plot
-                        </div>
-                        <div class="item">
-                            selecting easy to spot waypoints
-                        </div>
-                        <div class="item">
-                            getting winds aloft
-                        </div>
-                        <div class="item">
-                            adding your climb and descent 
-                        </div>
-                        <div class="item">
-                            creating interactive map
+                            <i>planning your route</i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="container">
-            <div class="smalltabs">
-                <ul class="nav nav-tabs">
-                    <li class="active"><a href="#tab_a" data-toggle="tab">Route Map</a></li>
-                    <li><a href="#elevation" data-toggle="tab">Elevation Map and Weather</a></li>
-                    <li><a href="#waypoints" data-toggle="tab">Waypoints and Route Changes</a></li>
-                    <li><a href="#freqs" data-toggle="tab">Trip Frequencies</a></li>
-                    {% if not (airplane.weights|length) == 0%}
-                    <li><a href="#airplane" data-toggle="tab">Weight and Balance</a></li>
-                    {% endif %}
-                    <li><a href="#how" data-toggle="tab">Filing your plan</a></li>
-                    <li><a href="#diag" data-toggle="tab">Airport Diagrams</a></li>
-                    <li><a href="#what" data-toggle="tab">Route Information</a></li>
-                </ul>
-            </div>
-            <div class="tab-content">
-                <div class="tab-pane active" id="tab_a">
-                    {{ route_map.html }}
-                    <br>
-                    <br>
-                    <br>
-                    <br>
+        <div style="width: 100%;">
+           <div style="float:left; width: 70%">
+                <div class="smalltabs">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#tab_a" data-toggle="tab">Route Map</a></li>
+                        <li><a href="#elevation" data-toggle="tab">Elevation Map and Weather</a></li>
+                        <li><a href="#waypoints" data-toggle="tab">Waypoints and Route Changes</a></li>
+                        <li><a href="#freqs" data-toggle="tab">Trip Frequencies</a></li>
+                        {% if not (airplane.weights|length) == 0%}
+                            <li><a href="#airplane" data-toggle="tab">Weight and Balance</a></li>
+                        {% endif %}
+                        <li><a href="#how" data-toggle="tab">Filing your plan</a></li>
+                        <li><a href="#diag" data-toggle="tab">Airport Diagrams</a></li>
+                        <li><a href="#what" data-toggle="tab">Route Information</a></li>
+                    </ul>
                 </div>
-                <div class="tab-pane" id="elevation">
-                    <br>
-                    <img src="{{ elevation }}" alt="Elevation Map">
-                    <br>
-                    <br>
-                    <div class="container">
-                        <small>
-                            <b>Please note:</b> this map represents elevation data taken at specified intervals during the route and does not include towers or other obstructions.     The pilot must be prepared at all times to change altitude in response to elevation changes. 
-                        </small>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab_a">
+                        {{ route_map.html }}
+                        <br>
+                        <br>
+                        <br>
+                        <br>
                     </div>
-                    {% if zipcode == "" %}
-                    {% else %}
+                    <div class="tab-pane" id="elevation">
+                        <br>
+                        <img src="{{ elevation }}" alt="Elevation Map">
                         <br>
                         <br>
-                        <a href="http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode={{zipcode}}&amp;width=500&amp;height=200" target="main">
-                            <img border="0" dynsrc="http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode={{zipcode}}&amp;width=500&amp;height=250" start="fileopen" src="  http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode={{zipcode}}&amp;width=500&amp;height=200">
-                        </a>
+                        <div class="container">
+                            <small>
+                                <b>Please note:</b> this map represents elevation data taken at specified intervals during the route and does not include towers or other obstructions.     The pilot must be prepared at all times to change altitude in response to elevation changes. 
+                            </small>
+                        </div>
+                        {% if zipcode == "" %}
+                        {% else %}
+                            <br>
+                            <br>
+                            <a href="http://www.geostrophy.weather.net/cgi-bin/freesenotis_wx_interrad?zipcode=10028?zipcode={{zipcode}}&amp;width=500&amp;height=200" target="main">
+                                <img border="0" dynsrc="http://www.geostrophy.weather.net/cgi-bin/freesenotis_wx_interrad?zipcode=10028?zipcode={{zipcode}}&amp;width=500&amp;height=250" start="fileopen" src="http://www.geostrophy.weather.net/cgi-bin/freesenotis_wx_interrad?zipcode=10028?&amp;width=500&amp;height=200">
+                            </a>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                        {% endif %}
+                    </div>
+                    <div class="tab-pane" id="waypoints">
                         <br>
-                        <br>
-                        <br>
-                        <br>
-                    {% endif %}
-                </div>
-                <div class="tab-pane" id="waypoints">
-                    <br>
-                    <div class="container">
-                        <style>
-                            th, td {
-                                padding: 7px
-                            }
-                            input{ 
-                                height:100%; 
-                                display:inline-block;
-                                position:relative;
-                            }
-                        </style>
-    
-                        To change a waypoint, type in a new airport or location name in the input box in the 'to' column of a leg. 
-                        <br>
-                        <br>
-    
-                        <table border='1' style="width:50%;" cellpadding="10">
-                            <tr>
-                                <th> Leg (from) </th>
-                                <th> Leg (to) </th>
-                                <th> Length (nm) </th>
-                                <th> Altitude (feet)</th>
-                                <th> True Airspeed (kts) </th>
-                                <th> Groundspeed (kts) </th>
-                                <th> Time (minutes) </th>
-                                <th> 
-                                    <table border='1' cellpadding="0" style="border-collapse: collapse; border-style: hidden;">
-                                        <tr>
-                                            <td class="nolines">True Course (&deg;)</td>
-                                            <td class="nolines">WCA</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="nolines"><b>Corrected Heading</b></td>
-                                            <td class="nolines">Mag. Var.</td>
-                                        </tr>
-                                    </table>
-                                </th>
-                            </tr>
-                        <!--<br>-->
-                        {% 
-                            for item in theRoute.courseSegs
-                        %}
-                            {% if "TOC" in item.to_poi.name or dest.name in item.to_poi.name: %}
+                        <div class="container">
+                            <style>
+                                th, td {
+                                    padding: 7px
+                                }
+                                input{ 
+                                    height:100%; 
+                                    display:inline-block;
+                                    position:relative;
+                                }
+                            </style>
+        
+                            To change a waypoint, type in a new airport or location name in the input box in the 'to' column of a leg. 
+                            <br>
+                            <br>
+        
+                            <table border='1' style="width:50%;" cellpadding="10">
                                 <tr>
-                                {% for thing in item.getData() %}
-                                    <td>{{ thing }}</td>
-                                {% endfor %}
-                                    <td>
+                                    <th> Leg (from) </th>
+                                    <th> Leg (to) </th>
+                                    <th> Length (nm) </th>
+                                    <th> Altitude (feet)</th>
+                                    <th> True Airspeed (kts) </th>
+                                    <th> Groundspeed (kts) </th>
+                                    <th> Time (minutes) </th>
+                                    <th> 
                                         <table border='1' cellpadding="0" style="border-collapse: collapse; border-style: hidden;">
                                             <tr>
-                                                <td class="nolines">{{ item.seg_hdg }}</td>
-                                                <td class="nolines">{{ item.wca }}</td>
+                                                <td class="nolines">True Course (&deg;)</td>
+                                                <td class="nolines">WCA</td>
                                             </tr>
                                             <tr>
-                                                <td class="nolines"><b> {{ item.hdg }} </b></td>
-                                                <td class="nolines"> {{ item. mag_var}}</td>
+                                                <td class="nolines"><b>Corrected Heading</b></td>
+                                                <td class="nolines">Mag. Var.</td>
                                             </tr>
                                         </table>
-                                    </td>
+                                    </th>
                                 </tr>
-                            {% else %} 
-                                <tr>
-                                    <td> 
-                                        {{ item.getData()[0] }}
-                                    </td>
-                                    {% set f = forms[item.num].place.process_data(item.getData()[1]) %}
-                                    {% set f = forms[item.num].num.process_data(item.num) %}
-                                    <td stype="padding:0;"> <!-- form here -->
-                                        <form action="/update" method="post" role="form">
-                                            {{ forms[item.num].hidden_tag() }}
-                                            {{ forms[item.num].place(onsubmit="loading();") }}
-                                        </form>
-                                    </td>
-    
-                                    {% for thing in item.getData()[2:] %}
+                            <!--<br>-->
+                            {% 
+                                for item in theRoute.courseSegs
+                            %}
+                                {% if "TOC" in item.to_poi.name or dest.name in item.to_poi.name: %}
+                                    <tr>
+                                    {% for thing in item.getData() %}
                                         <td>{{ thing }}</td>
                                     {% endfor %}
-                                    <td>
-                                        <table border='1' cellpadding="0" style="border-collapse: collapse; border-style: hidden;">
-                                            <tr>
-                                                <td class="nolines">{{ item.seg_hdg }}</td>
-                                                <td class="nolines">{{ item.wca }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="nolines"><b> {{ item.hdg }} </b></td>
-                                                <td class="nolines"> {{ item. mag_var}}</td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
+                                        <td>
+                                            <table border='1' cellpadding="0" style="border-collapse: collapse; border-style: hidden;">
+                                                <tr>
+                                                    <td class="nolines">{{ item.seg_hdg }}</td>
+                                                    <td class="nolines">{{ item.wca }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="nolines"><b> {{ item.hdg }} </b></td>
+                                                    <td class="nolines"> {{ item. mag_var}}</td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                {% else %} 
+                                    <tr>
+                                        <td> 
+                                            {{ item.getData()[0] }}
+                                        </td>
+                                        {% set f = forms[item.num].place.process_data(item.getData()[1]) %}
+                                        {% set f = forms[item.num].num.process_data(item.num) %}
+                                        <td stype="padding:0;"> <!-- form here -->
+                                            <form action="/update" method="post" role="form">
+                                                {{ forms[item.num].hidden_tag() }}
+                                                {{ forms[item.num].place(onsubmit="loading();") }}
+                                            </form>
+                                        </td>
+        
+                                        {% for thing in item.getData()[2:] %}
+                                            <td>{{ thing }}</td>
+                                        {% endfor %}
+                                        <td>
+                                            <table border='1' cellpadding="0" style="border-collapse: collapse; border-style: hidden;">
+                                                <tr>
+                                                    <td class="nolines">{{ item.seg_hdg }}</td>
+                                                    <td class="nolines">{{ item.wca }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="nolines"><b> {{ item.hdg }} </b></td>
+                                                    <td class="nolines"> {{ item. mag_var}}</td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                {% 
+                                    endif
+                                %}
                             {% 
-                                endif
+                                endfor
                             %}
-                        {% 
-                            endfor
-                        %}
+                            </table>
+                            <br><br><br>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="freqs">
+                        <br>
+                        <table border='1' style="width:50%;" cellpadding="10">
+                                <tr>
+                                    <td><b>Airport Identification</b></td>
+                                    <td><b>Type</b></td>
+                                    <td><b>Identification</b></td>
+                                    <td><b>Frequency</b></td>
+                                    <!-- <td><b>Services</b></td> -->
+                                </tr>
+                            {% for thing in freqs %}
+                                <tr>   
+                                    {% for freq in thing %}
+                                        <td> {{ freq }} </td>
+                                    {% endfor %} 
+                                    <!-- {% if thing.hasFuel %} 
+                                       <td> Fuel likely provided </td>
+                                    {% else %} 
+                                       <td> May have services </td>
+                                    {% endif %} -->
+                                </tr>
+                            {% endfor %}
                         </table>
-                        <br><br><br>
+                        <br>
+                        <br>
+                        <br>
+                    </div>
+                    {% if not (airplane.weights|length) == 0%}
+                    <div class="tab-pane" id="airplane">
+                        <br>
+                         <table border='1' style="width:50%;" cellpadding="10">
+                            <tr>
+                                <td></td>
+                                <td>Weight (lbs)</td>
+                                <td>Arm (in)</td>
+                                <td>Moment (lb·ft)</td>
+                            </tr>
+                            {% for item in airplane.weights %}
+                                <tr>
+                                    <td> {{ item.num }} </td>
+                                    <td> {{ item.weight }} </td>
+                                    <td> {{ item.arm }} </td>
+                                    <td> {{ item.moment }} </td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td>Total: </td>
+                                <td>{{ airplane.totalweight }} </td>
+                                <td>{{ airplane.cg }}</td>
+                                <td>{{ airplane.totalmoment }} </td>
+                            </tr>
+                         </table>
+                    </div>
+                    {% endif %}
+                    <div class="tab-pane" id="how">
+                        <br>
+                        <b>One way to file your flight plan:</b>
+                        <br>
+                        <br>
+                        <li><b>Call +1 (800) WX-BRIEF</b></li>
+                        <li>Provide your flight type: <b> VFR </b> </li>
+                        <li>Your tail number</li>
+                        <li>Your airspeed: <b>{{ theRoute.cruise_speed }} knots </b></li>
+                        <li>Your departure airport: <b>{{ theRoute.origin.name }}</b></li>
+                        <li>Your departure time </li>
+                        <li>Your cruising altitude: <b>{{ theRoute.cruising_alt }}</b></li>
+                        <li>Your route of flight: <b> direct </b> </li>
+                        <li>Your destination: <b> {{ theRoute.destination.name }} </b></li>
+                        <li>Your estimated time enroute: <b> {{ theRoute.hours }} hours {{ theRoute.minutes }} minutes</b></li>
+                        <li>Your fuel onboard in hours and minutes</li>
+                        <li>Your name, address, and phone</li>
+                        <li>The number of people onboard, and</li>
+                        <li>The color of your aircraft.</li>
+                        <li>You can also view flight planning resources online at <a href="https://www.1800wxbrief.com/Website/#!/">www.1800wxbrief.com</a>.</li>
+                    </div>
+                    <div class="tab-pane" id="diag">
+                        <center>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <img src="http://flightaware.com/resources/airport/{{ theRoute.origin.name }}/APD/AIRPORT+DIAGRAM/png">
+                                </div>
+                                <div class="col-md-6">
+                                    <img src="http://flightaware.com/resources/airport/{{ theRoute.destination.name }}/APD/AIRPORT+DIAGRAM/png">
+                                </div>
+                            </div> 
+                        </center>
+                        <br><br>
+                    </div>
+                    <div class="tab-pane" id="what">
+                        <br>
+                        <b>Your route has been generated from a list of cities, towns, and airports. In addition: </b>
+                        <br>
+                        <br>
+                        <li>Your true heading for each segment has been converted to a magnetic heading with a wind correction angle based on winds aloft and METAR information</li>
+                        <li>Weather radar is displayed for your departure area</li>
+                        <li>Specific METAR information is included in the PDF download</li>
+                        <li>Frequencies for origin, destination, and waypoint airports are displayed</li>
+                        <li>An elevation map has been generated and compared with your selected cruising altitude</li>
+                        <li>To change a waypoint, go to the 'Waypoint List' tab and type in a new town or airport</li>
+                        <li>You can export the route map, elevation map, frequencies, waypoint list, and specific weather conditions as a PDF</li>
                     </div>
                 </div>
-                <div class="tab-pane" id="freqs">
-                    <br>
-                    <table border='1' style="width:50%;" cellpadding="10">
-                            <tr>
-                                <td><b>Airport Identification</b></td>
-                                <td><b>Type</b></td>
-                                <td><b>Identification</b></td>
-                                <td><b>Frequency</b></td>
-                                <!-- <td><b>Services</b></td> -->
-                            </tr>
-                        {% for thing in freqs %}
-                            <tr>   
-                                {% for freq in thing %}
-                                    <td> {{ freq }} </td>
-                                {% endfor %} 
-                                <!-- {% if thing.hasFuel %} 
-                                   <td> Fuel likely provided </td>
-                                {% else %} 
-                                   <td> May have services </td>
-                                {% endif %} -->
-                            </tr>
-                        {% endfor %}
-                    </table>
-                    <br>
-                    <br>
-                    <br>
-                </div>
-                {% if not (airplane.weights|length) == 0%}
-                <div class="tab-pane" id="airplane">
-                    <br>
-                     <table border='1' style="width:50%;" cellpadding="10">
-                        <tr>
-                            <td></td>
-                            <td>Weight (lbs)</td>
-                            <td>Arm (in)</td>
-                            <td>Moment (lb·ft)</td>
-                        </tr>
-                        {% for item in airplane.weights %}
-                            <tr>
-                                <td> {{ item.num }} </td>
-                                <td> {{ item.weight }} </td>
-                                <td> {{ item.arm }} </td>
-                                <td> {{ item.moment }} </td>
-                            </tr>
-                        {% endfor %}
-                        <tr>
-                            <td>Total: </td>
-                            <td>{{ airplane.totalweight }} </td>
-                            <td>{{ airplane.cg }}</td>
-                            <td>{{ airplane.totalmoment }} </td>
-                        </tr>
-                     </table>
-                </div>
-                {% endif %}
-                <div class="tab-pane" id="how">
-                    <br>
-                    <b>One way to file your flight plan:</b>
-                    <br>
-                    <br>
-                    <li><b>Call +1 (800) WX-BRIEF</b></li>
-                    <li>Provide your flight type: <b> VFR </b> </li>
-                    <li>Your tail number</li>
-                    <li>Your airspeed: <b>{{ theRoute.cruise_speed }} knots </b></li>
-                    <li>Your departure airport: <b>{{ theRoute.origin.name }}</b></li>
-                    <li>Your departure time </li>
-                    <li>Your cruising altitude: <b>{{ theRoute.cruising_alt }}</b></li>
-                    <li>Your route of flight: <b> direct </b> </li>
-                    <li>Your destination: <b> {{ theRoute.destination.name }} </b></li>
-                    <li>Your estimated time enroute: <b> {{ theRoute.hours }} hours {{ theRoute.minutes }} minutes</b></li>
-                    <li>Your fuel onboard in hours and minutes</li>
-                    <li>Your name, address, and phone</li>
-                    <li>The number of people onboard, and</li>
-                    <li>The color of your aircraft.</li>
-                    <li>You can also view flight planning resources online at <a href="https://www.1800wxbrief.com/Website/#!/">www.1800wxbrief.com</a>.</li>
-                </div>
-                <div class="tab-pane" id="diag">
-                    <center>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <img src="http://flightaware.com/resources/airport/{{ theRoute.origin.name }}/APD/AIRPORT+DIAGRAM/png">
-                            </div>
-                            <div class="col-md-6">
-                                <img src="http://flightaware.com/resources/airport/{{ theRoute.destination.name }}/APD/AIRPORT+DIAGRAM/png">
-                            </div>
-                        </div> 
-                    </center>
-                    <br><br>
-                </div>
-                <div class="tab-pane" id="what">
-                    <br>
-                    <b>Your route has been generated from a list of cities, towns, and airports. In addition: </b>
-                    <br>
-                    <br>
-                    <li>Your true heading for each segment has been converted to a magnetic heading with a wind correction angle based on winds aloft and METAR information</li>
-                    <li>Weather radar is displayed for your departure area</li>
-                    <li>Specific METAR information is included in the PDF download</li>
-                    <li>Frequencies for origin, destination, and waypoint airports are displayed</li>
-                    <li>An elevation map has been generated and compared with your selected cruising altitude</li>
-                    <li>To change a waypoint, go to the 'Waypoint List' tab and type in a new town or airport</li>
-                    <li>You can export the route map, elevation map, frequencies, waypoint list, and specific weather conditions as a PDF</li>
-                </div>
-            </div>
+           </div>
         </div>
+        <div style="float:left; width:10px; border-left: 2px solid black">
+
+        </div>
+        <div style="float:left; width:20%; margin-left:10px; padding-top: 0px">
+            <!-- message alert section -->
+            <h3>Messages</h3>
+            {% if showMsgs %} 
+                {% for msg in messages %}
+                    <div class="alert alert-{{ msg_types[loop.index0] }} role="alert"">
+                        <!-- <a href="#" class="close" data-dismiss="alert">&times;</a> -->
+                        <strong>Please note: </strong> {{ msg }}
+                    </div>            
+                {% endfor %} 
+            {% endif %} 
+            <!-- message alert section end -->
+       </div>
     </body>
 
     <footer>
