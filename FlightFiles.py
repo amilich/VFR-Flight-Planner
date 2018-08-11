@@ -1337,8 +1337,8 @@ def createRoute(home, dest, altitude, airspeed, custom=[], environments=[], clim
 	# map creation
 	num = getMid(len(route.courseSegs))
 	mapLL = (route.courseSegs[num].to_poi.lat, route.courseSegs[num].to_poi.lon)
-	const_add = 6
-	mymap = pygmaps.maps(float(mapLL[0]), float(mapLL[1]), int(max(course[0] / -800, -const_add) + const_add + 1))
+	const_add = 7
+	mymap = pygmaps.maps(float(mapLL[0]), float(mapLL[1]), int(max(course[0] / -600, -const_add) + const_add + 1))
 	mymap.addpoint(float(ll[0]), float(ll[1]))
 	path = []
 	path.append((float(ll[0]), float(ll[1])))
