@@ -165,9 +165,10 @@ class Environment:
 		self.location = location # A point of interest (ex. airport)
 		self.metar = metar if not metar=="" else getWeather(location) # set METAR 
 		if not self.metar == '': 
-			self.weather = "METAR"
+			self.weather = 'METAR'
 		else: 
-			self.weather = "NONE"
+			self.weather = 'NONE'
+			self.skyCond = 'unknown'
 			return 
 		self.winddir, self.wind = getWind(self.location, self.metar)
 		self.time = Environment.getTime(self.metar)
@@ -669,10 +670,11 @@ def getWeather(loc):
 		return ""
 	try: 
 		url = 'http://www.aviationweather.gov/adds/metars/?station_ids=%s&std_trans=standard&chk_metars=on&hoursStr=most+recent+only&submitmet=Submit' % (loc)
-		print('Weather {}'.format(loc))
-		page = urllib.request.urlopen(url).read()
+		print('Weather here: {}'.format(loc))
+		page = urllib.request.urlopen(url, timeout=1.5).read()
 		soup = BeautifulSoup(page, features="html5lib")
 		found = soup.find_all('font') # METAR data within font tag 
+		print('Done')
 		if len(found) == 1:
 			found = found[0] # will only work if so
 		else:
@@ -751,7 +753,7 @@ def getWindsAloft(lat, lon, alt, region):
 
 	# all winds aloft information 
 	for url in urls: 
-		page = urllib.request.urlopen(url).read()
+		page = urllib.request.urlopen(url, timeout=1.5).read()
 		soup = BeautifulSoup(page, features="html5lib")
 		found += soup.find_all('pre')
 	windLocs = []
