@@ -6,9 +6,9 @@ Getting started:
 
 1. Clone this repository
 
-2. Install brew, run `brew install pipenv`
+2. Install `brew`, run `brew install pipenv`
 
-3. cd into the repo directory
+3. `cd` into the repo directory
 
 4. `pipenv install --dev`
 
