@@ -55,6 +55,8 @@ sm_per_deg = 69.0000
 nm_per_sm = 0.868976
 nm_per_deg = sm_per_deg * nm_per_sm
 
+SHORT_TIMEOUT = 1.3
+
 """
 An airplane is used to store relevant information for weight and balance calculations. 
 """
@@ -671,7 +673,7 @@ def getWeather(loc):
 	try: 
 		url = 'http://www.aviationweather.gov/adds/metars/?station_ids=%s&std_trans=standard&chk_metars=on&hoursStr=most+recent+only&submitmet=Submit' % (loc)
 		print('Weather here: {}'.format(loc))
-		page = urllib.request.urlopen(url, timeout=1.5).read()
+		page = urllib.request.urlopen(url, timeout=SHORT_TIMEOUT).read()
 		soup = BeautifulSoup(page, features="html5lib")
 		found = soup.find_all('font') # METAR data within font tag 
 		print('Done')
@@ -753,7 +755,7 @@ def getWindsAloft(lat, lon, alt, region):
 
 	# all winds aloft information 
 	for url in urls: 
-		page = urllib.request.urlopen(url, timeout=1.5).read()
+		page = urllib.request.urlopen(url, timeout=SHORT_TIMEOUT).read()
 		soup = BeautifulSoup(page, features="html5lib")
 		found += soup.find_all('pre')
 	windLocs = []
@@ -1126,7 +1128,7 @@ def calculateRouteLandmarks(origin, destination, course):
 		offset_pt = v_d.destination(point=origin.latlon, bearing=course[1])
 		currentLandmarks = []
 		tolerance = 1.0
-		while len(currentLandmarks) == 0 and tolerance < 2.0: 
+		while len(currentLandmarks) == 0 and tolerance < 1.5: 
 			allRelevantAirports = getDistancesInRange2(offset_pt, float(leg_len) * 0.8)
 			currentLandmarks = getValidLandmarks2(offset_pt, allRelevantAirports, course, tolerance)
 			tolerance += 0.3
