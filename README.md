@@ -6,11 +6,15 @@ Getting started:
 
 1. Clone this repository
 
-2. Create a virtual environment for it, venv VFR-Flight-Planner
+2. Install brew, run `brew install pipenv`
 
-3. pip install -r requirements.txt
+3. cd into the repo directory
 
-4. python App.py
+4. `pipenv install --dev`
+
+5. `pipenv shell`
+
+6. `python App.py`
 
 # Version
 1.0.2
