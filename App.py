@@ -292,6 +292,7 @@ def search():
 Initialize homepage with entry form. 
 """
 @app.route('/')
+@app.route("/<path:path>")
 def init():
 	form = searchform()
 	return render_template('index.html', form=form)
